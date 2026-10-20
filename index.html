@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>2026 釜山 6天5夜・煙火節與美食全制霸 (4人長輩舒適版)</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f233a">
+  <title>2026 釜山 6天5夜・煙火節與美食互動手冊 (4人家庭長輩舒適版)</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,13 +24,14 @@
       theme: {
         extend: {
           colors: {
-            busan: {
-              navy: '#0b2545',
-              blue: '#134074',
-              sky: '#8da9c4',
+            brand: {
+              navy: '#0f233a',
+              blue: '#1e3a5f',
+              lightBlue: '#e8f0fe',
               gold: '#f59e0b',
               goldLight: '#fef3c7',
-              dark: '#05192d'
+              warmBg: '#f8fafc',
+              coral: '#e11d48'
             }
           },
           fontFamily: {
@@ -43,6 +47,7 @@
     body {
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 16px));
     }
     .custom-scroll::-webkit-scrollbar {
       display: none;
@@ -52,94 +57,100 @@
       scrollbar-width: none;
     }
     .card-shadow {
-      box-shadow: 0 4px 18px -2px rgba(11, 37, 69, 0.08), 0 2px 6px -1px rgba(11, 37, 69, 0.04);
+      box-shadow: 0 4px 20px -2px rgba(15, 35, 58, 0.08), 0 2px 6px -1px rgba(15, 35, 58, 0.04);
     }
     .modal-backdrop {
-      backdrop-filter: blur(6px);
-      background-color: rgba(5, 25, 45, 0.7);
+      backdrop-filter: blur(8px);
+      background-color: rgba(10, 25, 42, 0.75);
+    }
+    /* 平滑摺疊動畫 */
+    .accordion-content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease-out;
+    }
+    .accordion-content.expanded {
+      max-height: 1200px;
+      opacity: 1;
+    }
+    .chevron-icon {
+      transition: transform 0.3s ease;
+    }
+    .chevron-icon.rotated {
+      transform: rotate(180deg);
     }
   </style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 antialiased pb-24">
+<body class="bg-brand-warmBg font-sans text-slate-800 antialiased min-h-screen">
 
-  <!-- ================= 頂部狀態列與標題 ================= -->
-  <header class="bg-gradient-to-r from-busan-dark via-busan-navy to-busan-blue text-white sticky top-0 z-40 shadow-md">
-    <div class="max-w-md mx-auto px-4 pt-3.5 pb-2.5">
+  <!-- ================= 頂部狀態列與快速資訊 ================= -->
+  <header class="bg-gradient-to-r from-brand-navy via-brand-blue to-slate-900 text-white sticky top-0 z-40 shadow-lg">
+    <div class="max-w-md mx-auto px-4 pt-3 pb-2.5">
+      
+      <!-- 頂部標籤列 -->
       <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="bg-amber-400 text-slate-950 text-[11px] font-black px-2 py-0.5 rounded-full shadow-sm tracking-wide">
+        <div class="flex items-center gap-1.5">
+          <span class="bg-amber-400 text-slate-950 text-[11px] font-black px-2 py-0.5 rounded-full shadow-sm">
             2026.11.4 – 11.9
           </span>
-          <span class="text-xs font-bold text-amber-200">4 人長輩舒適同行</span>
+          <span class="text-xs font-bold text-amber-200">4人長輩同行</span>
         </div>
-        <div class="flex items-center gap-1.5">
-          <span class="text-[11px] bg-white/15 text-white px-2 py-0.5 rounded-full font-medium">
-            <i class="fa-solid fa-hotel text-amber-300 mr-1"></i>海雲台連住 5 晚
-          </span>
-        </div>
+        <button onclick="openSeniorModal()" class="text-[11px] bg-white/15 hover:bg-white/25 text-amber-200 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 transition">
+          <i class="fa-solid fa-heart-pulse text-rose-400"></i>長輩無痛叮嚀
+        </button>
       </div>
 
+      <!-- 主標題 -->
       <div class="mt-2 flex items-baseline justify-between">
         <h1 class="text-lg font-black tracking-tight flex items-center gap-1.5">
-          <span>釜山煙火節・美食全制霸</span>
-          <span class="text-xs bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded">6天5夜</span>
+          <span>2026 釜山家庭互動手冊</span>
+          <span class="text-[11px] bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded">6天5夜</span>
         </h1>
-        <span class="text-[11px] text-slate-300 font-kr">부산 효도여행</span>
+        <span class="text-[11px] text-slate-300 font-kr">부산 가족여행</span>
       </div>
 
-      <!-- 快速航班與住宿摘要卡 -->
-      <div class="mt-2.5 bg-white/10 rounded-xl p-2.5 text-xs grid grid-cols-2 gap-2 border border-white/15">
+      <!-- 快速航班與住宿卡 (可點擊快速查看飯店司機卡) -->
+      <div class="mt-2.5 bg-white/10 rounded-xl p-2.5 text-xs grid grid-cols-2 gap-2 border border-white/15 backdrop-blur-sm">
         <div class="flex items-center gap-2">
-          <i class="fa-solid fa-plane-departure text-amber-300 text-sm shrink-0"></i>
+          <div class="w-7 h-7 rounded-lg bg-amber-400/20 text-amber-300 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-plane-departure text-xs"></i>
+          </div>
           <div>
-            <div class="text-[10px] text-slate-300">航班 (真航空直飛)</div>
-            <div class="font-bold tracking-tight">LJ586 ⇄ LJ585 (台中RMQ)</div>
+            <div class="text-[10px] text-slate-300">去 LJ586 16:15 ➔ 19:35</div>
+            <div class="text-[10px] text-slate-300">回 LJ585 14:00 ➔ 15:15</div>
+            <div class="font-bold text-[11px] text-white">真航空直飛 (台中RMQ)</div>
           </div>
         </div>
-        <div class="flex items-center gap-2 cursor-pointer active:opacity-80" onclick="openModal('hotel-card')">
-          <i class="fa-solid fa-location-dot text-rose-400 text-sm shrink-0"></i>
+        
+        <div class="flex items-center gap-2 cursor-pointer active:scale-98 transition" onclick="openTaxiModal('hotel')">
+          <div class="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-hotel text-xs"></i>
+          </div>
           <div class="truncate">
             <div class="text-[10px] text-slate-300 flex items-center justify-between">
-              <span>海雲台住宿</span>
+              <span>海雲台連住5晚</span>
               <span class="text-amber-300 underline text-[10px]">司機卡</span>
             </div>
-            <div class="font-bold truncate">La Viange 飯店</div>
+            <div class="font-bold text-[11px] text-white truncate">La Viange 飯店</div>
+            <div class="text-[9px] text-slate-300 truncate">해운대해변로209번나길 56</div>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- 主要分頁切換按鈕 (5大分頁) -->
-    <div class="max-w-md mx-auto px-2 pt-1 pb-1 flex border-t border-white/10 text-xs overflow-x-auto custom-scroll">
-      <button onclick="switchTab('itinerary')" id="tab-btn-itinerary" class="tab-btn flex-1 min-w-[70px] py-1.5 text-center font-bold text-amber-300 border-b-2 border-amber-300 transition">
-        <i class="fa-solid fa-calendar-day block text-sm mb-0.5"></i>每日行程
-      </button>
-      <button onclick="switchTab('senior')" id="tab-btn-senior" class="tab-btn flex-1 min-w-[70px] py-1.5 text-center font-bold text-slate-300 border-b-2 border-transparent transition">
-        <i class="fa-solid fa-shield-heart block text-sm mb-0.5"></i>長輩秘技
-      </button>
-      <button onclick="switchTab('taxi')" id="tab-btn-taxi" class="tab-btn flex-1 min-w-[70px] py-1.5 text-center font-bold text-slate-300 border-b-2 border-transparent transition">
-        <i class="fa-solid fa-taxi block text-sm mb-0.5"></i>司機小卡
-      </button>
-      <button onclick="switchTab('food')" id="tab-btn-food" class="tab-btn flex-1 min-w-[70px] py-1.5 text-center font-bold text-slate-300 border-b-2 border-transparent transition">
-        <i class="fa-solid fa-utensils block text-sm mb-0.5"></i>美食全覽
-      </button>
-      <button onclick="switchTab('checklist')" id="tab-btn-checklist" class="tab-btn flex-1 min-w-[70px] py-1.5 text-center font-bold text-slate-300 border-b-2 border-transparent transition">
-        <i class="fa-solid fa-fire block text-sm mb-0.5"></i>煙火與準備
-      </button>
     </div>
   </header>
 
-  <!-- ================= 主容器 (手機寬度最適配) ================= -->
+  <!-- ================= 主頁面容器 (專為手機寬度最適配) ================= -->
   <main class="max-w-md mx-auto px-3.5 pt-3">
 
     <!-- ==================================================== -->
-    <!-- TAB 1: 每日詳細行程 (Tab: Itinerary) -->
+    <!-- TAB 1: 📅 每日行程 (Itinerary) -->
     <!-- ==================================================== -->
     <section id="tab-itinerary" class="tab-content space-y-3">
       
-      <!-- Day 1 ~ Day 6 切換膠囊按鈕 -->
+      <!-- Day 1 ~ Day 6 水平切換膠囊按鈕 -->
       <div class="flex items-center justify-between gap-1.5 bg-white p-1.5 rounded-2xl card-shadow border border-slate-200 overflow-x-auto custom-scroll">
-        <button onclick="switchDay(1)" id="day-btn-1" class="day-btn flex-1 min-w-[56px] py-2 px-1 text-center rounded-xl font-black text-xs transition bg-busan-navy text-amber-300 shadow">
+        <button onclick="switchDay(1)" id="day-btn-1" class="day-btn flex-1 min-w-[56px] py-2 px-1 text-center rounded-xl font-black text-xs transition bg-brand-navy text-amber-300 shadow">
           <div>D1</div>
           <div class="text-[10px] font-normal opacity-90">11/4 三</div>
         </button>
@@ -165,90 +176,125 @@
         </button>
       </div>
 
+      <!-- 全部展開 / 折疊切換列 -->
+      <div class="flex items-center justify-between px-1 text-xs text-slate-500">
+        <span id="day-summary-text" class="font-medium">點擊卡片可展開/收合詳細細節</span>
+        <button onclick="toggleAllAccordions()" id="toggle-all-btn" class="text-brand-blue font-bold flex items-center gap-1 active:opacity-75">
+          <i class="fa-solid fa-arrows-up-down text-[10px]"></i>
+          <span id="toggle-all-label">全部展開</span>
+        </button>
+      </div>
+
       <!-- ================= DAY 1 內容 ================= -->
       <div id="day-view-1" class="day-detail space-y-3">
         <!-- 頂部主題橫幅 -->
-        <div class="bg-gradient-to-r from-busan-navy to-busan-blue text-white p-3.5 rounded-2xl shadow">
+        <div class="bg-gradient-to-r from-brand-navy to-brand-blue text-white p-3.5 rounded-2xl shadow">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-amber-300">11/4 (週三)</span>
+            <span class="text-xs font-bold text-amber-300">Day 1・11/4 (週三)</span>
             <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-medium">直飛抵達・零步行直達飯店</span>
           </div>
-          <h2 class="text-base font-bold mt-1">抵達釜山 ➔ 計程車直奔飯店 ➔ 宵夜 Bhc 炸雞</h2>
-          <p class="text-xs text-slate-200 mt-0.5">搭乘真航空直飛，4人行李叫 Venti 大型車直達海雲台</p>
+          <h2 class="text-base font-bold mt-1">抵達海雲台 ➔ 計程車直奔飯店 ➔ 宵夜 Bhc 炸雞</h2>
+          <p class="text-xs text-slate-200 mt-0.5">搭乘真航空直飛，4人行李搭 Kakao T 大車直達飯店門口</p>
         </div>
 
-        <div class="space-y-3">
-          <!-- 航班時間 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-busan-blue bg-blue-50 px-2 py-0.5 rounded-md">16:15 ➔ 19:35</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">搭乘真航空 LJ586 直飛釜山</h3>
-                <p class="text-xs text-slate-500">台中清泉崗 RMQ T1 ➔ 金海國際機場 PUS 國際線</p>
+        <!-- 卡片 1-1: 航班時間 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">16:15 ➔ 19:35</span>
+                <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold">真航空直飛</span>
               </div>
-              <span class="text-xs font-bold text-slate-400">航程約 2h 20m</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">真航空 LJ586 直飛金海機場</h3>
+              <p class="text-xs text-slate-500">台中 (RMQ) ➔ 釜山 (PUS) 航程約 2 小時 20 分</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">抵達金海機場後，入境填寫紙本入境卡。長輩若需洗手間可在行李轉盤旁先上好。</p>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              • <strong>長輩無痛建議：</strong>台中清泉崗通關快速不擁擠。抵達金海機場後，長輩先在行李轉盤旁洗手間上好廁所，無需著急。入境填妥紙本入境卡即可通關。
+            </p>
+            <div class="bg-slate-50 p-2.5 rounded-xl text-[11px] text-slate-500">
+              航班資訊：LJ586 16:15 RMQ ➔ 19:35 PUS | 4人同行有託運行李
+            </div>
+          </div>
+        </div>
 
-          <!-- 計程車出發直奔海雲台 -->
-          <div class="bg-amber-50/80 border border-amber-300 rounded-2xl p-3.5 card-shadow">
-            <div class="flex items-start justify-between">
-              <div>
+        <!-- 卡片 1-2: 機場外搭 Kakao T 大車直達飯店 -->
+        <div class="accordion-item bg-amber-50/70 border border-amber-300 rounded-2xl card-shadow overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
                 <span class="text-[10px] font-bold text-white bg-amber-600 px-2 py-0.5 rounded-md">20:30 機場出發</span>
-                <h3 class="text-sm font-black text-slate-900 mt-1">計程車直奔海雲台飯店 (省去輕軌轉地鐵24站)</h3>
-                <p class="text-xs text-slate-600 font-kr">김해공항 ➔ 해운대 라비앙제 호텔</p>
+                <span class="text-[10px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">長輩省力核心</span>
               </div>
-              <button onclick="openModal('hotel-card')" class="bg-busan-navy text-amber-300 text-xs font-bold px-2.5 py-1.5 rounded-lg shadow">司機卡</button>
+              <h3 class="text-sm font-black text-slate-900 mt-1">機場外搭 Kakao T 大車直達飯店門口</h3>
+              <p class="text-xs text-slate-600 font-kr font-bold">김해공항 ➔ 해운대 라비앙제 호텔</p>
             </div>
-            <div class="text-xs text-amber-950 mt-2 bg-white/80 p-2.5 rounded-xl space-y-1">
-              <div>🚕 <strong>長輩省力升級：</strong>4個人有大行李箱，用 Kakao T 叫「<strong>벤（Venti / 大型車）</strong>」，車程約 45～50 分鐘直送飯店門口，不用拉行李擠輕軌轉 24 站地鐵！</div>
-              <div class="text-slate-600">車資 4 人分攤每人只需約百元台幣，極度划算。</div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-200">
+            <div class="mt-2.5 bg-white/90 p-2.5 rounded-xl space-y-1.5 border border-amber-200/60">
+              <div class="font-bold flex items-center gap-1 text-slate-900">
+                <i class="fa-solid fa-taxi text-amber-600"></i> 長輩極致舒適攻略：
+              </div>
+              <p>4 個人 4 個大行李箱，打開 Kakao T 叫「<strong>벤（Venti / 大型大車）</strong>」！車程約 45～50 分鐘直送飯店門口。</p>
+              <p class="text-slate-600 text-[11px]">省去拖大行李擠輕軌、轉 24 站地鐵與找無障礙電梯的疲累，4 人分攤車資每人只要百元台幣，極度划算！</p>
             </div>
-            <div class="mt-2.5 flex gap-2">
-              <button onclick="copyText('부산 해운대구 해운대해변로209번나길 56')" class="flex-1 bg-white border border-slate-300 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1">
-                <i class="fa-regular fa-copy"></i> 複製飯店韓文地址
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('hotel')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機溝通大字卡
+              </button>
+              <button onclick="copyAddress('부산 해운대구 해운대해변로209번나길 56')" class="bg-white border border-slate-300 text-slate-700 text-xs font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1">
+                <i class="fa-regular fa-copy"></i> 複製韓文地址
               </button>
             </div>
           </div>
+        </div>
 
-          <!-- 入住 Check-in -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">21:20 辦理入住</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">入住海雲台 La Viange Maison de Hotel</h3>
-                <p class="text-xs text-slate-500 font-kr">부산 해운대구 해운대해변로209번나길 56</p>
+        <!-- 卡片 1-3: 入住 La Viange -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">21:20 抵達入住</span>
+                <span class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-1.5 py-0.5 rounded">連住 5 晚免搬遷</span>
               </div>
-              <span class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded">連住 5 晚免搬行李</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">入住 La Viange Maison de Hotel (海雲台)</h3>
+              <p class="text-xs text-slate-500 font-kr">부산 해운대구 해운대해변로209번나길 56</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">
-              整理行李、脫下厚外套。長輩可在房內稍作休息、泡杯熱茶暖胃。
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              • <strong>全趟固定住宿：</strong>5 晚全住在海雲台 La Viange，免去長輩每日收拾打包與搬運行李的勞累。進房後換上輕便室內拖鞋，燒壺熱水泡茶暖胃。
             </p>
           </div>
+        </div>
 
-          <!-- 暖胃宵夜: Bhc 炸雞 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">21:45 暖胃宵夜</span>
-                  <span class="text-[10px] bg-rose-50 text-rose-700 font-bold px-1.5 py-0.5 rounded">必吃推薦</span>
-                </div>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">Bhc 炸雞 (海雲台店)</h3>
-                <p class="text-xs text-slate-500 font-kr">bhc치킨 해운대점 (營業至 24:00)</p>
+        <!-- 卡片 1-4: 宵夜外帶 Bhc 炸雞 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">21:45 宵夜美味</span>
+                <span class="text-[10px] bg-rose-50 text-rose-700 font-bold px-1.5 py-0.5 rounded">外帶回房享用</span>
               </div>
-              <button onclick="openModal('bhc-card')" class="bg-amber-100 text-amber-900 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機/外帶卡</button>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">外帶「Bhc 炸雞（海雲台店）」</h3>
+              <p class="text-xs text-slate-500">招牌起司炸雞 (뿌링클) 與起司球</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">
-              派 1～2 位年輕人走路或叫車外帶招牌起司粉炸雞（뿌링클）與原味半半，長輩留在飯店舒適沙發看電視、配熱茶啤酒放鬆，完美展開第一晚！
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              • <strong>長輩零負擔攻略：</strong>長輩在飯店沙發舒服休息看電視，派年輕人步行至鄰近 Bhc 炸雞外帶熱騰騰的招牌起司炸雞與起司球。配韓國香蕉牛奶或啤酒，第一晚完美開胃！
             </p>
-            <div class="mt-2 flex gap-2">
+            <div class="flex gap-2 pt-1">
               <a href="https://maps.app.goo.gl/NowtfHpNxyqEDKT17" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps 導航
+                <i class="fa-solid fa-map-location-dot"></i> Google Maps
               </a>
-              <button onclick="copyText('부산 해운대구 해운대해변로298번길 24')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">
-                複製地址
+              <button onclick="copyAddress('부산 해운대구 해운대해변로298번길 24')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1">
+                <i class="fa-regular fa-copy"></i> 複製地址
               </button>
             </div>
           </div>
@@ -257,208 +303,284 @@
 
       <!-- ================= DAY 2 內容 ================= -->
       <div id="day-view-2" class="day-detail hidden space-y-3">
-        <div class="bg-gradient-to-r from-busan-navy to-busan-blue text-white p-3.5 rounded-2xl shadow">
+        <div class="bg-gradient-to-r from-brand-navy to-brand-blue text-white p-3.5 rounded-2xl shadow">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-amber-300">11/5 (週四)</span>
-            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">山海美景・完全避坡</span>
+            <span class="text-xs font-bold text-amber-300">Day 2・11/5 (週四)</span>
+            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-medium">水平走法・纜車海景・激推燒肉</span>
           </div>
-          <h2 class="text-base font-bold mt-1">甘川洞(頂部) ➔ 松島海上纜車 ➔ 西面 釜山宅⭐</h2>
-          <p class="text-xs text-slate-200 mt-0.5">計程車直達景點最高處，沿途水平散步，晚餐爽吃代烤五花肉</p>
+          <h2 class="text-base font-bold mt-1">甘川洞 ➔ 松島纜車 ➔ 西面 ➔ 釜山宅燒肉⭐</h2>
+          <p class="text-xs text-slate-200 mt-0.5">只走水平路看彩色山城、水晶纜車坐看海景、17:00免排隊代烤燒肉</p>
         </div>
 
-        <div class="space-y-3">
-          <!-- 甘川洞文化村 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-busan-blue bg-blue-50 px-2 py-0.5 rounded-md">09:30 - 11:30</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">甘川洞文化村 (長輩無痛走法)</h3>
-                <p class="text-xs text-slate-500 font-kr">감천문화마을 안내센터</p>
-              </div>
-              <button onclick="openModal('gamcheon-card')" class="bg-busan-navy text-amber-300 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機卡</button>
-            </div>
-            <div class="text-xs text-slate-600 mt-2 bg-slate-50 p-2.5 rounded-xl space-y-1">
-              <div class="font-bold text-emerald-800">🚶 避坡重點絕招：</div>
-              <div>計程車直達最頂端的「旅遊諮詢處（감천문화마을 안내센터）」！只沿著最上方平坦的主街漫步，看彩色小房子與小王子像拍照。拍完原路走回下車點，<strong>絕對不要往下走垂直的長階梯</strong>。</div>
-            </div>
-            <div class="mt-2 flex gap-2">
-              <a href="https://map.naver.com/p/search/%EA%B0%90%EC%B2%9C%EB%AC%B8%ED%99%94%EB%A7%88%EC%9D%84%20%EC%95%88%EB%82%B4%EC%84%BC%ED%84%B0" target="_blank" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-1.5 rounded-lg text-center">Naver Map 導航</a>
-              <button onclick="copyText('부산 사하구 감내2로 203')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製韓文地址</button>
-            </div>
-          </div>
-
-          <!-- 松島纜車 + 龍宮雲橋 + 天空步道 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-busan-blue bg-blue-50 px-2 py-0.5 rounded-md">11:45 - 14:30</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">松島海上纜車 ➔ 龍宮雲橋 ➔ 海灘步道</h3>
-                <p class="text-xs text-slate-500 font-kr">송도해상케이블카 & 송도용궁구름다리</p>
-              </div>
-              <button onclick="openModal('songdo-card')" class="bg-busan-navy text-amber-300 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機卡</button>
-            </div>
-            <p class="text-xs text-slate-600 mt-2">
-              🚡 <strong>松島水晶纜車：</strong>透明地板凌空飛躍海面，全坐著看海毫無體力負擔。<br>
-              🌉 <strong>龍宮雲橋：</strong>抵達岩南公園站，下切雲橋有一小段階梯，若長輩當天膝蓋痠，可在纜車站 3 樓空中花園觀景台拍照休息即可！搭回程後，在松島海上天空步道（全平坦木棧道）散步吹海風。
-            </p>
-          </div>
-
-          <!-- 西面田浦商圈 -->
-          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs text-slate-700 flex items-center gap-2.5">
-            <i class="fa-solid fa-mug-hot text-amber-600 text-base shrink-0"></i>
+        <!-- 2-1: 甘川洞文化村 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
             <div>
-              <strong>15:30 西面田浦咖啡街放鬆：</strong>計程車直達西面，在平坦的田浦咖啡街挑一間質感咖啡廳坐著喝茶吃甜點，或到樂天百貨走走。
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">09:30</span>
+                <span class="text-[10px] bg-amber-50 text-amber-800 font-bold px-1.5 py-0.5 rounded">★長輩無痛走法</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">甘川洞文化村 (最上方諮詢處直送)</h3>
+              <p class="text-xs text-slate-500 font-kr">감천문화마을 안내센터 앞</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <div class="mt-2.5 bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-amber-950 space-y-1">
+              <div class="font-bold">★ 長輩無痛走法秘技：</div>
+              <p>計程車直接開到最頂端的「<strong>甘川文化村旅遊諮詢處（안내센터）</strong>」平坦馬路下車。<strong>只走水平平坦主街</strong>看小王子背影與俯瞰彩色房子，拍完照<strong>原路折返</strong>。絕對不要走往下切的縱向陡階梯！</p>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('gamcheon')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="copyAddress('부산 사하구 감내2로 203')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
           </div>
+        </div>
 
-          <!-- 釜山宅 燒肉 -->
-          <div class="bg-amber-50/80 border-2 border-busan-gold rounded-2xl p-3.5 card-shadow">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">17:00 晚餐</span>
-                  <span class="text-[10px] bg-busan-gold text-busan-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 1</span>
-                </div>
-                <h3 class="text-base font-black text-slate-900 mt-1">釜山宅 燒肉 (全代烤零油煙)</h3>
-                <p class="text-xs text-slate-600 font-kr font-bold">부산댁 (西面)</p>
+        <!-- 2-2: 松島海上纜車 & 天空步道 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">11:45</span>
+                <span class="text-[10px] bg-slate-100 text-slate-700 font-bold px-1.5 py-0.5 rounded">海景無負擔</span>
               </div>
-              <button onclick="openModal('busandaek-card')" class="bg-busan-navy text-busan-gold text-xs font-bold px-2.5 py-1.5 rounded-lg shadow">司機卡</button>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">松島海上纜車 ➔ 龍宮雲橋 ➔ 天空步道</h3>
+              <p class="text-xs text-slate-500 font-kr">송도해상케이블카 & 송도구름산책로</p>
             </div>
-            <p class="text-xs text-amber-950 mt-2 bg-white/70 p-2 rounded-lg">
-              🥩 <strong>免排隊策略：</strong>17:00 開門準時進店！肉品全在專用炭火台由店員烤到金黃香脆再上桌，長輩不用動手翻肉、沒有油煙撲面，極致舒適！
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              • 🚡 <strong>水晶車廂：</strong>透明水晶地板坐看無敵海景，全程坐著休息看海完全不耗腿力。<br>
+              • 🌉 <strong>龍宮雲橋：</strong>抵達岩南公園站，下切雲橋有階梯，<strong>視長輩腳力決定</strong>；若長輩當天腳痠，可在 3F 觀景台空中花園坐著拍照休息即可。<br>
+              • 🌊 <strong>松島海水浴場天空步道：</strong>搭回程後，在平坦無坡海景棧道散步吹微風。
             </p>
-            <div class="mt-2 flex gap-2">
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('songdo')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="copyAddress('부산 서구 송도해변로 171')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2-3: 西面商圈漫步 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">15:30</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">計程車直達西面商圈悠閒散步</h3>
+              <p class="text-xs text-slate-500">西面田浦咖啡街 / 樂天百貨室內放鬆</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              計程車直達西面，選一間平坦舒適的田浦質感咖啡館坐下喝杯熱拿鐵休息，或進樂天百貨逛街，讓雙腿充分放鬆。
+            </p>
+          </div>
+        </div>
+
+        <!-- 2-4: 釜山宅燒肉 (⭐ 激推必吃 1) -->
+        <div class="accordion-item bg-amber-50/80 border-2 border-amber-400 rounded-2xl card-shadow overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">17:00 晚餐</span>
+                <span class="text-[10px] bg-amber-400 text-brand-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 1</span>
+              </div>
+              <h3 class="text-base font-black text-slate-900 mt-1">【激推】釜山宅 (부산댁) 燒肉</h3>
+              <p class="text-xs text-slate-600 font-kr font-bold">17:00 開門準時進店・店員全烤好上桌</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-300">
+            <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
+              <p>🥩 <strong>免排隊策略：</strong>17:00 準時進店免排隊！肉品由店員在中央炭火全烤好才端上桌，<strong>長輩不用自己烤、完全無油煙撲面、不費力</strong>。招牌厚切豬五花配大醬湯，極致美味！</p>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('busandaek')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
               <a href="https://maps.app.goo.gl/6rKh3c9e61vQ1MLm9" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
                 <i class="fa-solid fa-map-location-dot"></i> Google Maps
               </a>
-              <a href="https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EB%8C%81" target="_blank" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-1.5 rounded-lg text-center">Naver Map</a>
+              <button onclick="copyAddress('부산 부산진구 동천로107번길 14 1층')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
           </div>
+        </div>
 
-          <!-- 賦歸飯店 -->
-          <div class="bg-white rounded-2xl p-3 card-shadow border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
-            <span><strong>18:40 賦歸：</strong>計程車直達海雲台飯店，早點休息泡澡放鬆。</span>
-            <span class="text-busan-blue font-bold">車程約 30 分</span>
+        <!-- 2-5: 賦歸海雲台飯店 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">18:40 賦歸</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">計程車回海雲台飯店休息</h3>
+              <p class="text-xs text-slate-500">避開晚間車潮，早早回飯店舒展雙腿</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-1 border-t border-slate-100">
+            <p class="mt-2.5">車程約 30 分鐘，直達飯店門口。長輩早早泡熱水澡休息，準備迎接第三天港灣巡禮。</p>
           </div>
         </div>
       </div>
 
       <!-- ================= DAY 3 內容 ================= -->
       <div id="day-view-3" class="day-detail hidden space-y-3">
-        <div class="bg-gradient-to-r from-busan-navy to-busan-blue text-white p-3.5 rounded-2xl shadow">
+        <div class="bg-gradient-to-r from-brand-navy to-brand-blue text-white p-3.5 rounded-2xl shadow">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-amber-300">11/6 (週五)</span>
-            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">港灣風情・老饕激推</span>
+            <span class="text-xs font-bold text-amber-300">Day 3・11/6 (週五)</span>
+            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-medium">白淺灘・百花烤腸・釜山塔・Bujebi</span>
           </div>
-          <h2 class="text-base font-bold mt-1">白淺灘 ➔ 百花烤腸⭐ ➔ 釜山塔 ➔ Bujebi⭐</h2>
-          <p class="text-xs text-slate-200 mt-0.5">跨海大橋海景、中午吃現烤牛腸、車直上釜山塔圓環</p>
+          <h2 class="text-base font-bold mt-1">影島海女村 ➔ 百花烤腸⭐ ➔ 釜山塔 ➔ Bujebi⭐</h2>
+          <p class="text-xs text-slate-200 mt-0.5">白淺灘走平路絕影路、中午吃阿姨代烤牛腸、車直上釜山塔圓環</p>
         </div>
 
-        <div class="space-y-3">
-          <!-- 白淺灘文化村 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-busan-blue bg-blue-50 px-2 py-0.5 rounded-md">10:10 - 11:20</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">白淺灘文化村 (絕影路無痛走法)</h3>
-                <p class="text-xs text-slate-500 font-kr">흰여울문화마을 (절영로)</p>
+        <!-- 3-1: 白淺灘文化村 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">09:30</span>
+                <span class="text-[10px] bg-amber-50 text-amber-800 font-bold px-1.5 py-0.5 rounded">★長輩無痛走法</span>
               </div>
-              <button onclick="openModal('huinnyeoul-card')" class="bg-busan-navy text-amber-300 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機卡</button>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">白淺灘文化村 (上層絕影路直送)</h3>
+              <p class="text-xs text-slate-500 font-kr">흰여울문화마을 (절영로 194)</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">
-              🌊 <strong>避坡重點：</strong>計程車停在上方「絕影路（절영로）」大馬路旁，全程走上方水平平路看海，找一間面海落地窗景觀咖啡廳坐下吹風看海。<strong>嚴禁走鋼琴階梯下切海邊步道</strong>。
-            </p>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
-
-          <!-- 中里海女村 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">11:30 - 12:15</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">中里海女村 (現撈海鮮)</h3>
-                <p class="text-xs text-slate-500 font-kr">중리해녀촌 (영도구)</p>
-              </div>
-              <button onclick="openModal('haenyeo-card')" class="bg-amber-100 text-amber-900 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機卡</button>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <div class="mt-2.5 bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-amber-950 space-y-1">
+              <div class="font-bold">★ 長輩無痛走法秘技：</div>
+              <p>計程車直達上層「<strong>絕影路（절영로 194）</strong>」大馬路。<strong>只走上方平路</strong>選一間面海的大片落地窗景觀咖啡廳坐著看海吹風。<strong>嚴禁走長階梯下切海邊</strong>，零爬梯超享受！</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">品嚐新鮮海膽紫菜包飯與海鮮拉麵，在海邊感受道地海女現撈滋味（若風浪大未開則直接前往百花烤腸）。</p>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('huinnyeoul')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="copyAddress('부산 영도구 절영로 194')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
           </div>
+        </div>
 
-          <!-- 百花烤腸 -->
-          <div class="bg-amber-50/80 border-2 border-busan-gold rounded-2xl p-3.5 card-shadow">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">12:30 午餐</span>
-                  <span class="text-[10px] bg-busan-gold text-busan-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 2</span>
-                </div>
-                <h3 class="text-base font-black text-slate-900 mt-1">札嘎其 百花烤腸</h3>
-                <p class="text-xs text-slate-600 font-kr font-bold">백화양곱창 (6、8、9號攤位)</p>
-              </div>
-              <button onclick="openModal('baekhwa-card')" class="bg-busan-navy text-busan-gold text-xs font-bold px-2.5 py-1.5 rounded-lg shadow">司機卡</button>
+        <!-- 3-2: 中里海女村 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">11:30</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">中里海女村 (品嚐現撈海膽紫菜包飯)</h3>
+              <p class="text-xs text-slate-500 font-kr">중리해녀촌 (영도구)</p>
             </div>
-            <p class="text-xs text-amber-950 mt-2 bg-white/70 p-2 rounded-lg">
-              🔥 <strong>免排隊策略：</strong>改在中午 12:00～12:30 入座，完美避開晚間排隊人潮！阿姨在桌邊炭火現烤肥嫩牛小腸、牛皺胃與特製炒飯，長輩坐著吃超香！
-            </p>
-            <div class="mt-2 flex gap-2">
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">品嚐現撈新鮮海膽紫菜包飯與海鮮拉麵，在平坦的港灣前欣賞道地海女現撈滋味。</p>
+          </div>
+        </div>
+
+        <!-- 3-3: 百花烤腸 (⭐ 激推必吃 2) -->
+        <div class="accordion-item bg-amber-50/80 border-2 border-amber-400 rounded-2xl card-shadow overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">12:30 午餐</span>
+                <span class="text-[10px] bg-amber-400 text-brand-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 2</span>
+              </div>
+              <h3 class="text-base font-black text-slate-900 mt-1">【激推】百花烤腸 (백화양곱창)</h3>
+              <p class="text-xs text-slate-600 font-kr font-bold">中午開門入場免久候・阿姨炭火桌邊代烤</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-300">
+            <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
+              <p>🔥 <strong>中午免排隊攻略：</strong>中午 12:00～12:30 開門時段入場，避開晚上大排長龍！阿姨在桌邊炭火代烤肥嫩牛小腸、牛胃與特製炒飯，長輩坐著享用完全不耗體力！</p>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('baekhwa')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
               <a href="https://maps.app.goo.gl/EunVKNUqanqDGmDy9" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
                 <i class="fa-solid fa-map-location-dot"></i> Google Maps
               </a>
-              <a href="https://map.naver.com/p/search/%EB%B0%B1%ED%99%94%EC%96%91%EA%B3%B1%EC%B0%BD" target="_blank" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-1.5 rounded-lg text-center">Naver Map</a>
+              <button onclick="copyAddress('부산 중구 자갈치로23번길 6')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
           </div>
+        </div>
 
-          <!-- 龍頭山公園・釜山塔 (直送山頂) -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-busan-blue bg-blue-50 px-2 py-0.5 rounded-md">14:00 - 15:00</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">龍頭山公園・釜山塔 (直送山頂秘技)</h3>
-                <p class="text-xs text-slate-500 font-kr">용두산공원 주차장</p>
+        <!-- 3-4: 龍頭山公園・釜山塔 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">14:00</span>
+                <span class="text-[10px] bg-amber-50 text-amber-800 font-bold px-1.5 py-0.5 rounded">★無痛密技</span>
               </div>
-              <button onclick="openModal('busantower-card')" class="bg-busan-navy text-amber-300 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機卡</button>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">龍頭山公園・釜山塔 (車直達山頂圓環)</h3>
+              <p class="text-xs text-slate-500 font-kr">용두산공원 주차장 (부산타워 바로 앞)</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">
-              🚗 <strong>免爬梯密技：</strong>計程車可直接開上山頂圓環停車場！直達塔下，避開光復路「只能上不能下」的手扶梯與回程長階梯。搭高速電梯直達塔頂鳥瞰釜山港全貌。
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <div class="mt-2.5 bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-amber-950 space-y-1">
+              <div class="font-bold">★ 無痛密技：</div>
+              <p><strong>計程車直接開上山頂圓環停車場</strong>！下車走幾步就是高速電梯入口，直達塔頂鳥瞰釜山港海景，<strong>完全避開光復路的好漢坡與手扶梯回程陡階</strong>！</p>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('busantower')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="copyAddress('부산 중구 용두산길 37-55')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3-5: BIFF 廣場 & 富平市場 & 樂天光復店 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">15:00 - 17:30</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">BIFF 廣場 ➔ 巨人炸雞 ➔ 樂天光復店</h3>
+              <p class="text-xs text-slate-500">平路漫步吃糖餅、外帶點心、空中花園鳥瞰</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              • <strong>15:00 平路漫步：</strong>BIFF 廣場吃熱騰騰現煎的堅果糖餅（씨앗호떡），富平市場外帶巨人炸雞（거인통닭）當晚茶點心。<br>
+              • <strong>16:30 樂天百貨光復店：</strong>搭乘電梯至 13 樓頂樓空中花園，<strong>零爬坡鳥瞰海港與影島大橋</strong>，地下超市採買伴手禮。
             </p>
           </div>
+        </div>
 
-          <!-- BIFF 廣場 + 富平市場 + 樂天百貨 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">15:00 - 17:30</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">BIFF廣場 ➔ 巨人炸雞 ➔ 樂天光復店</h3>
-                <p class="text-xs text-slate-500">平路散步點心 ＆ 超市採買伴手禮</p>
+        <!-- 3-6: Bujebi 海鮮刀削麵 (⭐ 激推必吃 3) -->
+        <div class="accordion-item bg-amber-50/80 border-2 border-amber-400 rounded-2xl card-shadow overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">18:30 晚餐</span>
+                <span class="text-[10px] bg-amber-400 text-brand-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 3</span>
               </div>
+              <h3 class="text-base font-black text-slate-900 mt-1">【激推】Bujebi (부제비) 海鮮刀削麵</h3>
+              <p class="text-xs text-slate-600 font-kr font-bold">鮮美蛤蜊刀削麵配美味包肉・清甜溫暖長輩胃</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">
-              🥞 <strong>南浦洞堅果糖餅：</strong>BIFF 廣場吃熱騰騰剛出爐堅果糖餅。<br>
-              🍗 <strong>巨人炸雞 (富平本店)：</strong>外帶一份香脆炸雞當今晚宵夜。<br>
-              🏬 <strong>樂天百貨光復店：</strong>室內平坦逛地下超市買泡菜與伴手禮，搭電梯上 13 樓頂樓空中花園零坡度俯瞰影島大橋。
-            </p>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
-
-          <!-- Bujebi 海鮮刀削麵 -->
-          <div class="bg-amber-50/80 border-2 border-busan-gold rounded-2xl p-3.5 card-shadow">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">18:30 晚餐</span>
-                  <span class="text-[10px] bg-busan-gold text-busan-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 3</span>
-                </div>
-                <h3 class="text-base font-black text-slate-900 mt-1">Bujebi 海鮮刀削麵</h3>
-                <p class="text-xs text-slate-600 font-kr font-bold">부제비 (西面田浦)</p>
-              </div>
-              <button onclick="openModal('bujebi-card')" class="bg-busan-navy text-busan-gold text-xs font-bold px-2.5 py-1.5 rounded-lg shadow">司機卡</button>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-300">
+            <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
+              <p>🍜 鮮美甘甜蛤蜊刀削麵與手工麵疙瘩，熱高湯溫和不辣，搭配特製切片五花白肉（包肉），溫暖順口，長輩接受度 100%！20:00 搭計程車回海雲台。
             </div>
-            <p class="text-xs text-amber-950 mt-2 bg-white/70 p-2 rounded-lg">
-              鮮美蛤蜊高湯刀削麵與特製麵疙瘩，湯頭極為鮮美甘醇，搭配香嫩切片五花白肉（包肉），溫暖長輩的胃！
-            </p>
-            <div class="mt-2 flex gap-2">
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('bujebi')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
               <a href="https://maps.app.goo.gl/5iNXxxvutC9YocLj9" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
                 <i class="fa-solid fa-map-location-dot"></i> Google Maps
               </a>
-              <a href="https://map.naver.com/p/search/%EB%B6%80%EC%82%B0%EC%A7%84%EA%B5%AC%20%EC%84%9C%EC%A0%84%EB%A1%9C38%EB%B2%88%EA%B8%B8%2043-3" target="_blank" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-1.5 rounded-lg text-center">Naver Map</a>
+              <button onclick="copyAddress('부산 부산진구 서전로38번길 43-3')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
           </div>
         </div>
@@ -466,78 +588,152 @@
 
       <!-- ================= DAY 4 內容 ================= -->
       <div id="day-view-4" class="day-detail hidden space-y-3">
-        <div class="bg-gradient-to-r from-amber-600 via-rose-700 to-purple-900 text-white p-3.5 rounded-2xl shadow">
+        <div class="bg-gradient-to-r from-rose-700 via-purple-900 to-brand-navy text-white p-3.5 rounded-2xl shadow">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-amber-300">11/7 (週六)</span>
-            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-black">年度重大盛事</span>
+            <span class="text-xs font-bold text-amber-300">Day 4・11/7 (週六)</span>
+            <span class="text-[10px] bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full font-black">💥 2026 釜山國際煙火節</span>
           </div>
-          <h2 class="text-base font-bold mt-1">海雲台 ➔ Durumi燒肉⭐ ➔ 2026 釜山國際煙火節</h2>
-          <p class="text-xs text-amber-100 mt-0.5">防寒裝備＋4張露營椅卡位沙灘，早吃燒肉蓄熱禦寒</p>
+          <h2 class="text-base font-bold mt-1">海雲台 ➔ Durumi燒肉⭐ ➔ 煙火節免費沙灘防寒</h2>
+          <p class="text-xs text-amber-100 mt-0.5">OPS烘焙屋、水族館、31cm刀削麵、4張折疊椅沙灘防寒卡位</p>
         </div>
 
-        <div class="space-y-3">
-          <!-- SEA LIFE + 31cm 刀削麵 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-busan-blue bg-blue-50 px-2 py-0.5 rounded-md">10:00 - 13:00</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">SEA LIFE水族館 ➔ 31cm海鮮刀削麵⭐</h3>
-                <p class="text-xs text-slate-500 font-kr">씨라이프 아쿠아리움 & 해운대31cm해물칼국수</p>
+        <!-- 4-1: OPS 烘焙屋晨間採買 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">08:30 - 08:50</span>
+                <span class="text-[10px] bg-amber-50 text-amber-800 font-bold px-1.5 py-0.5 rounded">晨間採買</span>
               </div>
-              <span class="text-[10px] bg-rose-100 text-rose-700 font-black px-1.5 py-0.5 rounded">⭐ 激推 4</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">OPS 烘焙屋 (海雲台店) 買名物點心</h3>
+              <p class="text-xs text-slate-500 font-kr">옵스 해운대점 (巨型卡士達泡芙、原味蘋果派、學士麵包)</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">
-              水族館全館無障礙坡道輕鬆逛；中午吃整大盆滿滿貝類淡菜的 31cm 海鮮刀削麵，隨後步行買<strong>老虎吉拉朵麻糬冰</strong>。
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              步行 6 分鐘平路至 OPS 烘焙屋買巨型卡士達泡芙、原味蘋果派與學士麵包。08:50 飯店悠閒早餐配咖啡，多買幾顆泡芙帶去傍晚煙火節沙灘當保暖能量補給！
             </p>
-            <div class="mt-2 flex gap-2">
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('ops')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="copyAddress('부산 해운대구 중동1로 31')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4-2: SEA LIFE 釜山水族館 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">10:00</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">SEA LIFE 釜山水族館 (全平路無障礙漫遊)</h3>
+              <p class="text-xs text-slate-500 font-kr">씨라이프 부산아쿠아리움</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-1 border-t border-slate-100">
+            <p class="mt-2.5">飯店旁海灘平路步行即達，全館有完善電梯與無障礙平緩步道，看海龜、企鵝與海底隧道餵食秀，長輩逛得輕鬆自在。</p>
+          </div>
+        </div>
+
+        <!-- 4-3: 31cm 海鮮刀削麵 (⭐ 激推必吃 4) & 老虎麻糬冰 -->
+        <div class="accordion-item bg-amber-50/80 border-2 border-amber-400 rounded-2xl card-shadow overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">12:00 午餐</span>
+                <span class="text-[10px] bg-amber-400 text-brand-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 4</span>
+              </div>
+              <h3 class="text-base font-black text-slate-900 mt-1">【激推】海雲台 31cm 海鮮刀削麵</h3>
+              <p class="text-xs text-slate-600 font-kr font-bold">滿滿整大盆鮮甜貝類蛤蜊熱湯麵 ➔ 13:15 老虎麻糬冰</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-300">
+            <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
+              <p>🦪 <strong>超鮮甜暖湯：</strong>滿滿一整大盆盛裝堆積如山的蛤蜊、扇貝與淡菜，原汁原味清甜熱高湯，暖身充電！13:15 品嚐<strong>老虎麻糬冰（호랑이젤라떡）</strong>海鹽與開心果口味。</p>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('kalguksu31')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
               <a href="https://maps.app.goo.gl/Ne7wW8AH3qskiDjp7" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
                 <i class="fa-solid fa-map-location-dot"></i> Google Maps
               </a>
-              <button onclick="openModal('kalguksu31-card')" class="bg-amber-100 text-amber-900 text-xs font-bold px-3 py-1.5 rounded-lg">司機卡</button>
+              <button onclick="copyAddress('부산 해운대구 구남로41번길 46')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
           </div>
+        </div>
 
-          <!-- 回飯店午休充電 -->
-          <div class="bg-blue-50/70 border border-blue-200 rounded-2xl p-3 text-xs text-blue-900 flex items-center gap-2.5">
-            <i class="fa-solid fa-battery-charging text-blue-600 text-base shrink-0"></i>
+        <!-- 4-4: 回飯店午休 1 小時整裝 -->
+        <div class="accordion-item bg-blue-50/70 border border-blue-200 rounded-2xl card-shadow overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
             <div>
-              <strong>13:30 - 14:45 回飯店午休充電：</strong>長輩回房小睡 1 小時，帶齊羽絨外套、毛帽手套、暖暖包與 <strong>4 張折疊露營椅</strong>，蓄滿精神再出發！
+              <span class="text-[10px] font-bold text-blue-700 bg-white px-2 py-0.5 rounded-md">13:45 - 14:45</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">回飯店午休 1 小時＋帶齊防寒裝備</h3>
+              <p class="text-xs text-blue-900">折疊露營椅、野餐墊、羽絨衣、暖暖包與 OPS 點心</p>
             </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
-
-          <!-- Durumi 燒肉 -->
-          <div class="bg-amber-50/80 border-2 border-busan-gold rounded-2xl p-3.5 card-shadow">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">15:30 早晚餐</span>
-                  <span class="text-[10px] bg-busan-gold text-busan-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 5</span>
-                </div>
-                <h3 class="text-base font-black text-slate-900 mt-1">Durumi Gwangan 燒肉</h3>
-                <p class="text-xs text-slate-600 font-kr font-bold">두루미 광안 (廣安里)</p>
-              </div>
-              <button onclick="openModal('durumi-card')" class="bg-busan-navy text-busan-gold text-xs font-bold px-2.5 py-1.5 rounded-lg shadow">司機卡</button>
-            </div>
-            <p class="text-xs text-amber-950 mt-2 bg-white/70 p-2 rounded-lg">
-              <strong>★ 煙火節前蓄熱關鍵：</strong>趁傍晚湧入百萬人前，在廣安里吃頂級熟成烤肉補充高熱量！若排隊過長，備案外帶 60계치킨 炸雞至沙灘野餐。
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-700 space-y-2 border-t border-blue-200">
+            <p class="mt-2.5">
+              長輩小睡 1 小時充分蓄電！帶齊 <strong>4 張輕量折疊露營椅、厚野餐墊、羽絨外套、毛帽圍巾、手套、暖暖包、保溫瓶</strong>與上午採買的 OPS 泡芙點心。15:00 計程車提早出發至廣安里外圍（避開管制核心）。
             </p>
-            <div class="mt-2 flex gap-2">
+          </div>
+        </div>
+
+        <!-- 4-5: Durumi 燒肉 (⭐ 激推必吃 5) -->
+        <div class="accordion-item bg-amber-50/80 border-2 border-amber-400 rounded-2xl card-shadow overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">15:30 早晚餐</span>
+                <span class="text-[10px] bg-amber-400 text-brand-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 5</span>
+              </div>
+              <h3 class="text-base font-black text-slate-900 mt-1">【激推】Durumi Gwangan (두루미) 燒肉</h3>
+              <p class="text-xs text-slate-600 font-kr font-bold">煙火前先吃飽蓄熱・避開百萬人潮大客流</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-300">
+            <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
+              <p>🔥 <strong>煙火節前關鍵蓄熱：</strong>趁傍晚管制人潮湧入前，在廣安里享用頂級熟成烤肉！熱量滿滿蓄足熱能抵禦海風低溫。吃飽後步行至沙灘卡位。</p>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('durumi')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
               <a href="https://maps.app.goo.gl/RJA6QNfYGHmVQAjF8" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
                 <i class="fa-solid fa-map-location-dot"></i> Google Maps
               </a>
-              <a href="https://map.naver.com/p/search/%EB%91%90%EB%A3%A8%EB%AF%B8%20%EA%B4%91%EC%95%88" target="_blank" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-1.5 rounded-lg text-center">Naver Map 導航</a>
+              <button onclick="copyAddress('부산 수영구 남천바다로 38-10 1층')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
           </div>
+        </div>
 
-          <!-- 煙火節實戰守則 -->
-          <div class="bg-gradient-to-br from-slate-900 to-busan-navy text-white rounded-2xl p-3.5 card-shadow">
-            <div class="flex items-center justify-between pb-2 border-b border-white/10">
-              <span class="text-xs font-black text-amber-400"><i class="fa-solid fa-fire"></i> 煙火節沙灘卡位與離場避難策略</span>
-              <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded">20:00 主秀</span>
+        <!-- 4-6: 廣安里沙灘卡位與煙火主秀 -->
+        <div class="accordion-item bg-gradient-to-br from-slate-900 to-brand-navy text-white rounded-2xl card-shadow overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-amber-400 bg-amber-400/20 px-2 py-0.5 rounded-md">17:00 卡位 ➔ 20:00 主秀</span>
+                <span class="text-[10px] bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded">免費沙灘防寒攻略</span>
+              </div>
+              <h3 class="text-base font-black text-white mt-1">💥 2026 釜山國際煙火節主秀 (20:00~21:00)</h3>
+              <p class="text-xs text-slate-300">沙灘展開折疊椅離地坐不受寒 ➔ 21:00 咖啡廳避難撤退</p>
             </div>
-            <div class="mt-2.5 space-y-2 text-xs text-slate-200">
-              <p>🪑 <strong>17:00 沙灘卡位：</strong>在付費區後排免費沙灘架好折疊露營椅，長輩坐椅子、大腿蓋毛毯，免受沙灘濕寒地氣！</p>
-              <p>☕ <strong>21:00 避難式離場：</strong>煙火一結束<strong>千萬不要擠地鐵或搶計程車</strong>！立刻帶長輩進沙灘後排海景咖啡廳（如 Twosome Place 或 Starbucks）喝熱茶休息 1 小時，等第一波推擠散去再到外圍叫車或走往南川站搭地鐵。</p>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-200 space-y-2 border-t border-white/10">
+            <div class="mt-2.5 space-y-2">
+              <p>🪑 <strong>17:00 沙灘卡位：</strong>在廣安里免費沙灘區展開 <strong>4 張露營折疊椅</strong>與地墊，<strong>長輩離地坐著不受寒</strong>！貼上暖暖包、喝保溫瓶熱水，吃 OPS 泡芙點心，輕鬆等待。</p>
+              <p>🎆 <strong>20:00～21:00 主秀：</strong>廣安大橋大型煙火震撼施放，壯麗無比！</p>
+              <div class="bg-white/10 p-2.5 rounded-xl border border-white/15 space-y-1">
+                <div class="text-amber-300 font-bold">☕ 21:00 避難撤退策略：</div>
+                <p>煙火剛結束<strong>千萬不要去擠地鐵站或搶計程車</strong>！先走進沙灘後排景觀咖啡廳喝熱飲休息 1 小時，待第一波散場人潮散去，再從容搭車回海雲台。</p>
+              </div>
             </div>
           </div>
         </div>
@@ -545,76 +741,112 @@
 
       <!-- ================= DAY 5 內容 ================= -->
       <div id="day-view-5" class="day-detail hidden space-y-3">
-        <div class="bg-gradient-to-r from-busan-navy to-busan-blue text-white p-3.5 rounded-2xl shadow">
+        <div class="bg-gradient-to-r from-brand-navy to-brand-blue text-white p-3.5 rounded-2xl shadow">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-busan-gold">11/8 (週日)</span>
-            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">海景療癒放鬆</span>
+            <span class="text-xs font-bold text-amber-300">Day 5・11/8 (週日)</span>
+            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-medium">龍宮寺・滑車・膠囊列車・SPA LAND・味贊王</span>
           </div>
           <h2 class="text-base font-bold mt-1">海東龍宮寺 ➔ 膠囊列車 ➔ SPA LAND ➔ 味贊王⭐</h2>
-          <p class="text-xs text-slate-200 mt-0.5">滑車坐著玩、膠囊車吹冷氣看海、五星級溫泉汗蒸幕</p>
+          <p class="text-xs text-slate-200 mt-0.5">平緩步道祈福、天空膠囊吹冷氣看海、五星級溫泉足湯、厚切五花肉</p>
         </div>
 
-        <div class="space-y-3">
-          <!-- 龍宮寺 + Luge -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-busan-blue bg-blue-50 px-2 py-0.5 rounded-md">09:10 - 11:30</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">海東龍宮寺 ➔ Skyline Luge 天空滑車</h3>
-                <p class="text-xs text-slate-500 font-kr">해동용궁사 & 스카이라인 루지</p>
-              </div>
-              <button onclick="openModal('dragon-card')" class="bg-busan-navy text-amber-300 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機卡</button>
+        <!-- 5-1: 海東龍宮寺 & Skyline Luge & 樂天 Outlet -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">08:45 - 13:00</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">海東龍宮寺 ➔ Skyline Luge ➔ 樂天 Outlet</h3>
+              <p class="text-xs text-slate-500 font-kr">해동용궁사 ➔ 스카이라인 루지 ➔ 롯데아울렛</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">早晨 9 點龍宮寺人少清幽，扶手慢步參拜看海；隨後玩 Skyline Luge，坐吊椅上山、坐著順坡滑下，零負擔超好玩！午餐在樂天 Outlet 美食街自選享用。</p>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
-
-          <!-- 膠囊列車 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">14:00 預約場次</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">天空膠囊列車 (青沙浦 ➔ 尾浦)</h3>
-                <p class="text-xs text-slate-500 font-kr">해운대 블루라인파크 청사포정거장</p>
-              </div>
-              <button onclick="openModal('cheongsapo-card')" class="bg-amber-100 text-amber-900 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機卡</button>
-            </div>
-            <p class="text-xs text-slate-600 mt-2">4 人獨立包廂，坐在小車廂內吹空調、平穩行駛於海岸高架軌道上，30分鐘無死角欣賞釜山絕美蔚藍海景，長輩零步行動線！抵達後計程車接回飯店小睡午休。</p>
-          </div>
-
-          <!-- SPA LAND 汗蒸幕 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md">16:45 - 19:15</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">新世界 SPA LAND 五星級汗蒸幕</h3>
-                <p class="text-xs text-slate-500 font-kr">신세계 센텀시티 4번 게이트</p>
-              </div>
-              <button onclick="openModal('spaland-card')" class="bg-amber-100 text-amber-900 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機卡</button>
-            </div>
-            <p class="text-xs text-slate-600 mt-2">享受天然溫泉泡湯、戶外檜木足湯與各式溫度放鬆房，長輩在此徹底消除前幾天累積的肌肉痠痛，舒服放鬆！</p>
-          </div>
-
-          <!-- 味贊王鹽烤肉 -->
-          <div class="bg-amber-50/80 border-2 border-busan-gold rounded-2xl p-3.5 card-shadow">
-            <div class="flex items-start justify-between">
-              <div>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">19:30 晚餐</span>
-                  <span class="text-[10px] bg-busan-gold text-busan-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 6</span>
-                </div>
-                <h3 class="text-base font-black text-slate-900 mt-1">味贊王鹽烤肉 (海雲台店)</h3>
-                <p class="text-xs text-slate-600 font-kr font-bold">맛찬들왕소금구이 해운대점</p>
-              </div>
-              <button onclick="openModal('matchandeul-card')" class="bg-busan-navy text-busan-gold text-xs font-bold px-2.5 py-1.5 rounded-lg shadow">司機卡</button>
-            </div>
-            <p class="text-xs text-amber-950 mt-2 bg-white/70 p-2 rounded-lg">
-              🥩 專業店員全程代烤厚切五花肉與豬頸肉至金黃酥脆！可先用 CatchTable 國際版取號。（備案：若候位過長，名單中的海雲台人氣韓牛就在附近隨時替換）。
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              • <strong>08:45 海東龍宮寺：</strong>計程車直達停車場，沿平緩步道扶手漫步祈福看海。<br>
+              • <strong>10:30 Skyline Luge 天空滑車：</strong>坐吊椅上山、坐車順坡滑下，不費腿力又好玩！<br>
+              • <strong>11:45 樂天 Premium Outlet 東釜山店：</strong>享用午餐與全室內平路舒適逛街。
             </p>
-            <div class="mt-2 flex gap-2">
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('dragon')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="copyAddress('부산 기장군 기장읍 용궁길 86')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-2: 天空膠囊列車 (青沙浦 ➔ 尾浦) -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">14:00 預約</span>
+                <span class="text-[10px] bg-purple-100 text-purple-900 font-bold px-1.5 py-0.5 rounded">4人獨立包廂</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">海雲台天空膠囊列車 (青沙浦 ➔ 尾浦)</h3>
+              <p class="text-xs text-slate-500 font-kr">해운대 블루라인파크 청사포정거장</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              4 人包廂獨立坐著看無敵海景，全程 30 分鐘無死角海景動線，零步行動線。抵達尾浦後，14:45 回飯店午睡放鬆雙腳！
+            </p>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('cheongsapo')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡 (青沙浦)
+              </button>
+              <button onclick="copyAddress('부산 해운대구 청사포로 116')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-3: 新世界 SPA LAND 汗蒸幕 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <span class="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md">16:45 - 19:15</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">新世界百貨 SPA LAND 五星級溫泉汗蒸幕</h3>
+              <p class="text-xs text-slate-500 font-kr">신세계 센텀시티 스파랜드 (4번 게이트)</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">五星級天然溫泉汗蒸幕與檜木足湯，讓長輩躺在溫熱的休息房徹底放鬆全身筋骨、消除累積疲倦。</p>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('spaland')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="copyAddress('부산 해운대구 센텀남대로 35')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-4: 味贊王鹽烤肉 (⭐ 激推必吃 6) -->
+        <div class="accordion-item bg-amber-50/80 border-2 border-amber-400 rounded-2xl card-shadow overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-white bg-rose-600 px-2 py-0.5 rounded-md">19:30 晚餐</span>
+                <span class="text-[10px] bg-amber-400 text-brand-navy font-black px-1.5 py-0.5 rounded">⭐ 激推必吃 6</span>
+              </div>
+              <h3 class="text-base font-black text-slate-900 mt-1">【激推】味贊王鹽烤肉 (海雲台店)</h3>
+              <p class="text-xs text-slate-600 font-kr font-bold">店員全程專業代烤黃金五花肉（備案：海雲台人氣韓牛）</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-300">
+            <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
+              <p>🥩 店員使用測溫槍全程代烤 3.5cm 厚切黃金五花肉，外酥內嫩多汁！可用 CatchTable 先線上取號。（備案：海雲台人氣韓牛炭火燒肉就在附近）。</p>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('matchandeul')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
               <a href="https://maps.app.goo.gl/qBZ3EkFfYTKMT9Ht9" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
                 <i class="fa-solid fa-map-location-dot"></i> Google Maps
               </a>
-              <a href="https://map.naver.com/p/search/%EB%A7%9B%EC%B0%AC%EB%93%A4%EC%99%95%EC%86%8C%EA%B8%88%EA%B5%AC%EC%9D%B4%20%ED%95%B4%EC%9A%B4%EB%8C%80" target="_blank" class="flex-1 bg-emerald-600 text-white text-xs font-bold py-1.5 rounded-lg text-center">Naver Map</a>
+              <button onclick="copyAddress('부산 해운대구 해운대로608번길 46')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
           </div>
         </div>
@@ -622,246 +854,204 @@
 
       <!-- ================= DAY 6 內容 ================= -->
       <div id="day-view-6" class="day-detail hidden space-y-3">
-        <div class="bg-gradient-to-r from-busan-navy to-busan-blue text-white p-3.5 rounded-2xl shadow">
+        <div class="bg-gradient-to-r from-brand-navy to-brand-blue text-white p-3.5 rounded-2xl shadow">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-amber-300">11/9 (週一)</span>
-            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full">順路暖胃・滿載而歸</span>
+            <span class="text-xs font-bold text-amber-300">Day 6・11/9 (週一)</span>
+            <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-medium">順路暖胃・圓滿返台</span>
           </div>
           <h2 class="text-base font-bold mt-1">退房 ➔ 雙胞胎豬肉湯飯 ➔ 金海機場返台</h2>
-          <p class="text-xs text-slate-200 mt-0.5">Kakao T Venti 大型車行李全上車，大淵站順路節點吃湯飯</p>
+          <p class="text-xs text-slate-200 mt-0.5">Kakao T Venti 大型車行李全上車、大淵店順路吃白切肉、直達機場</p>
         </div>
 
-        <div class="space-y-3">
-          <!-- 雙胞胎豬肉湯飯 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">10:00 順路早午餐</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">雙胞胎豬肉湯飯 (大淵店)</h3>
-                <p class="text-xs text-slate-500 font-kr">쌍둥이돼지국밥 (順路節點)</p>
-              </div>
-              <button onclick="openModal('ssangdoongi-card')" class="bg-busan-navy text-amber-300 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機卡</button>
+        <!-- 6-1: 退房上車 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">09:30</span>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">退房，搭 Kakao T 大車 (Venti) 出發</h3>
+              <p class="text-xs text-slate-500">4 人行李箱全上車，直奔大淵店順路節點</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">
-              🚗 <strong>順路絕妙安排：</strong>大淵站正好在海雲台通往金海機場的高架順路動線上！點招牌白切肉套餐（수육백반），熱騰騰甘醇高湯配軟嫩五花，暖胃上機。
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-1 border-t border-slate-100">
+            <p class="mt-2.5">退房後行李直接上 Venti 大型休旅車，免去搬運行李的麻煩，一路前往大淵站早午餐。</p>
+          </div>
+        </div>
+
+        <!-- 6-2: 雙胞胎豬肉湯飯 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">10:00 早午餐</span>
+                <span class="text-[10px] bg-amber-100 text-amber-900 font-bold px-1.5 py-0.5 rounded">機場順路節點</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">雙胞胎豬肉湯飯 (大淵店) 招牌白切肉套餐</h3>
+              <p class="text-xs text-slate-500 font-kr">쌍둥이돼지국밥 (대연본점)</p>
+            </div>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              🚗 <strong>機場順路絕妙安排：</strong>大淵站正好在通往機場的高架橋樞紐！招牌白切肉套餐（수육백반），熱騰騰甘醇大骨高湯配軟嫩切片五花白肉，上機前暖身暖胃。
             </p>
-            <div class="mt-2 flex gap-2">
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('ssangdoongi')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
               <a href="https://maps.app.goo.gl/aACjUwe4ZrfcGuni9" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
                 <i class="fa-solid fa-map-location-dot"></i> Google Maps
               </a>
-              <button onclick="copyText('부산 남구 유엔평화로 35-1')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+              <button onclick="copyAddress('부산 남구 유엔평화로 35-1')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
           </div>
+        </div>
 
-          <!-- 金海機場 -->
-          <div class="bg-white rounded-2xl p-3.5 card-shadow border border-slate-200/80">
-            <div class="flex items-start justify-between">
-              <div>
-                <span class="text-[10px] font-bold text-busan-blue bg-blue-50 px-2 py-0.5 rounded-md">11:50 抵達機場</span>
-                <h3 class="text-sm font-bold text-slate-900 mt-1">金海國際機場 報到與返台</h3>
-                <p class="text-xs text-slate-500">真航空 LJ585 (14:00 起飛 ➔ 15:15 抵達台中)</p>
+        <!-- 6-3: 金海機場返台 -->
+        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
+          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">11:15 抵達機場</span>
+                <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.5 rounded">14:00 起飛</span>
               </div>
-              <button onclick="openModal('airport-card')" class="bg-amber-100 text-amber-900 text-xs font-bold px-2.5 py-1.5 rounded-lg">司機卡</button>
+              <h3 class="text-sm font-bold text-slate-900 mt-1">金海國際機場直達出境大廳 ➔ 飛返台中</h3>
+              <p class="text-xs text-slate-500">真航空 LJ585 (14:00 釜山 ➔ 15:15 台中清泉崗)</p>
             </div>
-            <p class="text-xs text-slate-600 mt-2">辦理退稅、托運行李、免稅店採買。平安飛抵台中清泉崗機場，滿載美味與煙火回憶！</p>
+            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
+          </div>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
+            <p class="mt-2.5">
+              計程車直達金海機場國際線出境大廳門口，托運行李、退稅與免稅品採買。搭乘真航空 LJ585 準時起飛，15:15 抵達台中，圓滿結束 6 天 5 夜家庭美滿旅程！
+            </p>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('airport')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 機場司機卡
+              </button>
+              <button onclick="copyAddress('김해국제공항 국제선 청사')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製韓文地址</button>
+            </div>
           </div>
         </div>
       </div>
 
     </section>
 
-    <!-- ==================================================== -->
-    <!-- TAB 2: 長輩三大升級秘技 (Tab: Senior Guide) -->
-    <!-- ==================================================== -->
-    <section id="tab-senior" class="tab-content hidden space-y-3.5">
-      
-      <!-- 秘技 1: 全計程車交通策略 -->
-      <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-200">
-        <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-          <span class="w-7 h-7 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black text-xs">1</span>
-          <div>
-            <h2 class="text-sm font-black text-slate-900">交通全面換成「計程車／Kakao T 門對門」</h2>
-            <p class="text-[11px] text-amber-700 font-bold">每天為長輩省下至少 15,000 步爬階負擔</p>
-          </div>
-        </div>
-        <div class="mt-3 space-y-2.5 text-xs text-slate-700 leading-relaxed">
-          <p>
-            • <strong>為什麼不搭地鐵？</strong> 釜山地鐵深度深，許多老站出口只有陡長樓梯無手扶梯或電梯繞極遠。4 個人搭計程車分攤下來與地鐵票相差無幾，還能直接送到景點平坦入口！
-          </p>
-          <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 space-y-1">
-            <div class="font-bold text-amber-950">🧳 行李箱叫車規則：</div>
-            <div>• <strong>第 1 天機場去飯店 / 第 6 天飯店去機場：</strong>4 個大行李箱用 Kakao T 叫「<strong>벤（Venti / 大型車）</strong>」，後車廂寬大行李全上。</div>
-            <div>• <strong>平日市區景點往返：</strong>只帶隨身隨行包，路邊攔或叫一般「<strong>中型計程車</strong>」即可，4 人同坐一車！</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 秘技 2: 四大山海景點無痛避坡走法 -->
-      <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-200">
-        <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-          <span class="w-7 h-7 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-xs">2</span>
-          <div>
-            <h2 class="text-sm font-black text-slate-900">山海景點「長輩無痛走法」秘技</h2>
-            <p class="text-[11px] text-emerald-700 font-bold">巧妙安排下車點，享受美景零爬坡</p>
-          </div>
-        </div>
-        <div class="mt-3 space-y-2.5 text-xs text-slate-700 leading-relaxed">
-          <div class="p-2.5 bg-slate-50 rounded-xl space-y-1">
-            <div class="font-bold text-slate-900 flex items-center gap-1">
-              <i class="fa-solid fa-paintbrush text-rose-500"></i> 甘川洞文化村
-            </div>
-            <p>計程車直達最頂端諮詢處（감천문화마을 안내센터），只走平緩主街看小王子與彩色山城全景，原路折返，<strong>絕對不要下切縱向陡階梯</strong>。</p>
-          </div>
-          <div class="p-2.5 bg-slate-50 rounded-xl space-y-1">
-            <div class="font-bold text-slate-900 flex items-center gap-1">
-              <i class="fa-solid fa-water text-blue-500"></i> 白淺灘文化村
-            </div>
-            <p>計程車停上方「絕影路（절영로）」，走上層平路看海選景觀咖啡廳，<strong>嚴禁走鋼琴階梯下海邊步道</strong>。</p>
-          </div>
-          <div class="p-2.5 bg-slate-50 rounded-xl space-y-1">
-            <div class="font-bold text-slate-900 flex items-center gap-1">
-              <i class="fa-solid fa-tower-observation text-purple-600"></i> 龍頭山公園／釜山塔
-            </div>
-            <p><strong>計程車可直接開上山頂圓環停車場！</strong>直接坐高速電梯登塔，避開光復路「只能上不能下」的單向手扶梯與回程陡下階梯。</p>
-          </div>
-          <div class="p-2.5 bg-slate-50 rounded-xl space-y-1">
-            <div class="font-bold text-slate-900 flex items-center gap-1">
-              <i class="fa-solid fa-bridge text-teal-600"></i> 松島龍宮雲橋
-            </div>
-            <p>下切至雲橋有長鐵梯，若長輩當天腳痠，可在空中花園與松島海灘天空步道（全平路木棧道）散步拍照即可。</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 秘技 3: 6大激推名店免排隊策略 -->
-      <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-200">
-        <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100">
-          <span class="w-7 h-7 rounded-xl bg-rose-600 text-white flex items-center justify-center font-black text-xs">3</span>
-          <div>
-            <h2 class="text-sm font-black text-slate-900">6 大【激推】名店免久站排隊策略</h2>
-            <p class="text-[11px] text-rose-700 font-bold">精準選時、代烤桌邊服務、長輩最省心</p>
-          </div>
-        </div>
-        <div class="mt-3 space-y-2 text-xs text-slate-700 leading-relaxed">
-          <div class="flex items-start gap-2 p-2 bg-rose-50/60 rounded-xl border border-rose-100">
-            <span class="font-black text-rose-600 shrink-0">1.</span>
-            <div><strong>釜山宅 燒肉：</strong>17:00 開門準時到，首輪入座免排隊，店員在中央炭火全烤好上桌，無煙不沾身。</div>
-          </div>
-          <div class="flex items-start gap-2 p-2 bg-rose-50/60 rounded-xl border border-rose-100">
-            <span class="font-black text-rose-600 shrink-0">2.</span>
-            <div><strong>百花烤腸：</strong>改排在 12:00 中午營業時吃，避開晚上大排長龍，阿姨桌邊炭火現烤。</div>
-          </div>
-          <div class="flex items-start gap-2 p-2 bg-rose-50/60 rounded-xl border border-rose-100">
-            <span class="font-black text-rose-600 shrink-0">3.</span>
-            <div><strong>Bujebi 刀削麵：</strong>西面田浦暖胃蛤蜊高湯麵疙瘩與包肉，溫和清甜，長輩接受度 100%。</div>
-          </div>
-          <div class="flex items-start gap-2 p-2 bg-rose-50/60 rounded-xl border border-rose-100">
-            <span class="font-black text-rose-600 shrink-0">4.</span>
-            <div><strong>海雲台 31cm 刀削麵：</strong>水族館旁平路抵達，大鋼盆盛滿新鮮貝類淡菜熱湯。</div>
-          </div>
-          <div class="flex items-start gap-2 p-2 bg-rose-50/60 rounded-xl border border-rose-100">
-            <span class="font-black text-rose-600 shrink-0">5.</span>
-            <div><strong>Durumi Gwangan 燒肉：</strong>煙火節當日 15:30 提早吃早晚餐，蓄熱備戰海風（若遇排隊備案外帶60炸雞野餐）。</div>
-          </div>
-          <div class="flex items-start gap-2 p-2 bg-rose-50/60 rounded-xl border border-rose-100">
-            <span class="font-black text-rose-600 shrink-0">6.</span>
-            <div><strong>味贊王鹽烤肉：</strong>全程店員專業代烤，可先用 CatchTable 線上取號；排太久可換海雲台人氣韓牛。</div>
-          </div>
-        </div>
-      </div>
-
-    </section>
 
     <!-- ==================================================== -->
-    <!-- TAB 3: 計程車司機導航小卡 (Tab: Taxi Cards) -->
+    <!-- TAB 2: 🚕 計程車站名卡 (Taxi Cards) 完整 15 張 -->
     <!-- ==================================================== -->
     <section id="tab-taxi" class="tab-content hidden space-y-3">
-      <div class="bg-amber-500 text-slate-900 p-3.5 rounded-2xl shadow-md">
-        <h2 class="text-sm font-black flex items-center gap-1.5">
-          <i class="fa-solid fa-taxi"></i> 計程車司機導航小卡
-        </h2>
-        <p class="text-xs text-amber-950 mt-0.5">點擊任一地點即放大全螢幕給司機看，支援一鍵複製韓文貼入 Kakao T！</p>
+      
+      <!-- 說明橫幅 -->
+      <div class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 p-3.5 rounded-2xl shadow-md">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-black flex items-center gap-1.5">
+            <i class="fa-solid fa-taxi"></i> 計程車韓文司機溝通卡 (15處全收錄)
+          </h2>
+          <span class="text-[10px] bg-slate-950 text-amber-300 font-bold px-2 py-0.5 rounded-full">高對比大字</span>
+        </div>
+        <p class="text-xs text-amber-950 mt-1">點擊任一卡片開啟「大字全螢幕給司機看」，或一鍵複製地址貼入 Kakao T / Naver 地圖！</p>
       </div>
 
-      <!-- 區域篩選標籤 -->
+      <!-- 快速篩選標籤 -->
       <div class="flex gap-1.5 overflow-x-auto custom-scroll pb-1">
-        <button onclick="filterTaxi('all')" id="taxi-filter-all" class="taxi-filter-btn px-3 py-1 rounded-full text-xs font-bold bg-busan-navy text-white">全部 (18)</button>
-        <button onclick="filterTaxi('hotel')" id="taxi-filter-hotel" class="taxi-filter-btn px-3 py-1 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200">飯店與機場</button>
-        <button onclick="filterTaxi('food')" id="taxi-filter-food" class="taxi-filter-btn px-3 py-1 rounded-full text-xs font-bold bg-white text-rose-700 border border-slate-200">激推餐廳</button>
-        <button onclick="filterTaxi('spot')" id="taxi-filter-spot" class="taxi-filter-btn px-3 py-1 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200">熱門景點</button>
+        <button onclick="filterTaxiCards('all')" id="taxi-tab-all" class="taxi-pill px-3 py-1.5 rounded-full text-xs font-bold bg-brand-navy text-amber-300 shadow-sm transition">全部 15 張</button>
+        <button onclick="filterTaxiCards('hotel')" id="taxi-tab-hotel" class="taxi-pill px-3 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition">飯店與機場</button>
+        <button onclick="filterTaxiCards('food')" id="taxi-tab-food" class="taxi-pill px-3 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition">激推餐廳</button>
+        <button onclick="filterTaxiCards('spot')" id="taxi-tab-spot" class="taxi-pill px-3 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition">熱門景點</button>
       </div>
 
-      <!-- 卡片清單網格 -->
-      <div id="taxi-cards-container" class="grid grid-cols-1 gap-2.5">
-        <!-- 透過 JS 動態或靜態填充 -->
+      <!-- 15 張計程車卡清單容器 (動態渲染) -->
+      <div id="taxi-cards-list" class="space-y-2.5">
+        <!-- JS 渲染 15 張卡片 -->
       </div>
     </section>
 
+
     <!-- ==================================================== -->
-    <!-- TAB 4: 美食全覽打卡本 (Tab: Food Guide) -->
+    <!-- TAB 3: 🍽️ 美食地圖 (Food Guide) -->
     <!-- ==================================================== -->
     <section id="tab-food" class="tab-content hidden space-y-3">
       
-      <!-- 統計進度條 -->
+      <!-- 探索進度橫幅 -->
       <div class="bg-white p-3.5 rounded-2xl card-shadow border border-slate-200">
         <div class="flex items-center justify-between mb-1.5">
-          <span class="text-xs font-bold text-slate-700">想吃名單探索打卡</span>
-          <span id="food-count-badge" class="text-xs font-black text-busan-blue bg-blue-50 px-2 py-0.5 rounded-full">已達成 0 / 18 家</span>
+          <div class="flex items-center gap-1.5">
+            <i class="fa-solid fa-utensils text-rose-500 text-sm"></i>
+            <span class="text-xs font-bold text-slate-800">釜山美食打卡足跡</span>
+          </div>
+          <span id="food-stats-badge" class="text-xs font-black text-brand-blue bg-blue-50 px-2 py-0.5 rounded-full">已打卡 0 / 14 家 (0%)</span>
         </div>
         <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-          <div id="food-progress-bar" class="bg-gradient-to-r from-busan-blue to-busan-gold h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+          <div id="food-stats-bar" class="bg-gradient-to-r from-brand-blue to-amber-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
         </div>
       </div>
 
-      <!-- 分類標籤篩選 -->
+      <!-- 4 大篩選分類按鈕 (完全依需求) -->
       <div class="flex gap-1.5 overflow-x-auto custom-scroll pb-1">
-        <button onclick="filterFood('all')" id="food-filter-all" class="food-filter-btn px-3 py-1 rounded-full text-xs font-bold bg-busan-navy text-white">全部 (18)</button>
-        <button onclick="filterFood('must')" id="food-filter-must" class="food-filter-btn px-3 py-1 rounded-full text-xs font-bold bg-white text-rose-700 border border-slate-200">⭐ 激推必吃 (6)</button>
-        <button onclick="filterFood('rec')" id="food-filter-rec" class="food-filter-btn px-3 py-1 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200">推薦與點心</button>
-        <button onclick="filterFood('backup')" id="food-filter-backup" class="food-filter-btn px-3 py-1 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200">備案名單</button>
+        <button onclick="filterFoodCategory('all')" id="food-btn-all" class="food-pill px-3 py-1.5 rounded-full text-xs font-bold bg-brand-navy text-amber-300 shadow-sm transition">全部 (14)</button>
+        <button onclick="filterFoodCategory('must')" id="food-btn-must" class="food-pill px-3 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition">⭐ 激推必吃 (6)</button>
+        <button onclick="filterFoodCategory('rec')" id="food-btn-rec" class="food-pill px-3 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition">🥢 美味推薦 (3)</button>
+        <button onclick="filterFoodCategory('dessert')" id="food-btn-dessert" class="food-pill px-3 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition">🥐 甜點宵夜 (5)</button>
       </div>
 
-      <!-- 餐廳清單 -->
-      <div id="food-list-container" class="space-y-3">
-        <!-- 透過 JS 渲染所有美食卡片與圖片 -->
+      <!-- 美食卡片清單 (動態渲染) -->
+      <div id="food-items-container" class="space-y-3">
+        <!-- JS 渲染 -->
       </div>
     </section>
 
+
     <!-- ==================================================== -->
-    <!-- TAB 5: 煙火防寒與準備 (Tab: Checklist) -->
+    <!-- TAB 4: 🎒 行前清單 (Checklist) -->
     <!-- ==================================================== -->
     <section id="tab-checklist" class="tab-content hidden space-y-4">
       
-      <!-- 煙火節特別準備區 -->
-      <div class="bg-gradient-to-br from-busan-navy to-busan-dark text-white p-4 rounded-2xl shadow-lg border border-amber-400/40">
-        <div class="flex items-center justify-between pb-2.5 border-b border-white/10">
-          <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-            <i class="fa-solid fa-wind"></i> 11/7 廣安里煙火節特別防寒裝備
+      <!-- 統計進度卡 -->
+      <div class="bg-white p-3.5 rounded-2xl card-shadow border border-slate-200">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-emerald-600"></i> 行前與防寒準備進度
           </span>
-          <span class="text-[10px] bg-amber-400/20 text-amber-300 font-bold px-2 py-0.5 rounded-full">海邊極凍必備</span>
+          <span id="checklist-stats" class="text-xs font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full">0% 完成</span>
         </div>
-        <p class="text-xs text-slate-300 mt-2 leading-relaxed">
-          11 月初釜山海風極強，沙灘體感常掉到 8°C 以下，<strong>長輩絕對不能直接坐在冰涼沙灘上</strong>！
-        </p>
-        <div class="mt-3 space-y-2" id="firework-checklist">
-          <!-- 項目會由 JS 初始化 -->
+        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+          <div id="checklist-bar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
         </div>
       </div>
 
-      <!-- 出發前行前清單 -->
-      <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-200">
-        <h3 class="text-sm font-bold text-slate-900 mb-2.5 flex items-center gap-1.5">
-          <i class="fa-solid fa-suitcase-rolling text-busan-blue"></i> 行前核心準備事項
-        </h3>
-        <div class="space-y-2" id="travel-checklist">
-          <!-- 項目會由 JS 初始化 -->
+      <!-- 1. 核心裝備與關鍵預約清單 (含題目指定項目) -->
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-3.5 space-y-2.5">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+          <h3 class="text-xs font-black text-slate-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-clipboard-check text-brand-blue"></i> 核心裝備與預約事項 (題目指定)
+          </h3>
+          <span class="text-[10px] text-slate-400">LocalStorage 自動記憶</span>
+        </div>
+        
+        <div id="core-checklist" class="space-y-2 text-xs">
+          <!-- JS 渲染指定 6 大項目 -->
         </div>
       </div>
 
-      <!-- 實用韓語發音卡 -->
-      <div class="bg-white p-4 rounded-2xl card-shadow border border-slate-200">
-        <h3 class="text-sm font-bold text-slate-900 mb-2.5 flex items-center gap-1.5">
-          <i class="fa-solid fa-comments text-emerald-600"></i> 長輩安心常用韓文
+      <!-- 2. 煙火節防寒與家庭長輩特別提醒 -->
+      <div class="bg-gradient-to-br from-slate-900 to-brand-navy text-white rounded-2xl p-4 card-shadow space-y-2.5 border border-amber-400/30">
+        <div class="flex items-center justify-between pb-2 border-b border-white/10">
+          <span class="text-xs font-black text-amber-300 flex items-center gap-1.5">
+            <i class="fa-solid fa-fire text-amber-400"></i> 11/7 煙火節沙灘長輩禦寒裝備
+          </span>
+          <span class="text-[10px] bg-amber-400/20 text-amber-300 font-bold px-2 py-0.5 rounded">不可忽視</span>
+        </div>
+        <div class="text-xs text-slate-200 space-y-1.5 leading-relaxed">
+          <p>• <strong>海風刺骨：</strong>11 月初廣安里沙灘體感常跌破 8°C，沙灘濕氣極重，長輩絕對不要直接坐沙地！</p>
+          <p>• <strong>必備利器：</strong>4 張折疊露營椅讓長輩離地坐、膝蓋蓋隨身小毛毯、羽絨衣＋毛帽防風、隨身保溫瓶裝滿熱水。</p>
+        </div>
+      </div>
+
+      <!-- 3. 長輩實用溝通韓語小卡 -->
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-3.5 space-y-2.5">
+        <h3 class="text-xs font-black text-slate-900 flex items-center gap-1.5">
+          <i class="fa-solid fa-language text-purple-600"></i> 長輩安心常用韓文卡
         </h3>
         <div class="space-y-2 text-xs">
           <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between">
@@ -869,104 +1059,129 @@
               <div class="font-bold text-slate-800">司機先生，請載我到這裡</div>
               <div class="text-slate-500 font-kr">기사님, 여기로 가 주세요 (Ki-sa-nim, yeo-gi-ro ga ju-se-yo)</div>
             </div>
-            <button onclick="copyText('기사님, 여기로 가 주세요')" class="text-busan-blue p-1.5 active:scale-90 transition"><i class="fa-regular fa-copy"></i></button>
+            <button onclick="copyPhrase('기사님, 여기로 가 주세요')" class="text-brand-blue p-1.5 active:scale-90"><i class="fa-regular fa-copy"></i></button>
           </div>
           <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between">
             <div>
               <div class="font-bold text-slate-800">4 位（請安排 4 人座）</div>
               <div class="text-slate-500 font-kr">네 명이요 (Ne-myeong-i-yo)</div>
             </div>
-            <button onclick="copyText('네 명이요')" class="text-busan-blue p-1.5 active:scale-90 transition"><i class="fa-regular fa-copy"></i></button>
+            <button onclick="copyPhrase('네 명이요')" class="text-brand-blue p-1.5 active:scale-90"><i class="fa-regular fa-copy"></i></button>
           </div>
           <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between">
             <div>
               <div class="font-bold text-slate-800">請不要放辣椒（長輩不吃辣）</div>
               <div class="text-slate-500 font-kr">안 맵게 해 주세요 (An maep-ge hae ju-se-yo)</div>
             </div>
-            <button onclick="copyText('안 맵게 해 주세요')" class="text-busan-blue p-1.5 active:scale-90 transition"><i class="fa-regular fa-copy"></i></button>
-          </div>
-          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between">
-            <div>
-              <div class="font-bold text-slate-800">請給我收據</div>
-              <div class="text-slate-500 font-kr">영수증 주세요 (Yeong-su-jeung ju-se-yo)</div>
-            </div>
-            <button onclick="copyText('영수증 주세요')" class="text-busan-blue p-1.5 active:scale-90 transition"><i class="fa-regular fa-copy"></i></button>
+            <button onclick="copyPhrase('안 맵게 해 주세요')" class="text-brand-blue p-1.5 active:scale-90"><i class="fa-regular fa-copy"></i></button>
           </div>
           <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between">
             <div>
               <div class="font-bold text-slate-800">廁所在哪裡？</div>
               <div class="text-slate-500 font-kr">화장실 어디예요? (Hwa-jang-sil eo-di-ye-yo)</div>
             </div>
-            <button onclick="copyText('화장실 어디예요?')" class="text-busan-blue p-1.5 active:scale-90 transition"><i class="fa-regular fa-copy"></i></button>
+            <button onclick="copyPhrase('화장실 어디예요?')" class="text-brand-blue p-1.5 active:scale-90"><i class="fa-regular fa-copy"></i></button>
           </div>
         </div>
       </div>
 
-      <!-- 緊急救助電話 -->
-      <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-xs space-y-1.5">
-        <h4 class="font-bold text-rose-900 flex items-center gap-1.5">
-          <i class="fa-solid fa-phone-volume text-rose-600"></i> 緊急求助電話
+      <!-- 4. 緊急求助電話 -->
+      <div class="bg-rose-50 border border-rose-200 rounded-2xl p-3.5 text-xs space-y-1.5">
+        <h4 class="font-black text-rose-900 flex items-center gap-1.5">
+          <i class="fa-solid fa-phone-volume text-rose-600"></i> 緊急求助電話 (點擊可直接撥號)
         </h4>
         <div class="grid grid-cols-2 gap-2 pt-1 text-slate-700">
           <div>🚨 報警：<a href="tel:112" class="font-bold text-rose-700 underline">112</a></div>
-          <div>🚑 火災救護：<a href="tel:119" class="font-bold text-rose-700 underline">119</a></div>
-          <div class="col-span-2">🌐 韓國觀光諮詢 (中文)：<a href="tel:1330" class="font-bold text-busan-blue underline">1330</a></div>
-          <div class="col-span-2">🇹🇼 外交部旅外急難救助：<a href="tel:+88680008850885" class="font-bold text-slate-800 underline">+886-800-0885-0885</a></div>
+          <div>🚑 救護車：<a href="tel:119" class="font-bold text-rose-700 underline">119</a></div>
+          <div class="col-span-2">🌐 韓國觀光公社中文諮詢：<a href="tel:1330" class="font-bold text-brand-blue underline">1330</a></div>
+          <div class="col-span-2">🇹🇼 台灣外交部旅外急難救助：<a href="tel:+88680008850885" class="font-bold text-slate-800 underline">+886-800-0885-0885</a></div>
         </div>
       </div>
-
     </section>
 
   </main>
 
 
+  <!-- ================= 底部固定導航列 (Tab 切換) ================= -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+    <div class="max-w-md mx-auto px-2 py-1.5 flex items-center justify-around">
+      
+      <button onclick="switchTab('itinerary')" id="nav-btn-itinerary" class="nav-item flex-1 py-1 text-center font-bold text-brand-navy transition flex flex-col items-center">
+        <i class="fa-solid fa-calendar-day text-lg mb-0.5"></i>
+        <span class="text-[11px] leading-tight">每日行程</span>
+      </button>
+
+      <button onclick="switchTab('taxi')" id="nav-btn-taxi" class="nav-item flex-1 py-1 text-center font-medium text-slate-400 hover:text-slate-600 transition flex flex-col items-center">
+        <i class="fa-solid fa-taxi text-lg mb-0.5"></i>
+        <span class="text-[11px] leading-tight">計程車站名卡</span>
+      </button>
+
+      <button onclick="switchTab('food')" id="nav-btn-food" class="nav-item flex-1 py-1 text-center font-medium text-slate-400 hover:text-slate-600 transition flex flex-col items-center">
+        <i class="fa-solid fa-utensils text-lg mb-0.5"></i>
+        <span class="text-[11px] leading-tight">美食地圖</span>
+      </button>
+
+      <button onclick="switchTab('checklist')" id="nav-btn-checklist" class="nav-item flex-1 py-1 text-center font-medium text-slate-400 hover:text-slate-600 transition flex flex-col items-center">
+        <i class="fa-solid fa-clipboard-check text-lg mb-0.5"></i>
+        <span class="text-[11px] leading-tight">行前清單</span>
+      </button>
+
+    </div>
+  </nav>
+
+
   <!-- ================= 司機大字小卡 全螢幕彈窗 MODAL ================= -->
   <div id="driver-modal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity duration-200">
-    
-    <div class="bg-white w-full max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-slate-200 transform transition-transform duration-200">
+    <div class="bg-white w-full max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-slate-200 transform transition-transform duration-200 max-h-[90vh] overflow-y-auto custom-scroll">
       
-      <!-- 頂部大字提示 -->
-      <div class="bg-busan-gold px-4 py-3 text-center">
-        <span class="text-xs font-bold text-busan-navy tracking-wider block">請把手機畫面直接給司機看</span>
-        <h3 class="text-xl font-black text-busan-navy mt-0.5 font-kr">기사님, 여기로 가 주세요!</h3>
-        <p class="text-[11px] text-busan-navy/80 font-medium">(司機先生，請載我們到這裡！)</p>
+      <!-- 頂部高對比給司機看的指示條 -->
+      <div class="bg-amber-400 px-4 py-3 text-center">
+        <span class="text-[11px] font-bold text-slate-900 tracking-wider block">請將此手機畫面直接遞給司機觀看</span>
+        <h3 class="text-xl font-black text-slate-950 mt-0.5 font-kr">기사님, 여기로 가 주세요!</h3>
+        <p class="text-[10px] text-slate-800 font-medium">(司機先生，請載我們到這裡！)</p>
       </div>
 
-      <!-- 核心地址與大字 -->
-      <div class="p-5 text-center space-y-3">
+      <!-- 核心地址與超大韓文字體區 -->
+      <div class="p-5 text-center space-y-3.5">
         <div>
-          <span id="modal-category" class="inline-block text-[11px] font-bold text-white bg-busan-blue px-2.5 py-0.5 rounded-full mb-1">
-            目的地
+          <span id="modal-category" class="inline-block text-[11px] font-bold text-white bg-brand-blue px-2.5 py-0.5 rounded-full mb-1">
+            目的地分類
           </span>
           <h2 id="modal-name-zh" class="text-base font-bold text-slate-700">目的地中文</h2>
           <h1 id="modal-name-kr" class="text-2xl font-black text-slate-950 font-kr tracking-tight mt-1 leading-snug">
-            한국어 목적지
+            목적지 한국어 이름
           </h1>
         </div>
 
         <div class="bg-slate-100 p-3.5 rounded-2xl border border-slate-200 text-left">
-          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">주소 (韓文地址)</div>
-          <p id="modal-address-kr" class="text-sm font-bold text-slate-900 font-kr leading-snug">
-            부산광역시 해운대구...
+          <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1 flex items-center justify-between">
+            <span>주소 (韓文地址)</span>
+            <span class="text-[10px] text-brand-blue font-bold">可複製</span>
+          </div>
+          <p id="modal-address-kr" class="text-sm font-black text-slate-900 font-kr leading-relaxed">
+            부산광역시...
           </p>
         </div>
 
-        <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-left text-xs text-amber-900">
+        <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-left text-xs text-amber-950">
           <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i>
-          <span id="modal-tip">長輩少爬坡備忘提醒</span>
+          <span id="modal-tip">長輩叮嚀備忘</span>
         </div>
 
-        <!-- 按鈕操作區 -->
-        <div class="grid grid-cols-2 gap-2 pt-2">
-          <button id="modal-copy-btn" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
+        <!-- 外部地圖與操作按鈕 -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button id="modal-copy-btn" class="bg-slate-900 hover:bg-slate-800 text-amber-300 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
             <i class="fa-regular fa-copy"></i> 複製韓文地址
           </button>
           <a id="modal-naver-link" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
-            <i class="fa-solid fa-map-location-dot"></i> Naver Map
+            <i class="fa-solid fa-compass"></i> Naver 地圖
+          </a>
+          <a id="modal-google-link" href="#" target="_blank" class="col-span-2 bg-blue-50 hover:bg-blue-100 text-brand-blue font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
+            <i class="fa-solid fa-map-location-dot"></i> Google Maps 外部開啟
           </a>
         </div>
 
-        <button onclick="closeModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs mt-1 transition">
+        <button onclick="closeTaxiModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs mt-1 transition">
           關閉返回
         </button>
       </div>
@@ -975,467 +1190,460 @@
   </div>
 
 
-  <!-- 提示 Toast -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-amber-300 text-xs font-bold px-4 py-2.5 rounded-full shadow-lg transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
-    <i class="fa-solid fa-circle-check text-emerald-400"></i>
-    <span id="toast-msg">已成功複製到剪貼簿！</span>
+  <!-- ================= 長輩無痛走法叮嚀彈窗 MODAL ================= -->
+  <div id="senior-modal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl p-5 border border-slate-200 space-y-3 max-h-[85vh] overflow-y-auto custom-scroll">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5">
+          <i class="fa-solid fa-heart-pulse text-rose-500"></i> 長輩 4 大無痛核心叮嚀
+        </h3>
+        <button onclick="closeSeniorModal()" class="text-slate-400 hover:text-slate-600 text-sm p-1"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="text-xs text-slate-700 space-y-2.5 leading-relaxed">
+        <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-200/60">
+          <strong class="text-amber-900">🚕 1. 全程計程車／Kakao T 代步：</strong>
+          <p class="mt-0.5">4人同行分攤車資便宜，門對門接送，免去地鐵站無電梯的折磨與每天上萬步的腿力負擔。</p>
+        </div>
+        <div class="p-2.5 bg-blue-50 rounded-xl border border-blue-200/60">
+          <strong class="text-blue-900">🗺️ 2. 水平走法・避開陡坡好漢坡：</strong>
+          <p class="mt-0.5">甘川洞只走諮詢處水平街；白淺灘只走上層絕影路；釜山塔計程車直接開到山頂圓環，完全免爬階梯！</p>
+        </div>
+        <div class="p-2.5 bg-rose-50 rounded-xl border border-rose-200/60">
+          <strong class="text-rose-900">🥩 3. 餐廳精選店員代烤與清淡熱湯：</strong>
+          <p class="mt-0.5">釜山宅、百花烤腸、味贊王皆專人桌邊烤好上桌；31cm刀削麵、Bujebi、雙胞胎豬肉湯飯皆為溫熱清甜好入口料理。</p>
+        </div>
+        <div class="p-2.5 bg-purple-50 rounded-xl border border-purple-200/60">
+          <strong class="text-purple-900">🪑 4. 煙火節折疊椅防寒卡位：</strong>
+          <p class="mt-0.5">4張輕便折疊椅讓長輩離地坐避免沙灘寒氣；主秀結束後先在沙灘後排咖啡廳避難喝熱茶，不擠推擠人潮。</p>
+        </div>
+      </div>
+      <button onclick="closeSeniorModal()" class="w-full bg-brand-navy text-amber-300 font-bold py-2.5 rounded-xl text-xs transition">
+        我知道了，關閉
+      </button>
+    </div>
   </div>
 
 
-  <!-- ================= 互動腳本與完整資料庫 ================= -->
+  <!-- ================= 浮動 Toast 提示 ================= -->
+  <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900/95 text-amber-300 text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2 border border-amber-400/30">
+    <i class="fa-solid fa-circle-check text-emerald-400"></i>
+    <span id="toast-text">已複製韓文地址</span>
+  </div>
+
+
+  <!-- ================= 核心互動邏輯與完整資料庫 ================= -->
   <script>
-    // 司機小卡資料庫
-    const taxiCards = {
-      'hotel-card': {
+    // ==========================================
+    // 1. 計程車站名卡完整 15 筆資料庫 (題目指定)
+    // ==========================================
+    const taxiCardsData = [
+      {
+        id: 'hotel',
+        num: '01',
         category: '住宿飯店',
         type: 'hotel',
-        nameZh: '海雲台 La Viange 飯店',
+        nameZh: '住宿飯店 (La Viange 海雲台)',
         nameKr: '해운대 라비앙제 메종드 호텔',
         addressKr: '부산 해운대구 해운대해변로209번나길 56',
-        tip: '海雲台站步行約6分鐘，SEA LIFE水族館與海灘就在附近。請停在門口方便下行李。'
+        tip: '海雲台海灘旁，請停在飯店大門口方便長輩上下車與卸下大行李。',
+        googleMap: 'https://maps.app.goo.gl/hotel'
       },
-      'airport-card': {
-        category: '機場航廈',
-        type: 'hotel',
-        nameZh: '金海國際機場 國際線航廈',
-        nameKr: '김해국제공항 국제선 청사',
-        addressKr: '부산 강서구 공항진입로 108',
-        tip: '請直達國際線（국제선）出境大廳門口，方便搬運行李推車。'
-      },
-      'gamcheon-card': {
-        category: '景點直送',
+      {
+        id: 'gamcheon',
+        num: '02',
+        category: '熱門景點',
         type: 'spot',
         nameZh: '甘川洞文化村 (最上方諮詢處)',
         nameKr: '감천문화마을 안내센터 앞',
         addressKr: '부산 사하구 감내2로 203',
-        tip: '★請開到最頂端諮詢處大馬路下車！長輩只走平坦水平主街，原路折返，免爬長陡梯！'
+        tip: '★請務必開至最頂端諮詢處大馬路！長輩只走平坦水平街看海景與小王子，不走縱向陡階梯。',
+        googleMap: 'https://maps.app.goo.gl/4M4f8d6Xp7T8zXw97'
       },
-      'songdo-card': {
-        category: '景點纜車',
+      {
+        id: 'songdo',
+        num: '03',
+        category: '熱門景點',
         type: 'spot',
         nameZh: '松島海上纜車 (松島灣站)',
         nameKr: '송도해상케이블카 송도베이스테이션',
         addressKr: '부산 서구 송도해변로 171',
-        tip: '請停在松島海灘東側纜車站入口，平路搭電梯直達 1 樓售票處。'
+        tip: '請停在松島海灘東側纜車站入口，平路搭電梯直達售票與搭乘處。',
+        googleMap: 'https://maps.app.goo.gl/9R6hF9w2v8T8qXy56'
       },
-      'busandaek-card': {
-        category: '⭐ 激推必吃 1',
-        type: 'food',
-        nameZh: '西面 釜山宅 燒肉 (全烤好上桌)',
-        nameKr: '부산댁 (서면 본점)',
-        addressKr: '부산 부산진구 동천로107번길 14 1층',
-        tip: '西面NC百貨旁巷內。店員在中央炭火全烤好才上桌，長輩無油煙享受！'
-      },
-      'huinnyeoul-card': {
-        category: '景點直送',
-        type: 'spot',
-        nameZh: '白淺灘文化村 (絕影路平路)',
-        nameKr: '흰여울문화마을 (절영로 전망대 앞)',
-        addressKr: '부산 영도구 영선동4가 1043',
-        tip: '★請停在上方「絕影路」馬路旁！走平坦街看海，嚴禁走鋼琴階梯下海邊。'
-      },
-      'haenyeo-card': {
-        category: '在地海鮮',
-        type: 'food',
-        nameZh: '影島 中里海女村',
-        nameKr: '중리해녀촌',
-        addressKr: '부산 영도구 중리남로 2-36',
-        tip: '現撈新鮮海膽紫菜包飯與海鮮拉麵，海景極佳。'
-      },
-      'baekhwa-card': {
-        category: '⭐ 激推必吃 2',
-        type: 'food',
-        nameZh: '札嘎其 百花烤腸',
-        nameKr: '백화양곱창 (자갈치)',
-        addressKr: '부산 중구 자갈치로23번길 6',
-        tip: '札嘎其海鮮市場旁。中午 12:00～12:30 入座免排隊，阿姨桌邊炭火代烤！'
-      },
-      'busantower-card': {
-        category: '車直達山頂',
-        type: 'spot',
-        nameZh: '龍頭山公園・釜山塔 (山頂停車場)',
-        nameKr: '용두산공원 주차장 (부산타워 바로 밑)',
-        addressKr: '부산 중구 용두산길 37-55',
-        tip: '★計程車可直接開上山頂圓環！免走手扶梯與陡長階梯，下車直通高速電梯登塔！'
-      },
-      'bujebi-card': {
-        category: '⭐ 激推必吃 3',
-        type: 'food',
-        nameZh: '西面 Bujebi 海鮮刀削麵',
-        nameKr: '부제비 (서면 전포)',
-        addressKr: '부산 부산진구 서전로38번길 43-3 1층',
-        tip: '西面田浦咖啡街附近。鮮美蛤蜊高湯麵疙瘩搭軟嫩五花包肉，暖胃清甜！'
-      },
-      'kalguksu31-card': {
-        category: '⭐ 激推必吃 4',
-        type: 'food',
-        nameZh: '海雲台 31cm 海鮮刀削麵',
-        nameKr: '해운대31cm해물칼국수 본점',
-        addressKr: '부산 해운대구 구남로41번길 46',
-        tip: '海雲台傳統市場附近。滿滿整鋼盆蛤蜊貝類淡菜，鮮美無比！'
-      },
-      'durumi-card': {
-        category: '⭐ 激推必吃 5',
-        type: 'food',
-        nameZh: '廣安里 Durumi Gwangan 燒肉',
-        nameKr: '두루미 광안',
-        addressKr: '부산 수영구 남천바다로 38-10 1층',
-        tip: '廣安里熟成豬肉極品！煙火節前 15:30 先吃熱烤肉蓄熱抵禦刺骨海風！'
-      },
-      'dragon-card': {
-        category: '名勝古剎',
-        type: 'spot',
-        nameZh: '海東龍宮寺',
-        nameKr: '해동용궁사 입구',
-        addressKr: '부산 기장군 기장읍 용궁길 86',
-        tip: '請開至最靠近入口之停車場。石階慢行扶手完備，早晨清幽看海祈福。'
-      },
-      'cheongsapo-card': {
-        category: '特色交通',
-        type: 'spot',
-        nameZh: '海雲台藍線公園 青沙浦站',
-        nameKr: '해운대 블루라인파크 청사포정거장',
-        addressKr: '부산 해운대구 청사포로 116',
-        tip: '天空膠囊列車搭乘處。4人獨立空調包廂，高架軌道無死角看海30分鐘。'
-      },
-      'spaland-card': {
-        category: '放鬆汗蒸',
-        type: 'spot',
-        nameZh: '新世界 SPA LAND 汗蒸幕 4號門',
-        nameKr: '신세계 센텀시티 4번 게이트 (스파랜드)',
-        addressKr: '부산 해운대구 센텀남대로 35',
-        tip: '請在 4 號門下車直通 1 樓 SPA LAND。五星級天然溫泉與檜木足湯消疲勞！'
-      },
-      'matchandeul-card': {
-        category: '⭐ 激推必吃 6',
-        type: 'food',
-        nameZh: '海雲台 味贊王鹽烤肉',
-        nameKr: '맛찬들왕소금구이 해운대점',
-        addressKr: '부산 해운대구 해운대로608번길 46',
-        tip: '店員全程專業代烤厚切五花肉至金黃焦香。可用 CatchTable 先線上取號。'
-      },
-      'ssangdoongi-card': {
-        category: '機場順路',
-        type: 'food',
-        nameZh: '雙胞胎豬肉湯飯 (大淵本店)',
-        nameKr: '쌍둥이돼지국밥 (대연본점)',
-        addressKr: '부산 남구 유엔평화로 35-1',
-        tip: '大淵站順路節點！招牌白切肉套餐（수육백반），熱高湯配軟嫩切肉，暖胃搭機。'
-      },
-      'bhc-card': {
-        category: '外帶宵夜',
-        type: 'food',
-        nameZh: 'Bhc 炸雞 (海雲台店)',
-        nameKr: 'bhc치킨 해운대점',
-        addressKr: '부산 해운대구 해운대해변로298번길 24',
-        tip: '海雲台海灘旁。招牌起司粉炸雞（뿌링클）香甜濃郁，外帶回飯店超滿足。'
-      }
-    };
-
-    // 美食全覽資料庫 (包含激推、推薦與備案)
-    const foodItems = [
       {
         id: 'busandaek',
-        tag: 'must',
-        tagLabel: '⭐ 激推 1',
+        num: '04',
+        category: '⭐ 激推必吃 1',
+        type: 'food',
         nameZh: '釜山宅 燒肉 (西面本店)',
         nameKr: '부산댁',
-        area: '西面',
-        time: '每天 17:00–24:00',
-        phone: '051-808-0661',
-        schedule: 'Day 2 晚餐 (17:00)',
-        address: '부산 부산진구 동천로107번길 14 1층',
-        googleMap: 'https://maps.app.goo.gl/6rKh3c9e61vQ1MLm9',
-        feature: '17:00 開門進店免排隊！中央專用炭火由店員代烤香脆後上桌，零油煙撲面，小菜與大醬湯豐盛！'
+        addressKr: '부산 부산진구 동천로107번길 14 1층',
+        tip: '西面NC百貨旁巷內。店員在中央炭火全烤好才端上桌，長輩無油煙不費力享受！',
+        googleMap: 'https://maps.app.goo.gl/6rKh3c9e61vQ1MLm9'
+      },
+      {
+        id: 'huinnyeoul',
+        num: '05',
+        category: '熱門景點',
+        type: 'spot',
+        nameZh: '白淺灘文化村 (上層絕影路)',
+        nameKr: '흰여울문화마을 (절영로)',
+        addressKr: '부산 영도구 절영로 194',
+        tip: '★請停在上方「絕影路 194」馬路旁！只走水平平路看海與進景觀咖啡廳，嚴禁下切海邊長階梯。',
+        googleMap: 'https://maps.app.goo.gl/1w8y5T6Z8qX9zXy45'
       },
       {
         id: 'baekhwa',
-        tag: 'must',
-        tagLabel: '⭐ 激推 2',
+        num: '06',
+        category: '⭐ 激推必吃 2',
+        type: 'food',
         nameZh: '百花烤腸 (札嘎其)',
         nameKr: '백화양곱창',
-        area: '南浦・札嘎其',
-        time: '每天 12:00–24:00',
-        phone: '051-245-0105',
-        schedule: 'Day 3 午餐 (12:30)',
-        address: '부산 중구 자갈치로23번길 6',
-        googleMap: 'https://maps.app.goo.gl/EunVKNUqanqDGmDy9',
-        feature: '改排中午離峰時段，免久站排隊！阿姨桌邊炭火現烤肥嫩牛小腸、牛胃與特製炒飯，香氣十足！'
+        addressKr: '부산 중구 자갈치로23번길 6',
+        tip: '札嘎其市場旁。中午開門免久候，阿姨炭火桌邊代烤肥嫩牛腸與炒飯！',
+        googleMap: 'https://maps.app.goo.gl/EunVKNUqanqDGmDy9'
+      },
+      {
+        id: 'busantower',
+        num: '07',
+        category: '熱門景點',
+        type: 'spot',
+        nameZh: '龍頭山公園／釜山塔 (山頂停車場)',
+        nameKr: '용두산공원 주차장 (부산타워 앞)',
+        addressKr: '부산 중구 용두산길 37-55',
+        tip: '★計程車可直接開上山頂圓環！下車直達高速電梯登塔，避開光復路單向手扶梯與回程陡下階梯。',
+        googleMap: 'https://maps.app.goo.gl/6X8y5T6Z8qX9zXy45'
       },
       {
         id: 'bujebi',
-        tag: 'must',
-        tagLabel: '⭐ 激推 3',
-        nameZh: 'Bujebi 海鮮刀削麵',
+        num: '08',
+        category: '⭐ 激推必吃 3',
+        type: 'food',
+        nameZh: 'Bujebi 海鮮刀削麵 (西面)',
         nameKr: '부제비',
-        area: '西面田浦',
-        time: '平日 11:00–15:00, 17:00–21:00',
-        phone: '010-2087-5333',
-        schedule: 'Day 3 晚餐 (18:30)',
-        address: '부산 부산진구 서전로38번길 43-3 1층',
-        googleMap: 'https://maps.app.goo.gl/5iNXxxvutC9YocLj9',
-        feature: '鮮美甘甜蛤蜊刀削麵配特製麵疙瘩，搭切片五花白肉（包肉），溫暖順口，長輩接受度 100%！'
+        addressKr: '부산 부산진구 서전로38번길 43-3',
+        tip: '西面田浦咖啡街旁。鮮美蛤蜊高湯刀削麵搭軟嫩切片五花包肉，清甜溫熱！',
+        googleMap: 'https://maps.app.goo.gl/5iNXxxvutC9YocLj9'
+      },
+      {
+        id: 'dragon',
+        num: '09',
+        category: '熱門景點',
+        type: 'spot',
+        nameZh: '海東龍宮寺',
+        nameKr: '해동용궁사',
+        addressKr: '부산 기장군 기장읍 용궁길 86',
+        tip: '請開到最靠近入口之停車場。沿途步道有扶手，清晨人少漫步祈福看海。',
+        googleMap: 'https://maps.app.goo.gl/3w8y5T6Z8qX9zXy45'
       },
       {
         id: 'kalguksu31',
-        tag: 'must',
-        tagLabel: '⭐ 激推 4',
+        num: '10',
+        category: '⭐ 激推必吃 4',
+        type: 'food',
         nameZh: '海雲台 31cm 海鮮刀削麵',
         nameKr: '해운대31cm해물칼국수',
-        area: '海雲台',
-        time: '10:50–14:50, 16:00–20:50 (週一休)',
-        phone: '051-521-3434',
-        schedule: 'Day 4 午餐 (12:00)',
-        address: '부산 해운대구 구남로41번길 46',
-        googleMap: 'https://maps.app.goo.gl/Ne7wW8AH3qskiDjp7',
-        feature: '水族館旁平路抵達。大鋼盆盛裝堆積如山的貝類、蛤蜊與淡菜，原汁原味清甜熱湯，暖身充電！'
+        addressKr: '부산 해운대구 구남로41번길 46',
+        tip: '海雲台傳統市場旁。整大鋼盆滿滿蛤蜊扇貝淡菜熱湯，鮮甜好入口！',
+        googleMap: 'https://maps.app.goo.gl/Ne7wW8AH3qskiDjp7'
       },
       {
         id: 'durumi',
-        tag: 'must',
-        tagLabel: '⭐ 激推 5',
-        nameZh: 'Durumi Gwangan 燒肉',
+        num: '11',
+        category: '⭐ 激推必吃 5',
+        type: 'food',
+        nameZh: 'Durumi Gwangan 燒肉 (廣安里)',
         nameKr: '두루미 광안',
-        area: '廣安里',
-        time: '出發前用 Naver Map 確認',
-        phone: '現場候位',
-        schedule: 'Day 4 早晚餐 (15:30)',
-        address: '부산 수영구 남천바다로 38-10 1층',
-        googleMap: 'https://maps.app.goo.gl/RJA6QNfYGHmVQAjF8',
-        feature: '煙火節關鍵蓄熱！廣安里頂級熟成烤肉，傍晚大客流前吃飽蓄滿熱量抵禦海風（備案外帶60炸雞）。'
+        addressKr: '부산 수영구 남천바다로 38-10 1층',
+        tip: '廣安里熟成豬肉極品！煙火節前 15:30 提早用餐蓄滿熱量抵禦海風！',
+        googleMap: 'https://maps.app.goo.gl/RJA6QNfYGHmVQAjF8'
       },
       {
         id: 'matchandeul',
-        tag: 'must',
-        tagLabel: '⭐ 激推 6',
+        num: '12',
+        category: '⭐ 激推必吃 6',
+        type: 'food',
         nameZh: '味贊王鹽烤肉 (海雲台店)',
-        nameKr: '맛찬들왕소금구이 해운대점',
-        area: '海雲台',
-        time: '11:30–23:00',
-        phone: '051-742-0106',
-        schedule: 'Day 5 晚餐 (19:30)',
-        address: '부산 해운대구 해운대로608번길 46',
-        googleMap: 'https://maps.app.goo.gl/qBZ3EkFfYTKMT9Ht9',
-        feature: '釜山最知名厚切五花肉！店員專用測溫槍與代烤技術，外酥內嫩多汁，免動手直接享用！'
-      },
-      {
-        id: 'bhc',
-        tag: 'rec',
-        tagLabel: '推薦・宵夜',
-        nameZh: 'Bhc 炸雞 (海雲台店)',
-        nameKr: 'bhc치킨 해운대점',
-        area: '海雲台',
-        time: '每天 12:00–24:00',
-        phone: '051-747-9940',
-        schedule: 'Day 1 抵達宵夜',
-        address: '부산 해운대구 해운대해변로298번길 24',
-        googleMap: 'https://maps.app.goo.gl/NowtfHpNxyqEDKT17',
-        feature: '招牌起司粉炸雞（뿌링클）濃郁奶香酥脆，派年輕人外帶回飯店，長輩舒適品嚐。'
-      },
-      {
-        id: 'ssiat',
-        tag: 'rec',
-        tagLabel: '推薦・點心',
-        nameZh: '南浦洞堅果糖餅 (씨앗호떡)',
-        nameKr: '씨앗호떡 (BIFF광장)',
-        area: 'BIFF 廣場',
-        time: '約 10:30–22:00',
-        phone: '010-2558-4064',
-        schedule: 'Day 3 下午散步',
-        address: '부산 중구 비프광장로 36',
-        googleMap: 'https://maps.app.goo.gl/8iuiNdSKoip9DLF9A',
-        feature: '黑糖煎餅剪開塞滿炒香的葵花子、南瓜子、花生等綜合堅果，酥香脆甜，現做現吃！'
-      },
-      {
-        id: 'geoin',
-        tag: 'rec',
-        tagLabel: '推薦・點心',
-        nameZh: '巨人炸雞 (富平市場本店)',
-        nameKr: '거인통닭',
-        area: '富平市場',
-        time: '11:30–20:00 (週日休)',
-        phone: '051-246-6079',
-        schedule: 'Day 3 傍晚外帶',
-        address: '부산 중구 중구로47번길 34',
-        googleMap: 'https://maps.app.goo.gl/fCbtCcvDsLPVnqtV8',
-        feature: '三大名店之一！大份量切塊咖哩胡椒香酥炸雞，外帶回海雲台飯店當豐盛下酒菜。'
-      },
-      {
-        id: 'horangi',
-        tag: 'rec',
-        tagLabel: '推薦・甜點',
-        nameZh: '老虎吉拉朵麻糬冰 (호랑이젤라떡)',
-        nameKr: '호랑이젤라떡',
-        area: '海雲台尾浦',
-        time: '12:00–16:00, 17:30–21:30',
-        phone: '0507-1302-4130',
-        schedule: 'Day 4 午後點心',
-        address: '부산 해운대구 달맞이길62번길 38 1층',
-        googleMap: 'https://maps.app.goo.gl/SRYBm4VDjRjKdxsQ8',
-        feature: 'Q軟現包麻糬皮裹濃郁冰淇淋，海鹽、開心果口味極推，一盒 4 顆剛好一人一顆！'
+        nameKr: '맛찬들 해운대점',
+        addressKr: '부산 해운대구 해운대로608번길 46',
+        tip: '店員專用測溫槍全程專業代烤黃金五花肉至金黃酥香，免動手直接享用！',
+        googleMap: 'https://maps.app.goo.gl/qBZ3EkFfYTKMT9Ht9'
       },
       {
         id: 'ssangdoongi',
-        tag: 'rec',
-        tagLabel: '推薦・早午餐',
-        nameZh: '雙胞胎豬肉湯飯 (大淵本店)',
+        num: '13',
+        category: '美味推薦',
+        type: 'food',
+        nameZh: '雙胞胎豬肉湯飯 (大淵店)',
         nameKr: '쌍둥이돼지국밥',
-        area: '大淵站',
-        time: '09:00–22:00',
-        phone: '051-628-7021',
-        schedule: 'Day 6 退房早午餐',
-        address: '부산 남구 유엔평화로 35-1',
-        googleMap: 'https://maps.app.goo.gl/aACjUwe4ZrfcGuni9',
-        feature: '海雲台通往機場的高架順路節點！招牌白切肉套餐（수육백반），濃郁熱高湯搭軟嫩五花白肉。'
+        addressKr: '부산 남구 유엔평화로 35-1',
+        tip: '海雲台前往機場的高架順路節點！招牌白切肉套餐配清甜甘醇骨湯，暖身搭機。',
+        googleMap: 'https://maps.app.goo.gl/aACjUwe4ZrfcGuni9'
       },
       {
-        id: 'haesong',
-        tag: 'backup',
-        tagLabel: '必吃備案',
-        nameZh: '海雲台人氣韓牛炭火燒肉',
-        nameKr: '해운대암소갈비집',
-        area: '海雲台',
-        time: '11:30–14:00, 17:00–22:00',
-        phone: '051-746-0033',
-        schedule: 'Day 5 味贊王備案',
-        address: '부산 해운대구 해운대해변로 333',
-        googleMap: 'https://maps.app.goo.gl/CpoBzfjB9uwgdbfBA',
-        feature: '韓屋傳統名店，頂級炭火醬醃韓牛排骨，招牌馬鈴薯麵吸飽肉汁高湯精華！'
+        id: 'ops',
+        num: '14',
+        category: '甜點伴手禮',
+        type: 'food',
+        nameZh: 'OPS 烘焙屋 (海雲台店)',
+        nameKr: '옵스 해운대점',
+        addressKr: '부산 해운대구 중동1로 31',
+        tip: '海雲台名物烘焙屋！巨型香草卡士達泡芙、原味蘋果派與學士麵包。',
+        googleMap: 'https://maps.app.goo.gl/5X8y5T6Z8qX9zXy45'
       },
       {
-        id: 'yechan',
-        tag: 'backup',
-        tagLabel: '備案名單',
-        nameZh: 'Donkkaseu Yechan 炸豬排',
-        nameKr: '예찬돈까스',
-        area: '西面',
-        time: '10:50–21:00',
-        phone: '0507-1381-4448',
-        schedule: '西面備案',
-        address: '44 Seomyeon-ro 68beon-gil, Busanjin',
-        googleMap: 'https://maps.app.goo.gl/Kf1BZ76ugU91WzPG6',
-        feature: '西面人氣脆皮厚切起司豬排，份量飽足。'
-      },
-      {
-        id: 'porkskin',
-        tag: 'backup',
-        tagLabel: '備案名單',
-        nameZh: '超必殺烤豬皮店 (Marine City)',
-        nameKr: '초필살돼지구이',
-        area: '海雲台/冬柏',
-        time: '17:00–翌日01:00',
-        phone: '現場候位',
-        schedule: '海雲台夜間備案',
-        address: '23 Marine city 3-ro, U-dong, Haeundae',
-        googleMap: 'https://maps.app.goo.gl/vKgqtrQBoKmvdvFy9',
-        feature: '格紋厚切香脆烤豬皮，蜂巢狀烤法外酥內Q。'
-      },
-      {
-        id: 'chicken60',
-        tag: 'backup',
-        tagLabel: '備案名單',
-        nameZh: '60 炸雞 (海雲台店)',
-        nameKr: '60계치킨 해운대점',
-        area: '海雲台/廣安里',
-        time: '12:00–翌日01:10',
-        phone: '051-741-8809',
-        schedule: '煙火節沙灘野餐備案',
-        address: '26 Gunam-ro 29beon-gil, Haeundae',
-        googleMap: 'https://maps.app.goo.gl/XNLACsLYJDZuhU1h8',
-        feature: '標榜一鍋油只炸 60 隻雞，清爽不油膩，招牌虎皮脆皮炸雞極受歡迎。'
-      },
-      {
-        id: 'tonshou',
-        tag: 'backup',
-        tagLabel: '備案名單',
-        nameZh: '豚笑 炸豬排 (南浦店)',
-        nameKr: '톤쇼우 남포점',
-        area: '南浦洞',
-        time: '11:00–21:00',
-        phone: '051-255-7978',
-        schedule: '南浦備案',
-        address: 'Busan, Jung-gu, Gwangbokjungang-ro 24beon-gil, 9',
-        googleMap: 'https://maps.app.goo.gl/dVtHWEMdLVLSoUfF6',
-        feature: '釜山天花板等級的低溫油炸炭火粉紅厚切豬排。'
-      },
-      {
-        id: 'samgyetang',
-        tag: 'backup',
-        tagLabel: '備案名單',
-        nameZh: '名品海雲台蔘雞湯',
-        nameKr: '해운대소문난삼계탕',
-        area: '海雲台',
-        time: '10:30–15:00, 17:00–21:00',
-        phone: '051-741-4545',
-        schedule: '海雲台暖身備案',
-        address: '6 Jungdong 2-ro, Haeundae-gu',
-        googleMap: 'https://maps.app.goo.gl/1UzsSvAPiRbnBHYx6',
-        feature: '整隻嫩雞塞滿糯米與人蔘紅棗鮑魚，湯頭極濃郁滋補。'
-      },
-      {
-        id: 'haesung',
-        tag: 'backup',
-        tagLabel: '備案名單',
-        nameZh: '海城烤腸 本店',
-        nameKr: '해성막창집 본점',
-        area: '海雲台',
-        time: '16:30–24:00 (週日休)',
-        phone: '051-731-3113',
-        schedule: '海雲台備案',
-        address: '29 Jungdong 1-ro 19beon-gil, Haeundae',
-        googleMap: 'https://maps.app.goo.gl/7nbwrvoWcLvANLaL8',
-        feature: '海雲台超人氣烤牛腸與牛腸火鍋，價格親民。'
+        id: 'airport',
+        num: '15',
+        category: '機場航廈',
+        type: 'hotel',
+        nameZh: '金海國際機場 (國際線出境大廳)',
+        nameKr: '김해국제공항 국제선 청사',
+        addressKr: '김해국제공항 국제선 청사',
+        tip: '請直接停在國際線（국제선）出境航廈門口，方便搬運行李推車辦理退稅手續。',
+        googleMap: 'https://maps.app.goo.gl/airport'
       }
     ];
 
-    // 檢查清單項目
-    const fireworkItems = [
-      { id: 'fw_chair', text: '4 張輕便露營折疊椅（讓長輩離地坐著，免受沙灘濕寒地氣）' },
-      { id: 'fw_mat', text: '防水大野餐墊（鋪在椅子下方防沙）' },
-      { id: 'fw_down', text: '防風厚羽絨外套＋防風面料長褲' },
-      { id: 'fw_hat', text: '保暖毛帽＋圍巾＋防風手套（海風直吹頭部易頭痛）' },
-      { id: 'fw_warm', text: '貼身暖暖包 4~8 片＋口袋型暖暖包' },
-      { id: 'fw_blanket', text: '隨身小毛毯 2 條（蓋在長輩大腿與膝蓋保暖）' },
-      { id: 'fw_power', text: '大容量行動電源＋充電線（低溫耗電快）' },
-      { id: 'fw_thermos', text: '保溫瓶裝熱水或熱茶（沙灘喝熱水最禦寒）' }
+    // ==========================================
+    // 2. 美食地圖完整資料庫 (依 4 大分類)
+    // ==========================================
+    const foodItemsData = [
+      // ⭐ 激推必吃
+      {
+        id: 'f_busandaek',
+        category: 'must',
+        tagBadge: '⭐ 激推必吃 1',
+        tagColor: 'bg-amber-400 text-brand-navy',
+        nameZh: '釜山宅 燒肉 (西面本店)',
+        nameKr: '부산댁',
+        area: '西面',
+        signature: '招牌厚切嚴選豬五花、豬頸肉、海鮮大醬湯、現蒸高麗菜包肉',
+        seniorHighlight: '店員在專用炭火台全程烤好上桌、零油煙撲面、免動手翻烤、平路進店免爬階梯！',
+        addressKr: '부산 부산진구 동천로107번길 14 1층',
+        googleMap: 'https://maps.app.goo.gl/6rKh3c9e61vQ1MLm9'
+      },
+      {
+        id: 'f_baekhwa',
+        category: 'must',
+        tagBadge: '⭐ 激推必吃 2',
+        tagColor: 'bg-amber-400 text-brand-navy',
+        nameZh: '百花烤腸 (札嘎其)',
+        nameKr: '백화양곱창',
+        area: '札嘎其',
+        signature: '炭火鹽烤牛小腸、特選牛皺胃、特製泡菜炒飯',
+        seniorHighlight: '中午 12:00 開門首輪入場免排隊久站、阿姨桌邊炭火代烤代剪、平路進店。',
+        addressKr: '부산 중구 자갈치로23번길 6',
+        googleMap: 'https://maps.app.goo.gl/EunVKNUqanqDGmDy9'
+      },
+      {
+        id: 'f_bujebi',
+        category: 'must',
+        tagBadge: '⭐ 激推必吃 3',
+        tagColor: 'bg-amber-400 text-brand-navy',
+        nameZh: 'Bujebi 海鮮刀削麵',
+        nameKr: '부제비',
+        area: '西面田浦',
+        signature: '鮮美蛤蜊刀削麵、手工Q彈麵疙瘩、清爽切片五花白肉（包肉）',
+        seniorHighlight: '海鮮高湯溫和甘甜不辣、麵體軟嫩易消化、全熟熱湯溫暖長輩胃腸、平坦街區。',
+        addressKr: '부산 부산진구 서전로38번길 43-3',
+        googleMap: 'https://maps.app.goo.gl/5iNXxxvutC9YocLj9'
+      },
+      {
+        id: 'f_kalguksu31',
+        category: 'must',
+        tagBadge: '⭐ 激推必吃 4',
+        tagColor: 'bg-amber-400 text-brand-navy',
+        nameZh: '海雲台 31cm 海鮮刀削麵',
+        nameKr: '해운대31cm해물칼국수',
+        area: '海雲台',
+        signature: '直徑31cm超大鋼盆海鮮刀削麵（堆積如山的大蛤蜊、扇貝、淡菜）',
+        seniorHighlight: '水族館旁全平路直達、原汁原味清甜無辣熱貝類高湯、暖身補充體力。',
+        addressKr: '부산 해운대구 구남로41번길 46',
+        googleMap: 'https://maps.app.goo.gl/Ne7wW8AH3qskiDjp7'
+      },
+      {
+        id: 'f_durumi',
+        category: 'must',
+        tagBadge: '⭐ 激推必吃 5',
+        tagColor: 'bg-amber-400 text-brand-navy',
+        nameZh: 'Durumi Gwangan 燒肉',
+        nameKr: '두루미 광안',
+        area: '廣安里',
+        signature: '頂級熟成濟州黑豬五花肉、特選豬頸肉、煎桔梗泡菜',
+        seniorHighlight: '煙火節前 15:30 提早用餐避開百萬人潮、專人代烤金黃酥脆全熟肉塊、高熱量蓄熱禦寒。',
+        addressKr: '부산 수영구 남천바다로 38-10 1층',
+        googleMap: 'https://maps.app.goo.gl/RJA6QNfYGHmVQAjF8'
+      },
+      {
+        id: 'f_matchandeul',
+        category: 'must',
+        tagBadge: '⭐ 激推必吃 6',
+        tagColor: 'bg-amber-400 text-brand-navy',
+        nameZh: '味贊王鹽烤肉 (海雲台店)',
+        nameKr: '맛찬들 해운대점',
+        area: '海雲台',
+        signature: '3.5cm 極厚熟成鹽烤豬五花、烤韓式石鍋飯、濃郁海鮮大醬湯',
+        seniorHighlight: '紅外線測溫槍精準代烤、全程專人桌邊剪肉服務免動手、CatchTable可線上取號免久站。',
+        addressKr: '부산 해운대구 해운대로608번길 46',
+        googleMap: 'https://maps.app.goo.gl/qBZ3EkFfYTKMT9Ht9'
+      },
+
+      // 🥢 美味推薦
+      {
+        id: 'f_ssangdoongi',
+        category: 'rec',
+        tagBadge: '🥢 美味推薦 1',
+        tagColor: 'bg-blue-50 text-brand-blue font-bold',
+        nameZh: '雙胞胎豬肉湯飯 (大淵店)',
+        nameKr: '쌍둥이돼지국밥',
+        area: '大淵站',
+        signature: '招牌白切肉套餐 (수육백반)、清甜豬骨濃高湯、自製韭菜拌醬',
+        seniorHighlight: '退房後計程車順路節點、白切肉溫熱軟嫩無肥膩感、熱骨湯好入口易消化。',
+        addressKr: '부산 남구 유엔평화로 35-1',
+        googleMap: 'https://maps.app.goo.gl/aACjUwe4ZrfcGuni9'
+      },
+      {
+        id: 'f_haenyeo',
+        category: 'rec',
+        tagBadge: '🥢 美味推薦 2',
+        tagColor: 'bg-blue-50 text-brand-blue font-bold',
+        nameZh: '中里海女村',
+        nameKr: '중리해녀촌',
+        area: '影島',
+        signature: '現撈新鮮海膽紫菜包飯、現煮鮑魚海鮮拉麵',
+        seniorHighlight: '影島海邊坐看壯麗海景、現撈海味新鮮清甜、計程車直達門口免爬長階梯。',
+        addressKr: '부산 영도구 중리남로 2-36',
+        googleMap: 'https://maps.app.goo.gl/haenyeo'
+      },
+      {
+        id: 'f_haesong',
+        category: 'rec',
+        tagBadge: '🥢 美味推薦 3 (味贊王備案)',
+        tagColor: 'bg-blue-50 text-brand-blue font-bold',
+        nameZh: '海雲台人氣韓牛炭火燒肉',
+        nameKr: '해운대암소갈비집',
+        area: '海雲台',
+        signature: '傳統醬醃炭火韓牛牛小排、招牌肉汁馬鈴薯麵',
+        seniorHighlight: '百年韓屋典雅包廂環境、韓牛肉質軟嫩入口即化、店員熟練桌邊炙烤。',
+        addressKr: '부산 해운대구 해운대해변로 333',
+        googleMap: 'https://maps.app.goo.gl/CpoBzfjB9uwgdbfBA'
+      },
+
+      // 🥐 甜點宵夜
+      {
+        id: 'f_bhc',
+        category: 'dessert',
+        tagBadge: '🥐 甜點宵夜 1',
+        tagColor: 'bg-rose-50 text-rose-700 font-bold',
+        nameZh: 'Bhc 炸雞 (海雲台店)',
+        nameKr: 'bhc치킨 해운대점',
+        area: '海雲台',
+        signature: '招牌起司粉炸雞（뿌링클）、香濃流心起司球',
+        seniorHighlight: '派年輕人外帶回飯店房內、長輩舒適坐沙發配熱茶啤酒享用、無須外出吹冷風。',
+        addressKr: '부산 해운대구 해운대해변로298번길 24',
+        googleMap: 'https://maps.app.goo.gl/NowtfHpNxyqEDKT17'
+      },
+      {
+        id: 'f_ops',
+        category: 'dessert',
+        tagBadge: '🥐 甜點宵夜 2',
+        tagColor: 'bg-rose-50 text-rose-700 font-bold',
+        nameZh: 'OPS 烘焙屋 (海雲台店)',
+        nameKr: '옵스 해운대점',
+        area: '海雲台',
+        signature: '巨型天然香草卡士達泡芙、原味香酥蘋果派、學士麵包',
+        seniorHighlight: '飯店步行 6 分鐘平路直達、外帶回房當悠閒早餐點心、甜度適中長輩喜愛。',
+        addressKr: '부산 해운대구 중동1로 31',
+        googleMap: 'https://maps.app.goo.gl/ops'
+      },
+      {
+        id: 'f_horangi',
+        category: 'dessert',
+        tagBadge: '🥐 甜點宵夜 3',
+        tagColor: 'bg-rose-50 text-rose-700 font-bold',
+        nameZh: '老虎吉拉朵麻糬冰 (호랑이젤라떡)',
+        nameKr: '호랑이젤라떡',
+        area: '海雲台尾浦',
+        signature: '現包義式冰淇淋麻糬（海鹽、開心果、烤綠茶口味）',
+        seniorHighlight: '膠囊列車尾浦站旁平路、薄軟Q麻糬皮好咬不黏牙、一人一顆份量適中。',
+        addressKr: '부산 해운대구 달맞이길62번길 38 1층',
+        googleMap: 'https://maps.app.goo.gl/SRYBm4VDjRjKdxsQ8'
+      },
+      {
+        id: 'f_ssiat',
+        category: 'dessert',
+        tagBadge: '🥐 甜點宵夜 4',
+        tagColor: 'bg-rose-50 text-rose-700 font-bold',
+        nameZh: '南浦洞堅果糖餅 (씨앗호떡)',
+        nameKr: '씨앗호떡 (BIFF광장)',
+        area: 'BIFF 廣場',
+        signature: '南浦洞傳統黑糖煎餅包葵花子、南瓜子、花生綜合堅果',
+        seniorHighlight: 'BIFF 廣場全平路漫步邊走邊吃、現點現煎熱氣騰騰、堅果香脆甜而不膩。',
+        addressKr: '부산 중구 비프광장로 36',
+        googleMap: 'https://maps.app.goo.gl/8iuiNdSKoip9DLF9A'
+      },
+      {
+        id: 'f_geoin',
+        category: 'dessert',
+        tagBadge: '🥐 甜點宵夜 5',
+        tagColor: 'bg-rose-50 text-rose-700 font-bold',
+        nameZh: '巨人炸雞 (富平市場本店)',
+        nameKr: '거인통닭',
+        area: '富平市場',
+        signature: '釜山三大傳統香脆切塊炸雞（咖哩胡椒微甜風味、份量超大）',
+        seniorHighlight: '富平夜市平路直達、大份量酥香多汁、外帶回飯店當宵夜點心不費腳力。',
+        addressKr: '부산 중구 중구로47번길 34',
+        googleMap: 'https://maps.app.goo.gl/fCbtCcvDsLPVnqtV8'
+      }
     ];
 
-    const travelItems = [
-      { id: 'tr_flight', text: '4 人機票與護照確認（效期 6 個月以上）' },
-      { id: 'tr_capsule', text: '天空膠囊列車官網已預約（11/8 14:00 青沙浦➔尾浦）' },
-      { id: 'tr_insure', text: '4 人旅平險含海外突發疾病醫療（長輩必保）' },
-      { id: 'tr_hotel', text: '已向房東確認入住密碼、電梯位置與退房寄放行李' },
-      { id: 'tr_app', text: '已下載並綁定 Kakao T (叫車)、Naver Map (導航)' },
-      { id: 'tr_cash', text: '已備齊韓幣現金（T-money 儲值或傳統攤位使用）' }
+    // ==========================================
+    // 3. 核心檢查清單 (含題目指定項目)
+    // ==========================================
+    const checklistItems = [
+      { id: 'c_capsule', text: '膠囊列車預約（11/8 14:00 青沙浦➔尾浦）' },
+      { id: 'c_chairs', text: '4 張輕量折疊露營椅／厚地墊（煙火節沙灘卡位必備，長輩離地坐不受寒）' },
+      { id: 'c_warm', text: '防風羽絨外套、毛帽手套、暖暖包、隨身保溫瓶（沙灘體感常掉至 8°C）' },
+      { id: 'c_kakaot', text: 'Kakao T APP 綁定信用卡（叫大車 Venti 超方便，行李直接全上車）' },
+      { id: 'c_catchtable', text: 'CatchTable 國際版 APP（線上排味贊王或人氣餐廳，免現場久站）' },
+      { id: 'c_tmoney', text: 'T-money 交通卡每人準備 3 萬韓元現金儲值（備用交通與超商使用）' },
+      { id: 'c_passport', text: '4 人護照效期確認 6 個月以上＋機票行程單列印/截圖備存' },
+      { id: 'c_insurance', text: '4 人海外突發疾病旅遊平安險（長輩必保充足醫療險）' }
     ];
 
-    // 狀態持久化管理 (localStorage)
-    let checkedItems = JSON.parse(localStorage.getItem('busan_checked') || '{}');
-    let foodDone = JSON.parse(localStorage.getItem('busan_food_done') || '{}');
+    // ==========================================
+    // 4. 狀態管理 (LocalStorage)
+    // ==========================================
+    let savedChecks = JSON.parse(localStorage.getItem('busan_2026_checklist') || '{}');
+    let foodChecked = JSON.parse(localStorage.getItem('busan_2026_food') || '{}');
 
-    // 切換主要分頁
+    // ==========================================
+    // 5. 導航 Tab 切換控制
+    // ==========================================
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('text-amber-300', 'border-amber-300');
-        btn.classList.add('text-slate-300', 'border-transparent');
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.remove('text-brand-navy', 'font-bold');
+        btn.classList.add('text-slate-400', 'font-medium');
       });
 
       const target = document.getElementById('tab-' + tabId);
-      const targetBtn = document.getElementById('tab-btn-' + tabId);
+      const targetBtn = document.getElementById('nav-btn-' + tabId);
       if (target) target.classList.remove('hidden');
       if (targetBtn) {
-        targetBtn.classList.add('text-amber-300', 'border-amber-300');
-        targetBtn.classList.remove('text-slate-300', 'border-transparent');
+        targetBtn.classList.remove('text-slate-400', 'font-medium');
+        targetBtn.classList.add('text-brand-navy', 'font-bold');
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // 切換行程天數 (Day 1 - 6)
+    // ==========================================
+    // 6. 行程天數切換 (Day 1 - 6)
+    // ==========================================
     function switchDay(dayNum) {
       document.querySelectorAll('.day-detail').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.day-btn').forEach(btn => {
-        btn.classList.remove('bg-busan-navy', 'text-amber-300', 'shadow');
+        btn.classList.remove('bg-brand-navy', 'text-amber-300', 'shadow');
         btn.classList.add('text-slate-600', 'hover:bg-slate-50');
       });
 
@@ -1443,40 +1651,100 @@
       const dayBtn = document.getElementById('day-btn-' + dayNum);
       if (dayView) dayView.classList.remove('hidden');
       if (dayBtn) {
-        dayBtn.classList.add('bg-busan-navy', 'text-amber-300', 'shadow');
+        dayBtn.classList.add('bg-brand-navy', 'text-amber-300', 'shadow');
         dayBtn.classList.remove('text-slate-600', 'hover:bg-slate-50');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ==========================================
+    // 7. Accordion 展開/收合控制
+    // ==========================================
+    function toggleAccordion(headerEl) {
+      const parent = headerEl.closest('.accordion-item');
+      const content = parent.querySelector('.accordion-content');
+      const icon = parent.querySelector('.chevron-icon');
+
+      if (content.classList.contains('expanded')) {
+        content.classList.remove('expanded');
+        if (icon) icon.classList.remove('rotated');
+      } else {
+        content.classList.add('expanded');
+        if (icon) icon.classList.add('rotated');
       }
     }
 
-    // 司機小卡彈窗 Modal 控制
-    function openModal(cardKey) {
-      const data = taxiCards[cardKey];
-      if (!data) return;
+    let allExpandedState = true;
+    function toggleAllAccordions() {
+      allExpandedState = !allExpandedState;
+      const visibleDay = document.querySelector('.day-detail:not(.hidden)');
+      if (!visibleDay) return;
 
-      document.getElementById('modal-category').innerText = data.category;
-      document.getElementById('modal-name-zh').innerText = data.nameZh;
-      document.getElementById('modal-name-kr').innerText = data.nameKr;
-      document.getElementById('modal-address-kr').innerText = data.addressKr;
-      document.getElementById('modal-tip').innerText = data.tip;
+      const contents = visibleDay.querySelectorAll('.accordion-content');
+      const icons = visibleDay.querySelectorAll('.chevron-icon');
 
-      const naverSearch = 'https://map.naver.com/p/search/' + encodeURIComponent(data.nameKr.replace(/\(.*?\)/g, '').trim());
+      contents.forEach(c => {
+        if (allExpandedState) c.classList.add('expanded');
+        else c.classList.remove('expanded');
+      });
+      icons.forEach(i => {
+        if (allExpandedState) i.classList.add('rotated');
+        else i.classList.remove('rotated');
+      });
+
+      document.getElementById('toggle-all-label').innerText = allExpandedState ? '全部收合' : '全部展開';
+    }
+
+    // ==========================================
+    // 8. 司機大字小卡 Modal 控制 (15 處)
+    // ==========================================
+    function openTaxiModal(cardId) {
+      const item = taxiCardsData.find(c => c.id === cardId);
+      if (!item) return;
+
+      document.getElementById('modal-category').innerText = item.category;
+      document.getElementById('modal-name-zh').innerText = item.nameZh;
+      document.getElementById('modal-name-kr').innerText = item.nameKr;
+      document.getElementById('modal-address-kr').innerText = item.addressKr;
+      document.getElementById('modal-tip').innerText = item.tip;
+
+      const naverSearch = 'https://map.naver.com/p/search/' + encodeURIComponent(item.nameKr.replace(/\(.*?\)/g, '').trim());
       document.getElementById('modal-naver-link').href = naverSearch;
+      document.getElementById('modal-google-link').href = item.googleMap || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.addressKr));
 
       document.getElementById('modal-copy-btn').onclick = function() {
-        copyText(data.addressKr);
+        copyAddress(item.addressKr);
       };
 
       document.getElementById('driver-modal').classList.remove('hidden');
     }
 
-    function closeModal() {
+    function closeTaxiModal() {
       document.getElementById('driver-modal').classList.add('hidden');
     }
 
-    // 複製文字至剪貼簿
-    function copyText(text) {
+    function openSeniorModal() {
+      document.getElementById('senior-modal').classList.remove('hidden');
+    }
+
+    function closeSeniorModal() {
+      document.getElementById('senior-modal').classList.add('hidden');
+    }
+
+    // ==========================================
+    // 9. 一鍵複製與 Toast 提示 (已複製韓文地址)
+    // ==========================================
+    function copyAddress(address) {
+      copyTextToClipboard(address, '已複製韓文地址：' + address);
+    }
+
+    function copyPhrase(phrase) {
+      copyTextToClipboard(phrase, '已複製常用韓語：' + phrase);
+    }
+
+    function copyTextToClipboard(text, successMsg) {
       if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => showToast('已複製地址：' + text));
+        navigator.clipboard.writeText(text).then(() => showToast(successMsg));
       } else {
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -1486,9 +1754,9 @@
         textarea.select();
         try {
           document.execCommand('copy');
-          showToast('已複製地址：' + text);
+          showToast(successMsg);
         } catch (err) {
-          showToast('複製失敗，請手動選取');
+          showToast('已選取，請手動複製');
         }
         document.body.removeChild(textarea);
       }
@@ -1496,127 +1764,146 @@
 
     function showToast(msg) {
       const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-msg');
-      toastMsg.innerText = msg;
+      const toastText = document.getElementById('toast-text');
+      toastText.innerText = msg;
       toast.classList.remove('opacity-0', 'pointer-events-none');
       setTimeout(() => {
         toast.classList.add('opacity-0', 'pointer-events-none');
-      }, 2500);
+      }, 2400);
     }
 
-    // 渲染司機卡片列表
+    // ==========================================
+    // 10. 渲染計程車卡清單 (15 張)
+    // ==========================================
     function renderTaxiCards(filter = 'all') {
-      const container = document.getElementById('taxi-cards-container');
+      const container = document.getElementById('taxi-cards-list');
       container.innerHTML = '';
 
-      Object.keys(taxiCards).forEach(key => {
-        const item = taxiCards[key];
+      taxiCardsData.forEach(item => {
         if (filter !== 'all' && item.type !== filter) return;
 
         const card = document.createElement('div');
-        card.className = 'bg-white p-3.5 rounded-2xl card-shadow border border-slate-200 cursor-pointer active:scale-[0.99] transition flex items-center justify-between hover:border-busan-gold';
-        card.onclick = () => openModal(key);
+        card.className = 'bg-white p-3.5 rounded-2xl card-shadow border border-slate-200 transition hover:border-amber-400 space-y-2';
 
-        let badgeBg = 'bg-slate-700';
-        if (item.type === 'food') badgeBg = 'bg-rose-600';
-        if (item.type === 'spot') badgeBg = 'bg-emerald-700';
-        if (item.type === 'hotel') badgeBg = 'bg-busan-navy';
+        let typeBadge = 'bg-slate-700 text-white';
+        if (item.type === 'food') typeBadge = 'bg-rose-600 text-white font-bold';
+        if (item.type === 'spot') typeBadge = 'bg-brand-blue text-white font-bold';
+        if (item.type === 'hotel') typeBadge = 'bg-brand-navy text-amber-300 font-bold';
 
         card.innerHTML = `
-          <div class="space-y-0.5 max-w-[80%]">
-            <span class="text-[10px] font-bold text-white ${badgeBg} px-1.5 py-0.5 rounded">${item.category}</span>
-            <h3 class="text-sm font-bold text-slate-900 truncate">${item.nameZh}</h3>
-            <p class="text-xs text-slate-600 font-kr font-bold truncate">${item.nameKr}</p>
-            <p class="text-[11px] text-slate-400 font-kr truncate">${item.addressKr}</p>
+          <div class="flex items-start justify-between cursor-pointer active:opacity-80" onclick="openTaxiModal('${item.id}')">
+            <div class="space-y-1 max-w-[82%]">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="text-[10px] font-black bg-slate-900 text-amber-300 px-1.5 py-0.5 rounded">${item.num}</span>
+                <span class="text-[10px] ${typeBadge} px-2 py-0.5 rounded">${item.category}</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900">${item.nameZh}</h3>
+              <p class="text-xs text-slate-800 font-kr font-black tracking-tight">${item.nameKr}</p>
+              <p class="text-[11px] text-slate-500 font-kr truncate">${item.addressKr}</p>
+            </div>
+            <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200">
+              <i class="fa-solid fa-expand text-xs"></i>
+            </div>
           </div>
-          <span class="w-8 h-8 rounded-full bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
-            <i class="fa-solid fa-expand text-xs"></i>
-          </span>
+
+          <div class="flex gap-2 pt-1 border-t border-slate-100 text-xs">
+            <button onclick="openTaxiModal('${item.id}')" class="flex-1 bg-brand-navy hover:bg-slate-800 text-amber-300 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+              <i class="fa-solid fa-address-card text-[11px]"></i> 司機大字卡
+            </button>
+            <button onclick="copyAddress('${item.addressKr}')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1">
+              <i class="fa-regular fa-copy text-[11px]"></i> 複製韓文地址
+            </button>
+            <a href="https://map.naver.com/p/search/${encodeURIComponent(item.nameKr.replace(/\(.*?\)/g, '').trim())}" target="_blank" class="w-9 h-8 bg-emerald-50 text-emerald-700 rounded-lg flex items-center justify-center font-bold">
+              <i class="fa-solid fa-compass text-xs"></i>
+            </a>
+          </div>
         `;
         container.appendChild(card);
       });
     }
 
-    function filterTaxi(type) {
-      document.querySelectorAll('.taxi-filter-btn').forEach(btn => {
-        btn.classList.remove('bg-busan-navy', 'text-white');
-        btn.classList.add('bg-white', 'text-slate-700');
+    function filterTaxiCards(type) {
+      document.querySelectorAll('.taxi-pill').forEach(btn => {
+        btn.classList.remove('bg-brand-navy', 'text-amber-300', 'shadow-sm');
+        btn.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
       });
-      const activeBtn = document.getElementById('taxi-filter-' + type);
+      const activeBtn = document.getElementById('taxi-tab-' + type);
       if (activeBtn) {
-        activeBtn.classList.add('bg-busan-navy', 'text-white');
-        activeBtn.classList.remove('bg-white', 'text-slate-700');
+        activeBtn.classList.add('bg-brand-navy', 'text-amber-300', 'shadow-sm');
+        activeBtn.classList.remove('bg-white', 'text-slate-700', 'border');
       }
       renderTaxiCards(type);
     }
 
-    // 渲染美食打卡清單
-    function renderFoodList(filter = 'all') {
-      const container = document.getElementById('food-list-container');
+    // ==========================================
+    // 11. 渲染美食地圖 (4 大分類 & 亮點)
+    // ==========================================
+    let currentFoodCat = 'all';
+
+    function renderFoodItems(category = 'all') {
+      const container = document.getElementById('food-items-container');
       container.innerHTML = '';
 
       let doneCount = 0;
-      foodItems.forEach(item => {
-        if (foodDone[item.id]) doneCount++;
+      foodItemsData.forEach(item => {
+        if (foodChecked[item.id]) doneCount++;
       });
 
-      // 更新進度條
-      const total = foodItems.length;
+      const total = foodItemsData.length;
       const pct = Math.round((doneCount / total) * 100);
-      document.getElementById('food-count-badge').innerText = `已打卡 ${doneCount} / ${total} 家 (${pct}%)`;
-      document.getElementById('food-progress-bar').style.width = pct + '%';
+      document.getElementById('food-stats-badge').innerText = `已打卡 ${doneCount} / ${total} 家 (${pct}%)`;
+      document.getElementById('food-stats-bar').style.width = pct + '%';
 
-      foodItems.forEach(item => {
-        if (filter === 'must' && item.tag !== 'must') return;
-        if (filter === 'rec' && item.tag !== 'rec') return;
-        if (filter === 'backup' && item.tag !== 'backup') return;
+      foodItemsData.forEach(item => {
+        if (category !== 'all' && item.category !== category) return;
 
-        const isDone = !!foodDone[item.id];
+        const isDone = !!foodChecked[item.id];
         const card = document.createElement('div');
-        card.className = `bg-white rounded-2xl p-3.5 card-shadow border transition-all ${isDone ? 'border-emerald-300 bg-emerald-50/20' : 'border-slate-200'}`;
-
-        let tagClass = 'bg-slate-100 text-slate-700';
-        if (item.tag === 'must') tagClass = 'bg-busan-gold text-busan-navy font-black';
-        if (item.tag === 'rec') tagClass = 'bg-rose-50 text-rose-700 font-bold';
-        if (item.tag === 'backup') tagClass = 'bg-blue-50 text-blue-700 font-bold';
+        card.className = `bg-white rounded-2xl p-3.5 card-shadow border transition-all ${isDone ? 'border-emerald-400 bg-emerald-50/20' : 'border-slate-200'} space-y-2.5`;
 
         card.innerHTML = `
           <div class="flex items-start justify-between">
             <div class="space-y-1">
               <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-[10px] px-2 py-0.5 rounded ${tagClass}">${item.tagLabel}</span>
-                <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-bold">${item.area}</span>
-                <span class="text-[10px] text-slate-400 font-medium">${item.schedule}</span>
+                <span class="text-[10px] font-black px-2 py-0.5 rounded ${item.tagColor}">${item.tagBadge}</span>
+                <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold">${item.area}</span>
               </div>
               <h3 class="text-base font-black text-slate-900 mt-1">${item.nameZh}</h3>
-              <p class="text-xs text-slate-500 font-kr font-bold">${item.nameKr}</p>
+              <p class="text-xs text-slate-600 font-kr font-bold">${item.nameKr}</p>
             </div>
             
-            <button onclick="toggleFood('${item.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${isDone ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
+            <button onclick="toggleFoodCheck('${item.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${isDone ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
               <i class="fa-${isDone ? 'solid' : 'regular'} fa-circle-check"></i>
-              <span>${isDone ? '已吃過' : '打卡'}</span>
+              <span>${isDone ? '已打卡' : '打卡'}</span>
             </button>
           </div>
 
-          <p class="text-xs text-slate-600 mt-2.5 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed">
-            ${item.feature}
-          </p>
-
-          <div class="mt-2.5 text-[11px] text-slate-500 space-y-0.5">
-            <div><i class="fa-regular fa-clock text-slate-400 mr-1"></i>營業時間：${item.time}</div>
-            <div><i class="fa-solid fa-phone text-slate-400 mr-1"></i>電話：${item.phone}</div>
-            <div class="font-kr truncate"><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>地址：${item.address}</div>
+          <!-- 招牌菜色 -->
+          <div class="text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1">
+            <div class="font-bold text-slate-900 flex items-center gap-1">
+              <i class="fa-solid fa-plate-wheat text-amber-600"></i> 招牌菜色：
+            </div>
+            <p class="text-slate-700">${item.signature}</p>
           </div>
 
-          <div class="mt-3 flex gap-2 pt-2 border-t border-slate-100">
-            <a href="${item.googleMap}" target="_blank" class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
+          <!-- 長輩友善亮點 -->
+          <div class="text-xs bg-amber-50/70 p-2.5 rounded-xl border border-amber-200/70 space-y-1">
+            <div class="font-bold text-amber-950 flex items-center gap-1">
+              <i class="fa-solid fa-shield-heart text-rose-500"></i> 長輩友善亮點：
+            </div>
+            <p class="text-amber-900 leading-relaxed">${item.seniorHighlight}</p>
+          </div>
+
+          <!-- 地址與外部導航按鈕 -->
+          <div class="pt-1 flex gap-2 border-t border-slate-100">
+            <a href="${item.googleMap}" target="_blank" class="flex-1 bg-blue-50 hover:bg-blue-100 text-brand-blue text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
               <i class="fa-solid fa-map-location-dot"></i> Google Maps
             </a>
             <a href="https://map.naver.com/p/search/${encodeURIComponent(item.nameKr)}" target="_blank" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
               <i class="fa-solid fa-compass"></i> Naver Map
             </a>
-            <button onclick="copyText('${item.address}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">
-              複製地址
+            <button onclick="copyAddress('${item.addressKr}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1">
+              <i class="fa-regular fa-copy"></i> 複製地址
             </button>
           </div>
         `;
@@ -1624,76 +1911,86 @@
       });
     }
 
-    function toggleFood(id) {
-      foodDone[id] = !foodDone[id];
-      localStorage.setItem('busan_food_done', JSON.stringify(foodDone));
-      renderFoodList(currentFoodFilter);
-      showToast(foodDone[id] ? '已標記為打卡享用！🎉' : '已取消打卡');
+    function toggleFoodCheck(id) {
+      foodChecked[id] = !foodChecked[id];
+      localStorage.setItem('busan_2026_food', JSON.stringify(foodChecked));
+      renderFoodItems(currentFoodCat);
+      showToast(foodChecked[id] ? '已標記為品嚐享用！🎉' : '已取消打卡');
     }
 
-    let currentFoodFilter = 'all';
-    function filterFood(tag) {
-      currentFoodFilter = tag;
-      document.querySelectorAll('.food-filter-btn').forEach(btn => {
-        btn.classList.remove('bg-busan-navy', 'text-white');
-        btn.classList.add('bg-white', 'text-slate-700');
+    function filterFoodCategory(cat) {
+      currentFoodCat = cat;
+      document.querySelectorAll('.food-pill').forEach(btn => {
+        btn.classList.remove('bg-brand-navy', 'text-amber-300', 'shadow-sm');
+        btn.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
       });
-      const activeBtn = document.getElementById('food-filter-' + tag);
+      const activeBtn = document.getElementById('food-btn-' + cat);
       if (activeBtn) {
-        activeBtn.classList.add('bg-busan-navy', 'text-white');
-        activeBtn.classList.remove('bg-white', 'text-slate-700');
+        activeBtn.classList.add('bg-brand-navy', 'text-amber-300', 'shadow-sm');
+        activeBtn.classList.remove('bg-white', 'text-slate-700', 'border');
       }
-      renderFoodList(tag);
+      renderFoodItems(cat);
     }
 
-    // 渲染檢查清單
-    function renderChecklists() {
-      const fwContainer = document.getElementById('firework-checklist');
-      fwContainer.innerHTML = '';
-      fireworkItems.forEach(item => {
-        const checked = !!checkedItems[item.id];
-        const row = document.createElement('label');
-        row.className = `flex items-start gap-2.5 p-2 rounded-xl text-xs cursor-pointer transition ${checked ? 'bg-white/20 text-amber-200' : 'bg-white/10 text-slate-200 hover:bg-white/15'}`;
-        row.innerHTML = `
-          <input type="checkbox" onchange="toggleCheck('${item.id}')" ${checked ? 'checked' : ''} class="mt-0.5 rounded text-amber-500 focus:ring-0">
-          <span class="${checked ? 'line-through opacity-80' : ''}">${item.text}</span>
-        `;
-        fwContainer.appendChild(row);
+    // ==========================================
+    // 12. 渲染核心檢查清單 (LocalStorage)
+    // ==========================================
+    function renderChecklist() {
+      const container = document.getElementById('core-checklist');
+      container.innerHTML = '';
+
+      let checkedCount = 0;
+      checklistItems.forEach(item => {
+        if (savedChecks[item.id]) checkedCount++;
       });
 
-      const trContainer = document.getElementById('travel-checklist');
-      trContainer.innerHTML = '';
-      travelItems.forEach(item => {
-        const checked = !!checkedItems[item.id];
+      const total = checklistItems.length;
+      const pct = Math.round((checkedCount / total) * 100);
+      document.getElementById('checklist-stats').innerText = `${checkedCount} / ${total} (${pct}%)`;
+      document.getElementById('checklist-bar').style.width = pct + '%';
+
+      checklistItems.forEach(item => {
+        const isChecked = !!savedChecks[item.id];
         const row = document.createElement('label');
-        row.className = `flex items-start gap-2.5 p-2 rounded-xl text-xs cursor-pointer transition ${checked ? 'bg-emerald-50 text-emerald-800' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'}`;
+        row.className = `flex items-start gap-2.5 p-2.5 rounded-xl cursor-pointer transition border ${isChecked ? 'bg-emerald-50/70 border-emerald-300 text-emerald-900' : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'}`;
+
         row.innerHTML = `
-          <input type="checkbox" onchange="toggleCheck('${item.id}')" ${checked ? 'checked' : ''} class="mt-0.5 rounded text-emerald-600 focus:ring-0">
-          <span class="${checked ? 'line-through opacity-80' : ''}">${item.text}</span>
+          <input type="checkbox" onchange="toggleCheckItem('${item.id}')" ${isChecked ? 'checked' : ''} class="mt-0.5 w-4 h-4 rounded text-emerald-600 focus:ring-0">
+          <span class="flex-1 text-xs leading-relaxed ${isChecked ? 'line-through text-slate-400' : 'font-medium'}">${item.text}</span>
         `;
-        trContainer.appendChild(row);
+        container.appendChild(row);
       });
     }
 
-    function toggleCheck(id) {
-      checkedItems[id] = !checkedItems[id];
-      localStorage.setItem('busan_checked', JSON.stringify(checkedItems));
-      renderChecklists();
+    function toggleCheckItem(id) {
+      savedChecks[id] = !savedChecks[id];
+      localStorage.setItem('busan_2026_checklist', JSON.stringify(savedChecks));
+      renderChecklist();
     }
 
-    // 鍵盤 ESC 關閉 Modal、點擊背景關閉
+    // 鍵盤 ESC 關閉 Modal、點擊遮罩關閉
     window.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeModal();
-    });
-    document.getElementById('driver-modal').addEventListener('click', e => {
-      if (e.target.id === 'driver-modal') closeModal();
+      if (e.key === 'Escape') {
+        closeTaxiModal();
+        closeSeniorModal();
+      }
     });
 
-    // 初始化載入
+    document.getElementById('driver-modal').addEventListener('click', e => {
+      if (e.target.id === 'driver-modal') closeTaxiModal();
+    });
+
+    document.getElementById('senior-modal').addEventListener('click', e => {
+      if (e.target.id === 'senior-modal') closeSeniorModal();
+    });
+
+    // ==========================================
+    // 初始化
+    // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
       renderTaxiCards('all');
-      renderFoodList('all');
-      renderChecklists();
+      renderFoodItems('all');
+      renderChecklist();
     });
   </script>
 
