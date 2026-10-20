@@ -46,7 +46,6 @@
   <style>
     body {
       -webkit-tap-highlight-color: transparent;
-      user-select: none;
       padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 16px));
     }
     .custom-scroll::-webkit-scrollbar {
@@ -79,6 +78,14 @@
     }
     .chevron-icon.rotated {
       transform: rotate(180deg);
+    }
+    /* 複製高亮動畫 */
+    .copy-highlight {
+      animation: copyFlash 0.6s ease-out;
+    }
+    @keyframes copyFlash {
+      0% { background-color: rgba(254, 243, 199, 0.9); }
+      100% { background-color: transparent; }
     }
   </style>
 </head>
@@ -133,7 +140,10 @@
               <span class="text-amber-300 underline text-[10px]">司機卡</span>
             </div>
             <div class="font-bold text-[11px] text-white truncate">La Viange 飯店</div>
-            <div class="text-[9px] text-slate-300 truncate">해운대해변로209번나길 56</div>
+            <div class="text-[9px] text-slate-300 truncate hover:text-amber-300 flex items-center justify-between" onclick="event.stopPropagation(); copyAddress('부산 해운대구 해운대해변로209번나길 56');" title="點擊直接複製地址">
+              <span class="truncate">해운대해변로209번나길 56</span>
+              <span class="text-amber-300 ml-1 text-[9px] shrink-0 font-bold"><i class="fa-regular fa-copy"></i> 複製</span>
+            </div>
           </div>
         </div>
       </div>
@@ -261,7 +271,7 @@
                 <span class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-1.5 py-0.5 rounded">連住 5 晚免搬遷</span>
               </div>
               <h3 class="text-sm font-bold text-slate-900 mt-1">入住 La Viange Maison de Hotel (海雲台)</h3>
-              <p class="text-xs text-slate-500 font-kr">부산 해운대구 해운대해변로209번나길 56</p>
+              <p class="text-xs text-slate-500 font-kr cursor-pointer hover:text-brand-blue flex items-center gap-1" onclick="copyAddress('부산 해운대구 해운대해변로209번나길 56')" title="點擊複製韓文地址"><i class="fa-regular fa-copy text-[10px]"></i><span>부산 해운대구 해운대해변로209번나길 56</span></p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
@@ -269,6 +279,14 @@
             <p class="mt-2.5">
               • <strong>全趟固定住宿：</strong>5 晚全住在海雲台 La Viange，免去長輩每日收拾打包與搬運行李的勞累。進房後換上輕便室內拖鞋，燒壺熱水泡茶暖胃。
             </p>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('hotel')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow active:scale-95 transition">
+                <i class="fa-solid fa-address-card"></i> 司機大字卡
+              </button>
+              <button onclick="copyAddress('부산 해운대구 해운대해변로209번나길 56')" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
+                <i class="fa-regular fa-copy text-amber-700"></i> 複製韓文地址
+              </button>
+            </div>
           </div>
         </div>
 
@@ -473,12 +491,17 @@
             <div>
               <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">11:30</span>
               <h3 class="text-sm font-bold text-slate-900 mt-1">中里海女村 (品嚐現撈海膽紫菜包飯)</h3>
-              <p class="text-xs text-slate-500 font-kr">중리해녀촌 (영도구)</p>
+              <p class="text-xs text-slate-500 font-kr cursor-pointer hover:text-brand-blue flex items-center gap-1" onclick="copyAddress('부산 영도구 중리남로 2-36')" title="點擊複製韓文地址"><i class="fa-regular fa-copy text-[10px]"></i><span>중리해녀촌 (부산 영도구 중리남로 2-36)</span></p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
           <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
             <p class="mt-2.5">品嚐現撈新鮮海膽紫菜包飯與海鮮拉麵，在平坦的港灣前欣賞道地海女現撈滋味。</p>
+            <div class="flex gap-2 pt-1">
+              <button onclick="copyAddress('부산 영도구 중리남로 2-36')" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
+                <i class="fa-regular fa-copy text-amber-700"></i> 複製海女村地址
+              </button>
+            </div>
           </div>
         </div>
 
@@ -553,6 +576,14 @@
               • <strong>15:00 平路漫步：</strong>BIFF 廣場吃熱騰騰現煎的堅果糖餅（씨앗호떡），富平市場外帶巨人炸雞（거인통닭）當晚茶點心。<br>
               • <strong>16:30 樂天百貨光復店：</strong>搭乘電梯至 13 樓頂樓空中花園，<strong>零爬坡鳥瞰海港與影島大橋</strong>，地下超市採買伴手禮。
             </p>
+            <div class="flex gap-2 pt-1">
+              <button onclick="copyAddress('부산 중구 비프광장로 36')" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
+                <i class="fa-regular fa-copy text-amber-700"></i> 複製糖餅地址
+              </button>
+              <button onclick="copyAddress('부산 중구 중구로47번길 34')" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
+                <i class="fa-regular fa-copy text-amber-700"></i> 複製巨人炸雞
+              </button>
+            </div>
           </div>
         </div>
 
@@ -629,12 +660,17 @@
             <div>
               <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">10:00</span>
               <h3 class="text-sm font-bold text-slate-900 mt-1">SEA LIFE 釜山水族館 (全平路無障礙漫遊)</h3>
-              <p class="text-xs text-slate-500 font-kr">씨라이프 부산아쿠아리움</p>
+              <p class="text-xs text-slate-500 font-kr cursor-pointer hover:text-brand-blue flex items-center gap-1" onclick="copyAddress('부산 해운대구 해운대해변로 266')" title="點擊複製水族館地址"><i class="fa-regular fa-copy text-[10px]"></i><span>부산 해운대구 해운대해변로 266</span></p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
           <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-1 border-t border-slate-100">
             <p class="mt-2.5">飯店旁海灘平路步行即達，全館有完善電梯與無障礙平緩步道，看海龜、企鵝與海底隧道餵食秀，長輩逛得輕鬆自在。</p>
+            <div class="flex gap-2 pt-1">
+              <button onclick="copyAddress('부산 해운대구 해운대해변로 266')" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
+                <i class="fa-regular fa-copy text-amber-700"></i> 複製水族館地址
+              </button>
+            </div>
           </div>
         </div>
 
@@ -656,13 +692,15 @@
               <p>🦪 <strong>超鮮甜暖湯：</strong>滿滿一整大盆盛裝堆積如山的蛤蜊、扇貝與淡菜，原汁原味清甜熱高湯，暖身充電！13:15 品嚐<strong>老虎麻糬冰（호랑이젤라떡）</strong>海鹽與開心果口味。</p>
             </div>
             <div class="flex gap-2 pt-1">
-              <button onclick="openTaxiModal('kalguksu31')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+              <button onclick="openTaxiModal('kalguksu31')" class="bg-brand-navy text-amber-300 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow active:scale-95 transition">
                 <i class="fa-solid fa-address-card"></i> 司機卡
               </button>
-              <a href="https://maps.app.goo.gl/Ne7wW8AH3qskiDjp7" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps
-              </a>
-              <button onclick="copyAddress('부산 해운대구 구남로41번길 46')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+              <button onclick="copyAddress('부산 해운대구 구남로41번길 46')" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
+                <i class="fa-regular fa-copy text-amber-700"></i> 複製刀削麵地址
+              </button>
+              <button onclick="copyAddress('부산 해운대구 달맞이길62번길 38 1층')" class="flex-1 bg-rose-50 hover:bg-rose-100 text-rose-900 border border-rose-300 text-xs font-bold py-1.5 px-2 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
+                <i class="fa-regular fa-copy text-rose-700"></i> 複製麻糬冰地址
+              </button>
             </div>
           </div>
         </div>
@@ -1148,30 +1186,31 @@
             目的地分類
           </span>
           <h2 id="modal-name-zh" class="text-base font-bold text-slate-700">目的地中文</h2>
-          <h1 id="modal-name-kr" class="text-2xl font-black text-slate-950 font-kr tracking-tight mt-1 leading-snug">
+          <h1 id="modal-name-kr" class="text-2xl font-black text-slate-950 font-kr tracking-tight mt-1 leading-snug cursor-pointer active:opacity-75 hover:text-amber-700 transition" title="點擊直接複製韓文名稱">
             목적지 한국어 이름
           </h1>
+          <span class="text-[10px] text-slate-400 mt-0.5 block"><i class="fa-regular fa-copy mr-0.5"></i>點擊韓文名或下方地址皆可複製</span>
         </div>
 
-        <div class="bg-slate-100 p-3.5 rounded-2xl border border-slate-200 text-left">
-          <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1 flex items-center justify-between">
+        <div id="modal-address-box" class="bg-amber-50 hover:bg-amber-100/70 p-3.5 rounded-2xl border-2 border-amber-300 text-left cursor-pointer active:scale-[0.98] transition shadow-sm" title="點擊直接複製韓文地址">
+          <div class="text-[10px] text-amber-900 font-bold uppercase tracking-wider mb-1 flex items-center justify-between">
             <span>주소 (韓文地址)</span>
-            <span class="text-[10px] text-brand-blue font-bold">可複製</span>
+            <span class="text-[10px] text-amber-950 font-black bg-amber-200 px-2 py-0.5 rounded-full shadow-xs flex items-center gap-1"><i class="fa-regular fa-copy"></i> 點此直接複製</span>
           </div>
-          <p id="modal-address-kr" class="text-sm font-black text-slate-900 font-kr leading-relaxed">
+          <p id="modal-address-kr" class="text-sm font-black text-slate-950 font-kr leading-relaxed">
             부산광역시...
           </p>
         </div>
 
-        <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-left text-xs text-amber-950">
+        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-left text-xs text-slate-700">
           <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i>
           <span id="modal-tip">長輩叮嚀備忘</span>
         </div>
 
         <!-- 外部地圖與操作按鈕 -->
         <div class="grid grid-cols-2 gap-2 pt-1">
-          <button id="modal-copy-btn" class="bg-slate-900 hover:bg-slate-800 text-amber-300 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
-            <i class="fa-regular fa-copy"></i> 複製韓文地址
+          <button id="modal-copy-btn" class="bg-amber-400 hover:bg-amber-500 text-slate-950 font-black py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition shadow-sm">
+            <i class="fa-regular fa-copy text-sm"></i> 複製韓文地址
           </button>
           <a id="modal-naver-link" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
             <i class="fa-solid fa-compass"></i> Naver 地圖
@@ -1715,6 +1754,12 @@
       document.getElementById('modal-copy-btn').onclick = function() {
         copyAddress(item.addressKr);
       };
+      document.getElementById('modal-address-box').onclick = function() {
+        copyAddress(item.addressKr);
+      };
+      document.getElementById('modal-name-kr').onclick = function() {
+        copyPhrase(item.nameKr);
+      };
 
       document.getElementById('driver-modal').classList.remove('hidden');
     }
@@ -1735,30 +1780,68 @@
     // 9. 一鍵複製與 Toast 提示 (已複製韓文地址)
     // ==========================================
     function copyAddress(address) {
+      if (!address) return;
       copyTextToClipboard(address, '已複製韓文地址：' + address);
     }
 
     function copyPhrase(phrase) {
-      copyTextToClipboard(phrase, '已複製常用韓語：' + phrase);
+      if (!phrase) return;
+      copyTextToClipboard(phrase, '已複製：' + phrase);
     }
 
     function copyTextToClipboard(text, successMsg) {
+      if (!text) return;
+      const cleanText = text.trim();
+
+      // 先嘗試現代 navigator.clipboard API
       if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => showToast(successMsg));
+        navigator.clipboard.writeText(cleanText)
+          .then(() => {
+            showToast(successMsg);
+          })
+          .catch(() => {
+            // 若權限受限或在 iframe 內失敗，自動降級至 execCommand
+            fallbackCopyText(cleanText, successMsg);
+          });
       } else {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        try {
-          document.execCommand('copy');
-          showToast(successMsg);
-        } catch (err) {
-          showToast('已選取，請手動複製');
-        }
-        document.body.removeChild(textarea);
+        fallbackCopyText(cleanText, successMsg);
+      }
+    }
+
+    function fallbackCopyText(text, successMsg) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      // 確保在 iOS 和 Android 上能正確選取且不跳動視窗
+      textarea.style.position = 'fixed';
+      textarea.style.top = '0';
+      textarea.style.left = '0';
+      textarea.style.width = '2em';
+      textarea.style.height = '2em';
+      textarea.style.padding = '0';
+      textarea.style.border = 'none';
+      textarea.style.outline = 'none';
+      textarea.style.boxShadow = 'none';
+      textarea.style.background = 'transparent';
+      textarea.setAttribute('readonly', '');
+
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+
+      let successful = false;
+      try {
+        successful = document.execCommand('copy');
+      } catch (err) {
+        successful = false;
+      }
+      document.body.removeChild(textarea);
+
+      if (successful) {
+        showToast(successMsg);
+      } else {
+        // 若雙重方式皆被瀏覽器限制，彈出原生 prompt 方便手動複製
+        window.prompt('請按 Ctrl+C 或長按複製：', text);
       }
     }
 
@@ -1769,7 +1852,7 @@
       toast.classList.remove('opacity-0', 'pointer-events-none');
       setTimeout(() => {
         toast.classList.add('opacity-0', 'pointer-events-none');
-      }, 2400);
+      }, 2500);
     }
 
     // ==========================================
@@ -1798,8 +1881,8 @@
                 <span class="text-[10px] ${typeBadge} px-2 py-0.5 rounded">${item.category}</span>
               </div>
               <h3 class="text-sm font-bold text-slate-900">${item.nameZh}</h3>
-              <p class="text-xs text-slate-800 font-kr font-black tracking-tight">${item.nameKr}</p>
-              <p class="text-[11px] text-slate-500 font-kr truncate">${item.addressKr}</p>
+              <p class="text-xs text-slate-800 font-kr font-black tracking-tight cursor-pointer hover:text-brand-blue" onclick="event.stopPropagation(); copyAddress('${item.addressKr}')" title="點擊複製韓文名與地址">${item.nameKr} <i class="fa-regular fa-copy text-[10px] text-slate-400"></i></p>
+              <p class="text-[11px] text-slate-500 font-kr truncate cursor-pointer hover:text-brand-blue flex items-center gap-1" onclick="event.stopPropagation(); copyAddress('${item.addressKr}')" title="點擊複製韓文地址"><i class="fa-solid fa-location-dot text-[10px] text-slate-400"></i><span class="truncate">${item.addressKr}</span></p>
             </div>
             <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200">
               <i class="fa-solid fa-expand text-xs"></i>
@@ -1807,13 +1890,13 @@
           </div>
 
           <div class="flex gap-2 pt-1 border-t border-slate-100 text-xs">
-            <button onclick="openTaxiModal('${item.id}')" class="flex-1 bg-brand-navy hover:bg-slate-800 text-amber-300 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+            <button onclick="openTaxiModal('${item.id}')" class="flex-1 bg-brand-navy hover:bg-slate-800 text-amber-300 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow-sm active:scale-95 transition">
               <i class="fa-solid fa-address-card text-[11px]"></i> 司機大字卡
             </button>
-            <button onclick="copyAddress('${item.addressKr}')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1">
-              <i class="fa-regular fa-copy text-[11px]"></i> 複製韓文地址
+            <button onclick="copyAddress('${item.addressKr}')" class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
+              <i class="fa-regular fa-copy text-[11px] text-amber-700"></i> 複製韓文地址
             </button>
-            <a href="https://map.naver.com/p/search/${encodeURIComponent(item.nameKr.replace(/\(.*?\)/g, '').trim())}" target="_blank" class="w-9 h-8 bg-emerald-50 text-emerald-700 rounded-lg flex items-center justify-center font-bold">
+            <a href="https://map.naver.com/p/search/${encodeURIComponent(item.nameKr.replace(/\(.*?\)/g, '').trim())}" target="_blank" class="w-9 h-8 bg-emerald-50 text-emerald-700 rounded-lg flex items-center justify-center font-bold active:scale-95 transition" title="Naver Map">
               <i class="fa-solid fa-compass text-xs"></i>
             </a>
           </div>
@@ -1869,10 +1952,10 @@
                 <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold">${item.area}</span>
               </div>
               <h3 class="text-base font-black text-slate-900 mt-1">${item.nameZh}</h3>
-              <p class="text-xs text-slate-600 font-kr font-bold">${item.nameKr}</p>
+              <p class="text-xs text-slate-600 font-kr font-bold cursor-pointer hover:text-brand-blue" onclick="copyPhrase('${item.nameKr}')" title="點擊複製韓文名">${item.nameKr} <i class="fa-regular fa-copy text-[10px] text-slate-400"></i></p>
             </div>
             
-            <button onclick="toggleFoodCheck('${item.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${isDone ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
+            <button onclick="toggleFoodCheck('${item.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${isDone ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'} active:scale-95">
               <i class="fa-${isDone ? 'solid' : 'regular'} fa-circle-check"></i>
               <span>${isDone ? '已打卡' : '打卡'}</span>
             </button>
@@ -1894,15 +1977,21 @@
             <p class="text-amber-900 leading-relaxed">${item.seniorHighlight}</p>
           </div>
 
-          <!-- 地址與外部導航按鈕 -->
+          <!-- 地址直接點擊複製列 -->
+          <div class="text-[11px] text-slate-600 font-kr flex items-center justify-between bg-slate-50 hover:bg-amber-50 p-2 rounded-xl border border-slate-200/60 cursor-pointer active:scale-98 transition" onclick="copyAddress('${item.addressKr}')" title="點擊直接複製地址">
+            <span class="truncate flex items-center gap-1"><i class="fa-solid fa-location-dot text-amber-600"></i><span class="truncate">${item.addressKr}</span></span>
+            <span class="text-amber-800 bg-amber-100 font-bold shrink-0 ml-1.5 text-[10px] px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-regular fa-copy"></i>點擊複製</span>
+          </div>
+
+          <!-- 外部導航按鈕 -->
           <div class="pt-1 flex gap-2 border-t border-slate-100">
-            <a href="${item.googleMap}" target="_blank" class="flex-1 bg-blue-50 hover:bg-blue-100 text-brand-blue text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
+            <a href="${item.googleMap}" target="_blank" class="flex-1 bg-blue-50 hover:bg-blue-100 text-brand-blue text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1 active:scale-95 transition">
               <i class="fa-solid fa-map-location-dot"></i> Google Maps
             </a>
-            <a href="https://map.naver.com/p/search/${encodeURIComponent(item.nameKr)}" target="_blank" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
+            <a href="https://map.naver.com/p/search/${encodeURIComponent(item.nameKr)}" target="_blank" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1 active:scale-95 transition">
               <i class="fa-solid fa-compass"></i> Naver Map
             </a>
-            <button onclick="copyAddress('${item.addressKr}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1">
+            <button onclick="copyAddress('${item.addressKr}')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 active:scale-95 transition">
               <i class="fa-regular fa-copy"></i> 複製地址
             </button>
           </div>
