@@ -4,7 +4,7 @@
 
 - **日期**：2026 年 11 月 4 日（週三）至 11 月 9 日（週一）
 - **航班**：真航空直飛 LJ586（台中 RMQ 16:15 ➔ 釜山 PUS 19:35）/ LJ585（釜山 PUS 14:00 ➔ 台中 RMQ 15:15）
-- **住宿**：海雲台 La Viange Maison de Hotel（56 Haeundaehaebyeon-ro 209beonna-gil, 連住 5 晚）
+- **住宿**：海雲台 Raviens Maison de Hotel（라비앙즈 메종 드 호텔，부산 해운대구 해운대해변로209번나길 56 | Naver 地圖：https://naver.me/FgTCLh2K，連住 5 晚）
 - **核心盛事**：11/7（週六）第 21 屆釜山國際煙火節（免費沙灘防寒＋露營椅舒適觀賞）
 
 ---
