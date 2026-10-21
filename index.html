@@ -109,6 +109,28 @@
       border-radius: 0.75rem;
       z-index: 10;
     }
+    .all-map-canvas {
+      height: 380px;
+      width: 100%;
+      border-radius: 0.85rem;
+      z-index: 10;
+    }
+    .map-pin-all-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+      min-width: 28px;
+      height: 22px;
+      border-radius: 9999px;
+      font-weight: 900;
+      font-size: 10px;
+      color: #ffffff;
+      border: 2px solid #ffffff;
+      box-shadow: 0 3px 8px rgba(15, 35, 58, 0.35);
+      font-family: "Noto Sans TC", sans-serif;
+      white-space: nowrap;
+    }
     .leaflet-popup-content-wrapper {
       border-radius: 0.85rem !important;
       padding: 2px !important;
@@ -236,9 +258,13 @@
           <div>D5</div>
           <div class="text-[10px] font-normal opacity-75">11/8 日</div>
         </button>
-        <button onclick="switchDay(6)" id="day-btn-6" class="day-btn flex-1 min-w-[56px] py-2 px-1 text-center rounded-xl font-bold text-xs transition text-slate-600 hover:bg-slate-50">
+        <button onclick="switchDay(6)" id="day-btn-6" class="day-btn flex-1 min-w-[52px] py-2 px-1 text-center rounded-xl font-bold text-xs transition text-slate-600 hover:bg-slate-50">
           <div>D6</div>
           <div class="text-[10px] font-normal opacity-75">11/9 一</div>
+        </button>
+        <button onclick="switchTab('allmap')" class="flex-1 min-w-[58px] py-2 px-1.5 text-center rounded-xl font-black text-xs transition bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100">
+          <div>🗺️全圖</div>
+          <div class="text-[10px] font-bold text-amber-700">6天總覽</div>
         </button>
       </div>
 
@@ -2063,30 +2089,95 @@
       </div>
     </section>
 
+
+    <!-- ==================================================== -->
+    <!-- TAB 5: 🗺️ 全程總地圖 (All Days Aggregated Map) -->
+    <!-- ==================================================== -->
+    <section id="tab-allmap" class="tab-content hidden space-y-3">
+      <!-- 頂部說明橫幅 -->
+      <div class="bg-gradient-to-r from-brand-navy via-brand-blue to-slate-900 text-white p-3.5 rounded-2xl shadow-md">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-black flex items-center gap-1.5 text-amber-300">
+            <i class="fa-solid fa-map-location-dot"></i> 6天5夜 全程景點與美食總地圖
+          </h2>
+          <span class="text-[10px] bg-white/20 text-white font-bold px-2 py-0.5 rounded-full">D1 ～ D6 彙總</span>
+        </div>
+        <p class="text-xs text-slate-200 mt-1">將 6 天所有景點、餐廳、海雲台飯店與金海機場彙總於同一張地圖，可自由篩選單日或全覽！</p>
+      </div>
+
+      <!-- 天數篩選膠囊列 -->
+      <div class="flex gap-1.5 overflow-x-auto custom-scroll pb-1">
+        <button onclick="filterAllMapDay('all')" id="allmap-btn-all" class="allmap-pill shrink-0 px-3 py-1.5 rounded-full text-xs font-black bg-brand-navy text-amber-300 shadow-sm transition">全部天數 (D1-D6)</button>
+        <button onclick="filterAllMapDay(1)" id="allmap-btn-1" class="allmap-pill shrink-0 px-2.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background:#0284c7"></span>D1 三</button>
+        <button onclick="filterAllMapDay(2)" id="allmap-btn-2" class="allmap-pill shrink-0 px-2.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background:#d97706"></span>D2 四</button>
+        <button onclick="filterAllMapDay(3)" id="allmap-btn-3" class="allmap-pill shrink-0 px-2.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background:#059669"></span>D3 五</button>
+        <button onclick="filterAllMapDay(4)" id="allmap-btn-4" class="allmap-pill shrink-0 px-2.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background:#e11d48"></span>D4 六</button>
+        <button onclick="filterAllMapDay(5)" id="allmap-btn-5" class="allmap-pill shrink-0 px-2.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background:#7c3aed"></span>D5 日</button>
+        <button onclick="filterAllMapDay(6)" id="allmap-btn-6" class="allmap-pill shrink-0 px-2.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200 transition flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background:#0f233a"></span>D6 一</button>
+      </div>
+
+      <!-- 彙總大地圖主卡片 -->
+      <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-3 space-y-2.5">
+        <div class="flex items-center justify-between gap-2">
+          <span id="allmap-status-title" class="text-xs font-black text-slate-900">📍 目前顯示：Day 1 ～ Day 6 全部行程點位</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="toggleAllMapLabels()" id="allmap-label-btn" class="bg-blue-50 hover:bg-blue-100 text-brand-blue border border-blue-200 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 transition">
+              <i class="fa-solid fa-tag text-[10px]"></i> 隱藏名稱
+            </button>
+            <button onclick="resetAllMapBounds()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 transition">
+              <i class="fa-solid fa-expand text-[10px]"></i> 全覽視野
+            </button>
+          </div>
+        </div>
+
+        <div id="leaflet-map-all" class="all-map-canvas border border-slate-200"></div>
+
+        <!-- 6天顏色圖例 -->
+        <div class="flex items-center justify-between flex-wrap gap-1.5 text-[10px] text-slate-600 font-bold bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200/70">
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#0284c7"></span>D1 抵達海雲台</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#d97706"></span>D2 甘川/松島/西面</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#059669"></span>D3 影島/南浦/西面</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#e11d48"></span>D4 海雲台/廣安煙火</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#7c3aed"></span>D5 東釜山/膠囊/SPA</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:#0f233a"></span>D6 大淵湯飯/返台</span>
+        </div>
+      </div>
+
+      <!-- 6天全站點快速定位列表 -->
+      <div id="allmap-stops-directory" class="space-y-2.5">
+        <!-- JS 動態渲染 D1 ~ D6 站點總表 -->
+      </div>
+    </section>
+
   </main>
 
 
   <!-- ================= 底部固定導航列 (Tab 切換) ================= -->
   <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
-    <div class="max-w-md mx-auto px-2 py-1.5 flex items-center justify-around">
+    <div class="max-w-md mx-auto px-1.5 py-1.5 flex items-center justify-around">
       
       <button onclick="switchTab('itinerary')" id="nav-btn-itinerary" class="nav-item flex-1 py-1 text-center font-bold text-brand-navy transition flex flex-col items-center">
-        <i class="fa-solid fa-calendar-day text-lg mb-0.5"></i>
+        <i class="fa-solid fa-calendar-day text-base mb-0.5"></i>
         <span class="text-[11px] leading-tight">每日行程</span>
       </button>
 
+      <button onclick="switchTab('allmap')" id="nav-btn-allmap" class="nav-item flex-1 py-1 text-center font-medium text-slate-400 hover:text-slate-600 transition flex flex-col items-center">
+        <i class="fa-solid fa-map-location-dot text-base mb-0.5"></i>
+        <span class="text-[11px] leading-tight">全程地圖</span>
+      </button>
+
       <button onclick="switchTab('taxi')" id="nav-btn-taxi" class="nav-item flex-1 py-1 text-center font-medium text-slate-400 hover:text-slate-600 transition flex flex-col items-center">
-        <i class="fa-solid fa-taxi text-lg mb-0.5"></i>
-        <span class="text-[11px] leading-tight">計程車站名卡</span>
+        <i class="fa-solid fa-taxi text-base mb-0.5"></i>
+        <span class="text-[11px] leading-tight">司機站名卡</span>
       </button>
 
       <button onclick="switchTab('food')" id="nav-btn-food" class="nav-item flex-1 py-1 text-center font-medium text-slate-400 hover:text-slate-600 transition flex flex-col items-center">
-        <i class="fa-solid fa-utensils text-lg mb-0.5"></i>
+        <i class="fa-solid fa-utensils text-base mb-0.5"></i>
         <span class="text-[11px] leading-tight">美食地圖</span>
       </button>
 
       <button onclick="switchTab('checklist')" id="nav-btn-checklist" class="nav-item flex-1 py-1 text-center font-medium text-slate-400 hover:text-slate-600 transition flex flex-col items-center">
-        <i class="fa-solid fa-clipboard-check text-lg mb-0.5"></i>
+        <i class="fa-solid fa-clipboard-check text-base mb-0.5"></i>
         <span class="text-[11px] leading-tight">行前清單</span>
       </button>
 
@@ -2922,6 +3013,269 @@
     }
 
     // ==========================================
+    // 4B. 6天全程總地圖 (All Days Aggregated Map)
+    // ==========================================
+    const dayColorPalette = {
+      1: { hex: '#0284c7', name: 'Day 1 (11/4 三)' },
+      2: { hex: '#d97706', name: 'Day 2 (11/5 四)' },
+      3: { hex: '#059669', name: 'Day 3 (11/6 五)' },
+      4: { hex: '#e11d48', name: 'Day 4 (11/7 六)' },
+      5: { hex: '#7c3aed', name: 'Day 5 (11/8 日)' },
+      6: { hex: '#0f233a', name: 'Day 6 (11/9 一)' }
+    };
+
+    let allMapInstance = null;
+    let allMapLayerGroup = null;
+    let allMapCurrentBounds = null;
+    let allMapFilter = 'all';
+    let allMapShowLabels = true;
+    let allMapMarkerMap = {};
+
+    function ensureAllMapInitialized() {
+      if (typeof L === 'undefined') return;
+      const mapEl = document.getElementById('leaflet-map-all');
+      if (!mapEl) return;
+
+      if (!allMapInstance) {
+        allMapInstance = L.map(mapEl, {
+          zoomControl: true,
+          attributionControl: false
+        });
+
+        const primaryTile = L.tileLayer('https://{s}.google.com/vt/lyrs=m&hl=zh-TW&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        }).addTo(allMapInstance);
+
+        let fallbackAdded = false;
+        primaryTile.on('tileerror', () => {
+          if (!fallbackAdded) {
+            fallbackAdded = true;
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              maxZoom: 19
+            }).addTo(allMapInstance);
+          }
+        });
+
+        allMapLayerGroup = L.layerGroup().addTo(allMapInstance);
+        populateAllMapLayers(allMapFilter);
+      } else {
+        setTimeout(() => {
+          allMapInstance.invalidateSize();
+          if (allMapCurrentBounds) {
+            allMapInstance.fitBounds(allMapCurrentBounds, { padding: [30, 30], maxZoom: 15 });
+          }
+        }, 60);
+      }
+    }
+
+    function populateAllMapLayers(filterDay = 'all') {
+      if (!allMapInstance || !allMapLayerGroup) return;
+      allMapLayerGroup.clearLayers();
+      allMapMarkerMap = {};
+
+      const allCoords = [];
+      const sharedHubMarkers = {};
+
+      for (let d = 1; d <= 6; d++) {
+        if (filterDay !== 'all' && Number(filterDay) !== d) continue;
+        const route = dailyMapRoutes[d];
+        if (!route) continue;
+
+        const colorHex = dayColorPalette[d].hex;
+        const dayLatLngs = [];
+
+        route.stops.forEach((s, idx) => {
+          const pt = [s.lat, s.lng];
+          dayLatLngs.push(pt);
+          allCoords.push(pt);
+
+          const key = `${d}-${idx}`;
+
+          // 若為全覽模式，飯店與機場共用同一個核心地標避免重疊
+          if (filterDay === 'all' && (s.type === 'hotel' || s.type === 'airport')) {
+            const hubKey = s.type;
+            if (sharedHubMarkers[hubKey]) {
+              allMapMarkerMap[key] = sharedHubMarkers[hubKey];
+              return;
+            }
+          }
+
+          const isHubInAll = filterDay === 'all' && (s.type === 'hotel' || s.type === 'airport');
+          const badgeText = isHubInAll ? (s.type === 'hotel' ? '🏨飯店' : '✈️機場') : `D${d}-${s.num}`;
+          const badgeBg = isHubInAll ? '#0f233a' : colorHex;
+          const labelText = isHubInAll
+            ? (s.type === 'hotel' ? '🏨 Raviens 飯店 (連住5晚)' : '✈️ 金海國際機場')
+            : `D${d}-${s.num} ${s.nameZh}`;
+
+          const icon = L.divIcon({
+            className: '',
+            html: `<div class="map-pin-all-badge" style="background:${badgeBg};">${badgeText}</div>`,
+            iconSize: [34, 22],
+            iconAnchor: [17, 11],
+            popupAnchor: [0, -12]
+          });
+
+          const searchUrl = getGoogleSearchUrl(s.nameZh, s.nameKr);
+          const taxiBtnHtml = s.taxiId
+            ? `<button onclick="openTaxiModal('${s.taxiId}')" style="background:#0f233a;color:#fcd34d;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;">司機卡</button>`
+            : '';
+
+          const popupHtml = `
+            <div style="min-width:185px;font-family:'Noto Sans TC',sans-serif;">
+              <div style="font-size:10px;font-weight:800;color:${badgeBg};">${dayColorPalette[d].name} · 第 ${s.num} 站 (${s.time})</div>
+              <div style="font-size:13px;font-weight:900;color:#0f172a;margin-top:1px;">${s.nameZh}</div>
+              <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;">${s.nameKr}</div>
+              <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                ${taxiBtnHtml}
+                <a href="${s.googleMap}" target="_blank" style="background:#eff6ff;color:#1d4ed8;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;text-decoration:none;">Google</a>
+                <a href="${s.naverMap}" target="_blank" style="background:#ecfdf5;color:#047857;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;text-decoration:none;">Naver</a>
+                <a href="${searchUrl}" target="_blank" style="background:#fef3c7;color:#92400e;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;text-decoration:none;">搜尋</a>
+              </div>
+            </div>
+          `;
+
+          const marker = L.marker(pt, { icon }).addTo(allMapLayerGroup).bindPopup(popupHtml);
+          marker.bindTooltip(labelText, {
+            permanent: allMapShowLabels,
+            direction: s.dir || 'top',
+            offset: s.offset || [0, -12],
+            className: 'map-stop-label'
+          });
+
+          allMapMarkerMap[key] = marker;
+          if (isHubInAll) {
+            sharedHubMarkers[s.type] = marker;
+          }
+        });
+
+        if (dayLatLngs.length > 1) {
+          L.polyline(dayLatLngs, {
+            color: colorHex,
+            weight: filterDay === 'all' ? 2.5 : 3.5,
+            opacity: filterDay === 'all' ? 0.65 : 0.85,
+            dashArray: '5, 6'
+          }).addTo(allMapLayerGroup);
+        }
+      }
+
+      if (allCoords.length > 0) {
+        allMapCurrentBounds = L.latLngBounds(allCoords);
+        setTimeout(() => {
+          allMapInstance.invalidateSize();
+          allMapInstance.fitBounds(allMapCurrentBounds, { padding: [30, 30], maxZoom: 15 });
+        }, 60);
+      }
+    }
+
+    function filterAllMapDay(dayFilter) {
+      allMapFilter = dayFilter;
+      document.querySelectorAll('.allmap-pill').forEach(btn => {
+        btn.classList.remove('bg-brand-navy', 'text-amber-300', 'shadow-sm', 'font-black');
+        btn.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200', 'font-bold');
+      });
+      const activeBtn = document.getElementById('allmap-btn-' + dayFilter);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-brand-navy', 'text-amber-300', 'shadow-sm', 'font-black');
+        activeBtn.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
+      }
+
+      const titleEl = document.getElementById('allmap-status-title');
+      if (titleEl) {
+        titleEl.innerText = dayFilter === 'all'
+          ? '📍 目前顯示：Day 1 ～ Day 6 全部行程點位'
+          : `📍 目前顯示：${dayColorPalette[dayFilter].name} 路線與景點`;
+      }
+
+      populateAllMapLayers(dayFilter);
+      renderAllMapDirectory(dayFilter);
+    }
+
+    function toggleAllMapLabels() {
+      allMapShowLabels = !allMapShowLabels;
+      const btn = document.getElementById('allmap-label-btn');
+      if (btn) {
+        btn.innerHTML = `<i class="fa-solid fa-tag text-[10px]"></i> ${allMapShowLabels ? '隱藏名稱' : '顯示名稱'}`;
+      }
+      populateAllMapLayers(allMapFilter);
+    }
+
+    function resetAllMapBounds() {
+      if (!allMapInstance || !allMapCurrentBounds) return;
+      allMapInstance.closePopup();
+      allMapInstance.fitBounds(allMapCurrentBounds, { padding: [30, 30], maxZoom: 15 });
+    }
+
+    function focusAllMapStop(dayNum, stopIdx) {
+      const marker = allMapMarkerMap[`${dayNum}-${stopIdx}`];
+      if (!marker || !allMapInstance) return;
+      const mapCard = document.getElementById('leaflet-map-all');
+      if (mapCard) {
+        mapCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      setTimeout(() => {
+        allMapInstance.setView(marker.getLatLng(), 16, { animate: true });
+        marker.openPopup();
+      }, 220);
+    }
+
+    function jumpToDayFromAllMap(dayNum) {
+      switchTab('itinerary');
+      switchDay(dayNum);
+    }
+
+    function renderAllMapDirectory(filterDay = 'all') {
+      const container = document.getElementById('allmap-stops-directory');
+      if (!container) return;
+      container.innerHTML = '';
+
+      for (let d = 1; d <= 6; d++) {
+        if (filterDay !== 'all' && Number(filterDay) !== d) continue;
+        const route = dailyMapRoutes[d];
+        if (!route) continue;
+        const colorHex = dayColorPalette[d].hex;
+
+        const stopsRows = route.stops.map((s, idx) => {
+          const searchUrl = getGoogleSearchUrl(s.nameZh, s.nameKr);
+          return `
+            <div class="flex items-center justify-between gap-2 py-1.5 border-t border-slate-100 first:border-t-0">
+              <div onclick="focusAllMapStop(${d}, ${idx})" class="flex items-center gap-2 min-w-0 flex-1 cursor-pointer active:opacity-75">
+                <span class="px-1.5 py-0.5 rounded-full text-[10px] font-black text-white shrink-0" style="background:${colorHex}">D${d}-${s.num}</span>
+                <div class="min-w-0">
+                  <div class="text-xs font-bold text-slate-900 truncate">${s.nameZh} <span class="text-[10px] text-slate-400 font-normal">${s.time}</span></div>
+                  <div class="text-[10px] text-slate-500 font-kr truncate">${s.nameKr}</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                <button onclick="focusAllMapStop(${d}, ${idx})" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg text-[10px] font-bold">定位</button>
+                <a href="${searchUrl}" target="_blank" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-2 py-1 rounded-lg text-[10px] font-bold">搜尋</a>
+                <a href="${s.naverMap}" target="_blank" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg text-[10px] font-bold">Naver</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const dayBox = document.createElement('div');
+        dayBox.className = 'bg-white rounded-2xl card-shadow border border-slate-200 p-3 space-y-1.5';
+        dayBox.innerHTML = `
+          <div class="flex items-center justify-between pb-1">
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-full inline-block" style="background:${colorHex}"></span>
+              <h3 class="text-xs font-black text-slate-900">${route.title}</h3>
+            </div>
+            <button onclick="jumpToDayFromAllMap(${d})" class="text-[10px] font-bold text-brand-blue bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-lg shrink-0">
+              看 D${d} 詳情 ➔
+            </button>
+          </div>
+          <div class="divide-y divide-slate-100">
+            ${stopsRows}
+          </div>
+        `;
+        container.appendChild(dayBox);
+      }
+    }
+
+    // ==========================================
     // 5. 導航 Tab 切換控制
     // ==========================================
     function switchTab(tabId) {
@@ -2940,6 +3294,9 @@
       }
       if (tabId === 'itinerary') {
         ensureDayMapInitialized(currentDayNum);
+      }
+      if (tabId === 'allmap') {
+        ensureAllMapInitialized();
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -3408,6 +3765,7 @@
     // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
       renderAllDayMapCards();
+      renderAllMapDirectory('all');
       ensureDayMapInitialized(1);
       renderTaxiCards('all');
       renderFoodItems('all');
