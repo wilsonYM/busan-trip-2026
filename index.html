@@ -81,7 +81,7 @@
       transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease-out;
     }
     .accordion-content.expanded {
-      max-height: 1200px;
+      max-height: 2000px;
       opacity: 1;
     }
     .chevron-icon {
@@ -97,6 +97,24 @@
     @keyframes copyFlash {
       0% { background-color: rgba(254, 243, 199, 0.9); }
       100% { background-color: transparent; }
+    }
+    /* 韓文語音發音按鈕與播放動態效果 */
+    .tts-btn {
+      transition: all 0.2s ease;
+    }
+    .tts-btn:active {
+      transform: scale(0.94);
+    }
+    .speaking-active {
+      background-color: #e11d48 !important;
+      color: #ffffff !important;
+      border-color: #fb7185 !important;
+      box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.3) !important;
+      animation: ttsPulse 1.1s infinite ease-in-out;
+    }
+    @keyframes ttsPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
     }
   </style>
 </head>
@@ -114,9 +132,15 @@
           </span>
           <span class="text-xs font-bold text-amber-200">4人長輩同行</span>
         </div>
-        <button onclick="openSeniorModal()" class="text-[11px] bg-white/15 hover:bg-white/25 text-amber-200 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 transition">
-          <i class="fa-solid fa-heart-pulse text-rose-400"></i>長輩無痛叮嚀
-        </button>
+        <div class="flex items-center gap-1.5">
+          <button onclick="toggleSpeechRate()" id="header-rate-btn" class="text-[11px] bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 transition" title="切換韓文語音朗讀速度">
+            <i class="fa-solid fa-volume-high text-[10px]"></i>
+            <span id="header-rate-label">語音: 正常</span>
+          </button>
+          <button onclick="openSeniorModal()" class="text-[11px] bg-white/15 hover:bg-white/25 text-amber-200 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 transition">
+            <i class="fa-solid fa-heart-pulse text-rose-400"></i>長輩叮嚀
+          </button>
+        </div>
       </div>
 
       <!-- 主標題 -->
@@ -125,10 +149,12 @@
           <span>2026 釜山家庭互動手冊</span>
           <span class="text-[11px] bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded">6天5夜</span>
         </h1>
-        <span class="text-[11px] text-slate-300 font-kr">부산 가족여행</span>
+        <button onclick="speakKorean('부산 가족여행', '釜山家庭旅行', this, event)" class="tts-btn text-[11px] text-amber-200 hover:text-white font-kr flex items-center gap-1 bg-white/10 px-2 py-0.5 rounded-full">
+          <i class="fa-solid fa-volume-high text-[10px]"></i>부산 가족여행
+        </button>
       </div>
 
-      <!-- 快速航班與住宿卡 (可點擊快速查看飯店司機卡) -->
+      <!-- 快速航班與住宿卡 (可點擊快速查看飯店司機卡或直接發音) -->
       <div class="mt-2.5 bg-white/10 rounded-xl p-2.5 text-xs grid grid-cols-2 gap-2 border border-white/15 backdrop-blur-sm">
         <div class="flex items-center gap-2">
           <div class="w-7 h-7 rounded-lg bg-amber-400/20 text-amber-300 flex items-center justify-center shrink-0">
@@ -141,18 +167,23 @@
           </div>
         </div>
         
-        <div class="flex items-center gap-2 cursor-pointer active:scale-98 transition" onclick="openTaxiModal('hotel')">
-          <div class="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0">
-            <i class="fa-solid fa-hotel text-xs"></i>
-          </div>
-          <div class="truncate">
-            <div class="text-[10px] text-slate-300 flex items-center justify-between">
-              <span>海雲台連住5晚</span>
-              <span class="text-amber-300 underline text-[10px]">司機卡</span>
+        <div class="flex items-center justify-between gap-1.5 cursor-pointer active:scale-98 transition" onclick="openTaxiModal('hotel')">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <div class="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-300 flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-hotel text-xs"></i>
             </div>
-            <div class="font-bold text-[11px] text-white truncate">Raviens 飯店</div>
-            <div class="text-[9px] text-slate-300 truncate">라비앙즈 메종드 호텔</div>
+            <div class="truncate">
+              <div class="text-[10px] text-slate-300 flex items-center gap-1">
+                <span>海雲台5晚</span>
+                <span class="text-amber-300 underline text-[10px]">司機卡</span>
+              </div>
+              <div class="font-bold text-[11px] text-white truncate">Raviens 飯店</div>
+              <div class="text-[9px] text-slate-300 truncate font-kr">라비앙즈 메종드 호텔</div>
+            </div>
           </div>
+          <button onclick="speakDriverSentence('라비앙즈 메종 드 호텔', '부산 해운대구 해운대해변로209번나길 56', '飯店導航語音', this, event)" class="tts-btn shrink-0 w-7 h-7 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center shadow hover:bg-amber-300" title="播放飯店韓文名稱與地址給司機聽">
+            <i class="fa-solid fa-volume-high text-xs"></i>
+          </button>
         </div>
       </div>
     </div>
@@ -232,8 +263,26 @@
             <p class="mt-2.5">
               • <strong>長輩無痛建議：</strong>台中清泉崗通關快速不擁擠。抵達金海機場後，長輩先在行李轉盤旁洗手間上好廁所，無需著急。入境填妥紙本入境卡即可通關。
             </p>
-            <div class="bg-slate-50 p-2.5 rounded-xl text-[11px] text-slate-500">
-              航班資訊：LJ586 16:15 RMQ ➔ 19:35 PUS | 4人同行有託運行李
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 抵達航廈 (韓文地名)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">김해국제공항 국제선 청사</span>
+                </div>
+                <button onclick="speakKorean('김해국제공항 국제선 청사', '金海國際機場國際線航廈', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 강서구 공항진입로 108</span>
+                </div>
+                <button onclick="speakKorean('부산 강서구 공항진입로 108', '金海機場地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -259,15 +308,39 @@
               <p>4 個人 4 個大行李箱，打開 Kakao T 叫「<strong>벤（Venti / 大型大車）</strong>」！車程約 45～50 分鐘直送飯店門口。</p>
               <p class="text-slate-600 text-[11px]">省去拖大行李擠輕軌、轉 24 站地鐵與找無障礙電梯的疲累，4 人分攤車資每人只要百元台幣，極度划算！</p>
             </div>
-            <div class="flex gap-2 pt-1">
-              <button onclick="openTaxiModal('hotel')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1 shadow">
-                <i class="fa-solid fa-address-card"></i> 司機溝通大字卡
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-white p-2.5 rounded-xl border border-amber-300 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 目的地韓文名稱 (Raviens 飯店)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">라비앙즈 메종 드 호텔</span>
+                </div>
+                <button onclick="speakKorean('라비앙즈 메종 드 호텔', 'Raviens 飯店名稱', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 해운대해변로209번나길 56</span>
+                </div>
+                <button onclick="speakKorean('부산 해운대구 해운대해변로209번나길 56', 'Raviens 飯店地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button onclick="openTaxiModal('hotel')" class="flex-1 min-w-[100px] bg-brand-navy text-amber-300 text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 司機大字卡
               </button>
-              <button onclick="copyAddress('부산 해운대구 해운대해변로209번나길 56')" class="bg-white border border-slate-300 text-slate-700 text-xs font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1">
-                <i class="fa-regular fa-copy"></i> 複製地址
+              <button onclick="speakDriverSentence('라비앙즈 메종 드 호텔', '부산 해운대구 해운대해변로209번나길 56', '對司機說：去飯店', this, event)" class="tts-btn bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
               </button>
-              <a href="https://naver.me/FgTCLh2K" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1 shadow-sm">
-                <i class="fa-solid fa-compass"></i> Naver Map
+              <button onclick="copyAddress('부산 해운대구 해운대해변로209번나길 56')" class="bg-white border border-slate-300 text-slate-700 text-xs font-bold py-2 px-2.5 rounded-xl flex items-center justify-center gap-1">
+                <i class="fa-regular fa-copy"></i> 複製
+              </button>
+              <a href="https://naver.me/FgTCLh2K" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-2.5 rounded-xl flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-compass"></i> Naver
               </a>
             </div>
           </div>
@@ -290,6 +363,27 @@
             <p class="mt-2.5">
               • <strong>全趟固定住宿：</strong>5 晚全住在海雲台 Raviens Maison de Hotel（라비앙즈），免去長輩每日收拾打包與搬運行李的勞累。進房後換上輕便室內拖鞋，燒壺熱水泡茶暖胃。
             </p>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 飯店韓文名稱</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">라비앙즈 메종 드 호텔</span>
+                </div>
+                <button onclick="speakKorean('라비앙즈 메종 드 호텔', 'Raviens 飯店名稱', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 해운대해변로209번나길 56</span>
+                </div>
+                <button onclick="speakKorean('부산 해운대구 해운대해변로209번나길 56', 'Raviens 飯店地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <a href="https://naver.me/FgTCLh2K" target="_blank" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
                 <i class="fa-solid fa-compass"></i> Naver Map 導航
@@ -310,7 +404,7 @@
                 <span class="text-[10px] bg-rose-50 text-rose-700 font-bold px-1.5 py-0.5 rounded">外帶回房享用</span>
               </div>
               <h3 class="text-sm font-bold text-slate-900 mt-1">外帶「Bhc 炸雞（海雲台店）」</h3>
-              <p class="text-xs text-slate-500">招牌起司炸雞 (뿌링클) 與起司球</p>
+              <p class="text-xs text-slate-500 font-kr">bhc치킨 해운대점・뿌링클 & 치즈볼</p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
@@ -318,6 +412,36 @@
             <p class="mt-2.5">
               • <strong>長輩零負擔攻略：</strong>長輩在飯店沙發舒服休息看電視，派年輕人步行至鄰近 Bhc 炸雞外帶熱騰騰的招牌起司炸雞與起司球。配韓國香蕉牛奶或啤酒，第一晚完美開胃！
             </p>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 店家韓文名稱</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">bhc치킨 해운대점</span>
+                </div>
+                <button onclick="speakKorean('비에이치씨치킨 해운대점', 'Bhc炸雞海雲台店', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸店名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 해운대해변로298번길 24</span>
+                </div>
+                <button onclick="speakKorean('부산 해운대구 해운대해변로298번길 24', 'Bhc炸雞地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🍗 點餐外帶韓文語音 (起司炸雞+起司球外帶)</span>
+                  <span class="font-kr font-bold text-rose-700 text-[11px]">뿌링클 한 마리랑 치즈볼 포장해 주세요</span>
+                </div>
+                <button onclick="speakKorean('뿌링클 한 마리랑 치즈볼 포장해 주세요', '點餐：起司炸雞與起司球外帶', this, event)" class="tts-btn shrink-0 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 點餐語音
+                </button>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <a href="https://maps.app.goo.gl/NowtfHpNxyqEDKT17" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
                 <i class="fa-solid fa-map-location-dot"></i> Google Maps
@@ -359,9 +483,33 @@
               <div class="font-bold">★ 長輩無痛走法秘技：</div>
               <p>計程車直接開到最頂端的「<strong>甘川文化村旅遊諮詢處（안내센터）</strong>」平坦馬路下車。<strong>只走水平平坦主街</strong>看小王子背影與俯瞰彩色房子，拍完照<strong>原路折返</strong>。絕對不要走往下切的縱向陡階梯！</p>
             </div>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 韓文地名 (甘川文化村諮詢處前)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">감천문화마을 안내센터 앞</span>
+                </div>
+                <button onclick="speakKorean('감천문화마을 안내센터 앞', '甘川洞文化村諮詢處前', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 사하구 감내2로 203</span>
+                </div>
+                <button onclick="speakKorean('부산 사하구 감내2로 203', '甘川洞文化村地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <button onclick="openTaxiModal('gamcheon')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="speakDriverSentence('감천문화마을 안내센터 앞', '부산 사하구 감내2로 203', '對司機說：去甘川文化村諮詢處', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
               </button>
               <button onclick="copyAddress('부산 사하구 감내2로 203')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
@@ -387,9 +535,33 @@
               • 🌉 <strong>龍宮雲橋：</strong>抵達岩南公園站，下切雲橋有階梯，<strong>視長輩腳力決定</strong>；若長輩當天腳痠，可在 3F 觀景台空中花園坐著拍照休息即可。<br>
               • 🌊 <strong>松島海水浴場天空步道：</strong>搭回程後，在平坦無坡海景棧道散步吹微風。
             </p>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 韓文地名 (松島海上纜車松島灣站)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">송도해상케이블카 송도베이스테이션</span>
+                </div>
+                <button onclick="speakKorean('송도해상케이블카 송도베이스테이션', '松島海上纜車松島灣站', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 서구 송도해변로 171</span>
+                </div>
+                <button onclick="speakKorean('부산 서구 송도해변로 171', '松島海上纜車地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <button onclick="openTaxiModal('songdo')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="speakDriverSentence('송도해상케이블카 송도베이스테이션', '부산 서구 송도해변로 171', '對司機說：去松島纜車', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
               </button>
               <button onclick="copyAddress('부산 서구 송도해변로 171')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
@@ -402,7 +574,7 @@
             <div>
               <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">15:30</span>
               <h3 class="text-sm font-bold text-slate-900 mt-1">計程車直達西面商圈悠閒散步</h3>
-              <p class="text-xs text-slate-500">西面田浦咖啡街 / 樂天百貨室內放鬆</p>
+              <p class="text-xs text-slate-500 font-kr">서면 전포카페거리 / 롯데백화점 부산본점</p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
@@ -410,6 +582,33 @@
             <p class="mt-2.5">
               計程車直達西面，選一間平坦舒適的田浦質感咖啡館坐下喝杯熱拿鐵休息，或進樂天百貨逛街，讓雙腿充分放鬆。
             </p>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 韓文地名 (樂天百貨釜山本店 / 西面)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">롯데백화점 부산본점 (서면)</span>
+                </div>
+                <button onclick="speakKorean('롯데백화점 부산본점', '樂天百貨釜山本店', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 부산진구 가야대로 772</span>
+                </div>
+                <button onclick="speakKorean('부산 부산진구 가야대로 772', '西面樂天百貨地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="speakDriverSentence('서면 롯데백화점 부산본점', '부산 부산진구 가야대로 772', '對司機說：去西面樂天百貨', this, event)" class="tts-btn flex-1 bg-rose-600 text-white text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <button onclick="copyAddress('부산 부산진구 가야대로 772')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
           </div>
         </div>
 
@@ -430,14 +629,38 @@
             <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
               <p>🥩 <strong>免排隊策略：</strong>17:00 準時進店免排隊！肉品由店員在中央炭火全烤好才端上桌，<strong>長輩不用自己烤、完全無油煙撲面、不費力</strong>。招牌厚切豬五花配大醬湯，極致美味！</p>
             </div>
-            <div class="flex gap-2 pt-1">
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-white p-2.5 rounded-xl border border-amber-300 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 餐廳韓文名稱 (釜山宅燒肉)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">부산댁 (서면본점)</span>
+                </div>
+                <button onclick="speakKorean('부산댁', '釜山宅燒肉', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸店名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 부산진구 동천로107번길 14 1층</span>
+                </div>
+                <button onclick="speakKorean('부산 부산진구 동천로107번길 14 1층', '釜山宅燒肉地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
+            <div class="flex gap-1.5 pt-1">
               <button onclick="openTaxiModal('busandaek')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
               </button>
-              <a href="https://maps.app.goo.gl/6rKh3c9e61vQ1MLm9" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps
+              <button onclick="speakDriverSentence('부산댁', '부산 부산진구 동천로107번길 14 1층', '對司機說：去釜山宅', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <a href="https://maps.app.goo.gl/6rKh3c9e61vQ1MLm9" target="_blank" class="bg-blue-50 text-blue-700 text-xs font-bold py-1.5 px-2.5 rounded-lg text-center flex items-center justify-center gap-1">
+                <i class="fa-solid fa-map-location-dot"></i> 地圖
               </a>
-              <button onclick="copyAddress('부산 부산진구 동천로107번길 14 1층')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+              <button onclick="copyAddress('부산 부산진구 동천로107번길 14 1층')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-2.5 rounded-lg">複製</button>
             </div>
           </div>
         </div>
@@ -448,12 +671,21 @@
             <div>
               <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">18:40 賦歸</span>
               <h3 class="text-sm font-bold text-slate-900 mt-1">計程車回海雲台飯店休息</h3>
-              <p class="text-xs text-slate-500">避開晚間車潮，早早回飯店舒展雙腿</p>
+              <p class="text-xs text-slate-500 font-kr">라비앙즈 메종 드 호텔 (해운대)</p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
-          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-1 border-t border-slate-100">
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
             <p class="mt-2.5">車程約 30 分鐘，直達飯店門口。長輩早早泡熱水澡休息，準備迎接第三天港灣巡禮。</p>
+            <div class="flex gap-2 pt-1">
+              <button onclick="openTaxiModal('hotel')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
+                <i class="fa-solid fa-address-card"></i> 飯店司機卡
+              </button>
+              <button onclick="speakDriverSentence('라비앙즈 메종 드 호텔', '부산 해운대구 해운대해변로209번나길 56', '對司機說：回海雲台飯店', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <button onclick="copyAddress('부산 해운대구 해운대해변로209번나길 56')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
           </div>
         </div>
       </div>
@@ -487,9 +719,33 @@
               <div class="font-bold">★ 長輩無痛走法秘技：</div>
               <p>計程車直達上層「<strong>絕影路（절영로 194）</strong>」大馬路。<strong>只走上方平路</strong>選一間面海的大片落地窗景觀咖啡廳坐著看海吹風。<strong>嚴禁走長階梯下切海邊</strong>，零爬梯超享受！</p>
             </div>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 韓文地名 (白淺灘文化村絕影路)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">흰여울문화마을 절영로</span>
+                </div>
+                <button onclick="speakKorean('흰여울문화마을 절영로', '白淺灘文化村絕影路', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 영도구 절영로 194</span>
+                </div>
+                <button onclick="speakKorean('부산 영도구 절영로 194', '白淺灘文化村地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <button onclick="openTaxiModal('huinnyeoul')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="speakDriverSentence('흰여울문화마을 절영로', '부산 영도구 절영로 194', '對司機說：去白淺灘絕影路', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
               </button>
               <button onclick="copyAddress('부산 영도구 절영로 194')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
@@ -502,12 +758,39 @@
             <div>
               <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">11:30</span>
               <h3 class="text-sm font-bold text-slate-900 mt-1">中里海女村 (品嚐現撈海膽紫菜包飯)</h3>
-              <p class="text-xs text-slate-500 font-kr">중리해녀촌 (영도구)</p>
+              <p class="text-xs text-slate-500 font-kr">중리해녀촌 (부산 영도구 중리남로 2-36)</p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
           <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
             <p class="mt-2.5">品嚐現撈新鮮海膽紫菜包飯與海鮮拉麵，在平坦的港灣前欣賞道地海女現撈滋味。</p>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 韓文地名 (中里海女村)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">중리해녀촌</span>
+                </div>
+                <button onclick="speakKorean('중리해녀촌', '中里海女村', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 영도구 중리남로 2-36</span>
+                </div>
+                <button onclick="speakKorean('부산 영도구 중리남로 2-36', '中里海女村地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="speakDriverSentence('영도 중리해녀촌', '부산 영도구 중리남로 2-36', '對司機說：去中里海女村', this, event)" class="tts-btn flex-1 bg-rose-600 text-white text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <button onclick="copyAddress('부산 영도구 중리남로 2-36')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
           </div>
         </div>
 
@@ -528,14 +811,38 @@
             <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
               <p>🔥 <strong>中午免排隊攻略：</strong>中午 12:00～12:30 開門時段入場，避開晚上大排長龍！阿姨在桌邊炭火代烤肥嫩牛小腸、牛胃與特製炒飯，長輩坐著享用完全不耗體力！</p>
             </div>
-            <div class="flex gap-2 pt-1">
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-white p-2.5 rounded-xl border border-amber-300 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 餐廳韓文名稱 (百花烤腸)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">백화양곱창 (자갈치)</span>
+                </div>
+                <button onclick="speakKorean('백화양곱창', '百花烤腸', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸店名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 중구 자갈치로23번길 6</span>
+                </div>
+                <button onclick="speakKorean('부산 중구 자갈치로23번길 6', '百花烤腸地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
+            <div class="flex gap-1.5 pt-1">
               <button onclick="openTaxiModal('baekhwa')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
               </button>
-              <a href="https://maps.app.goo.gl/EunVKNUqanqDGmDy9" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps
+              <button onclick="speakDriverSentence('백화양곱창', '부산 중구 자갈치로23번길 6', '對司機說：去百花烤腸', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <a href="https://maps.app.goo.gl/EunVKNUqanqDGmDy9" target="_blank" class="bg-blue-50 text-blue-700 text-xs font-bold py-1.5 px-2.5 rounded-lg text-center flex items-center justify-center gap-1">
+                <i class="fa-solid fa-map-location-dot"></i> 地圖
               </a>
-              <button onclick="copyAddress('부산 중구 자갈치로23번길 6')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+              <button onclick="copyAddress('부산 중구 자갈치로23번길 6')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-2.5 rounded-lg">複製</button>
             </div>
           </div>
         </div>
@@ -558,9 +865,33 @@
               <div class="font-bold">★ 無痛密技：</div>
               <p><strong>計程車直接開上山頂圓環停車場</strong>！下車走幾步就是高速電梯入口，直達塔頂鳥瞰釜山港海景，<strong>完全避開光復路的好漢坡與手扶梯回程陡階</strong>！</p>
             </div>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 韓文地名 (龍頭山公園山頂停車場)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">용두산공원 주차장 (부산타워 앞)</span>
+                </div>
+                <button onclick="speakKorean('용두산공원 주차장 부산타워 앞', '龍頭山公園停車場釜山塔前', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 중구 용두산길 37-55</span>
+                </div>
+                <button onclick="speakKorean('부산 중구 용두산길 37-55', '釜山塔地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <button onclick="openTaxiModal('busantower')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="speakDriverSentence('용두산공원 주차장 부산타워 앞', '부산 중구 용두산길 37-55', '對司機說：去釜山塔山頂停車場', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
               </button>
               <button onclick="copyAddress('부산 중구 용두산길 37-55')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
@@ -573,7 +904,7 @@
             <div>
               <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">15:00 - 17:30</span>
               <h3 class="text-sm font-bold text-slate-900 mt-1">BIFF 廣場 ➔ 巨人炸雞 ➔ 樂天光復店</h3>
-              <p class="text-xs text-slate-500">平路漫步吃糖餅、外帶點心、空中花園鳥瞰</p>
+              <p class="text-xs text-slate-500 font-kr">비프광장 ➔ 거인통닭 ➔ 롯데백화점 광복점</p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
@@ -582,6 +913,39 @@
               • <strong>15:00 平路漫步：</strong>BIFF 廣場吃熱騰騰現煎的堅果糖餅（씨앗호떡），富平市場外帶巨人炸雞（거인통닭）當晚茶點心。<br>
               • <strong>16:30 樂天百貨光復店：</strong>搭乘電梯至 13 樓頂樓空中花園，<strong>零爬坡鳥瞰海港與影島大橋</strong>，地下超市採買伴手禮。
             </p>
+            <!-- 三處景點地名與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 1. BIFF廣場堅果糖餅 (씨앗호떡)</span>
+                  <span class="font-kr font-bold text-slate-800 text-[11px]">비프광장 씨앗호떡 · 부산 중구 비프광장로 36</span>
+                </div>
+                <div class="flex gap-1 shrink-0">
+                  <button onclick="speakKorean('비프광장 씨앗호떡', 'BIFF廣場堅果糖餅', this, event)" class="tts-btn bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地名</button>
+                  <button onclick="speakKorean('부산 중구 비프광장로 36', 'BIFF廣場地址', this, event)" class="tts-btn bg-amber-50 text-amber-800 border border-amber-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地址</button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 2. 富平市場巨人炸雞 (거인통닭)</span>
+                  <span class="font-kr font-bold text-slate-800 text-[11px]">거인통닭 · 부산 중구 중구로47번길 34</span>
+                </div>
+                <div class="flex gap-1 shrink-0">
+                  <button onclick="speakKorean('거인통닭', '巨人炸雞', this, event)" class="tts-btn bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 店名</button>
+                  <button onclick="speakKorean('부산 중구 중구로47번길 34', '巨人炸雞地址', this, event)" class="tts-btn bg-amber-50 text-amber-800 border border-amber-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地址</button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 3. 樂天百貨光復店 (롯데백화점 광복점)</span>
+                  <span class="font-kr font-bold text-slate-800 text-[11px]">롯데백화점 광복점 · 부산 중구 중앙대로 2</span>
+                </div>
+                <div class="flex gap-1 shrink-0">
+                  <button onclick="speakKorean('롯데백화점 광복점', '樂天百貨光復店', this, event)" class="tts-btn bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地名</button>
+                  <button onclick="speakKorean('부산 중구 중앙대로 2', '樂天百貨光復店地址', this, event)" class="tts-btn bg-amber-50 text-amber-800 border border-amber-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地址</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -600,16 +964,40 @@
           </div>
           <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-300">
             <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
-              <p>🍜 鮮美甘甜蛤蜊刀削麵與手工麵疙瘩，熱高湯溫和不辣，搭配特製切片五花白肉（包肉），溫暖順口，長輩接受度 100%！20:00 搭計程車回海雲台。
+              <p>🍜 鮮美甘甜蛤蜊刀削麵與手工麵疙瘩，熱高湯溫和不辣，搭配特製切片五花白肉（包肉），溫暖順口，長輩接受度 100%！20:00 搭計程車回海雲台。</p>
             </div>
-            <div class="flex gap-2 pt-1">
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-white p-2.5 rounded-xl border border-amber-300 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 餐廳韓文名稱 (Bujebi 海鮮刀削麵)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">부제비 (서면 전포)</span>
+                </div>
+                <button onclick="speakKorean('부제비', 'Bujebi海鮮刀削麵', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸店名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 부산진구 서전로38번길 43-3</span>
+                </div>
+                <button onclick="speakKorean('부산 부산진구 서전로38번길 43-3', 'Bujebi地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
+            <div class="flex gap-1.5 pt-1">
               <button onclick="openTaxiModal('bujebi')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
               </button>
-              <a href="https://maps.app.goo.gl/5iNXxxvutC9YocLj9" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps
+              <button onclick="speakDriverSentence('서면 부제비', '부산 부산진구 서전로38번길 43-3', '對司機說：去Bujebi刀削麵', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <a href="https://maps.app.goo.gl/5iNXxxvutC9YocLj9" target="_blank" class="bg-blue-50 text-blue-700 text-xs font-bold py-1.5 px-2.5 rounded-lg text-center flex items-center justify-center gap-1">
+                <i class="fa-solid fa-map-location-dot"></i> 地圖
               </a>
-              <button onclick="copyAddress('부산 부산진구 서전로38번길 43-3')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+              <button onclick="copyAddress('부산 부산진구 서전로38번길 43-3')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-2.5 rounded-lg">複製</button>
             </div>
           </div>
         </div>
@@ -643,9 +1031,33 @@
             <p class="mt-2.5">
               步行 6 分鐘平路至 OPS 烘焙屋買巨型卡士達泡芙、原味蘋果派與學士麵包。08:50 飯店悠閒早餐配咖啡，多買幾顆泡芙帶去傍晚煙火節沙灘當保暖能量補給！
             </p>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 店家韓文名稱 (OPS 烘焙屋海雲台店)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">옵스 해운대점</span>
+                </div>
+                <button onclick="speakKorean('옵스 해운대점', 'OPS烘焙屋海雲台店', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸店名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 중동1로 31</span>
+                </div>
+                <button onclick="speakKorean('부산 해운대구 중동1로 31', 'OPS烘焙屋地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <button onclick="openTaxiModal('ops')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="speakDriverSentence('옵스 해운대점', '부산 해운대구 중동1로 31', '對司機說：去OPS烘焙屋', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
               </button>
               <button onclick="copyAddress('부산 해운대구 중동1로 31')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
@@ -662,8 +1074,35 @@
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
-          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-1 border-t border-slate-100">
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
             <p class="mt-2.5">飯店旁海灘平路步行即達，全館有完善電梯與無障礙平緩步道，看海龜、企鵝與海底隧道餵食秀，長輩逛得輕鬆自在。</p>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 景點韓文名稱 (SEA LIFE 釜山水族館)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">씨라이프 부산아쿠아리움</span>
+                </div>
+                <button onclick="speakKorean('씨라이프 부산아쿠아리움', '釜山水族館', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 해운대해변로 266</span>
+                </div>
+                <button onclick="speakKorean('부산 해운대구 해운대해변로 266', '釜山水族館地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
+            <div class="flex gap-2 pt-1">
+              <button onclick="speakDriverSentence('씨라이프 부산아쿠아리움', '부산 해운대구 해운대해변로 266', '對司機說：去釜山水族館', this, event)" class="tts-btn flex-1 bg-rose-600 text-white text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <button onclick="copyAddress('부산 해운대구 해운대해변로 266')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+            </div>
           </div>
         </div>
 
@@ -684,14 +1123,48 @@
             <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
               <p>🦪 <strong>超鮮甜暖湯：</strong>滿滿一整大盆盛裝堆積如山的蛤蜊、扇貝與淡菜，原汁原味清甜熱高湯，暖身充電！13:15 品嚐<strong>老虎麻糬冰（호랑이젤라떡）</strong>海鹽與開心果口味。</p>
             </div>
-            <div class="flex gap-2 pt-1">
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-white p-2.5 rounded-xl border border-amber-300 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 餐廳韓文名稱 (海雲台 31cm 海鮮刀削麵)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">해운대31cm해물칼국수</span>
+                </div>
+                <button onclick="speakKorean('해운대 삼십일센티 해물칼국수', '海雲台31cm海鮮刀削麵', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸店名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 구남로41번길 46</span>
+                </div>
+                <button onclick="speakKorean('부산 해운대구 구남로41번길 46', '31cm海鮮刀削麵地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🍨 飯後甜點：老虎吉拉朵麻糬冰</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">호랑이젤라떡 · 부산 해운대구 달맞이길62번길 38</span>
+                </div>
+                <div class="flex gap-1 shrink-0">
+                  <button onclick="speakKorean('호랑이젤라떡', '老虎吉拉朵麻糬冰', this, event)" class="tts-btn bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 店名</button>
+                  <button onclick="speakKorean('부산 해운대구 달맞이길62번길 38', '老虎麻糬冰地址', this, event)" class="tts-btn bg-amber-50 text-amber-800 border border-amber-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地址</button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-1.5 pt-1">
               <button onclick="openTaxiModal('kalguksu31')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
               </button>
-              <a href="https://maps.app.goo.gl/Ne7wW8AH3qskiDjp7" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps
+              <button onclick="speakDriverSentence('해운대 삼십일센티 해물칼국수', '부산 해운대구 구남로41번길 46', '對司機說：去31cm刀削麵', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <a href="https://maps.app.goo.gl/Ne7wW8AH3qskiDjp7" target="_blank" class="bg-blue-50 text-blue-700 text-xs font-bold py-1.5 px-2.5 rounded-lg text-center flex items-center justify-center gap-1">
+                <i class="fa-solid fa-map-location-dot"></i> 地圖
               </a>
-              <button onclick="copyAddress('부산 해운대구 구남로41번길 46')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+              <button onclick="copyAddress('부산 해운대구 구남로41번길 46')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-2.5 rounded-lg">複製</button>
             </div>
           </div>
         </div>
@@ -730,14 +1203,38 @@
             <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
               <p>🔥 <strong>煙火節前關鍵蓄熱：</strong>趁傍晚管制人潮湧入前，在廣安里享用頂級熟成烤肉！熱量滿滿蓄足熱能抵禦海風低溫。吃飽後步行至沙灘卡位。</p>
             </div>
-            <div class="flex gap-2 pt-1">
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-white p-2.5 rounded-xl border border-amber-300 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 餐廳韓文名稱 (Durumi 廣安燒肉)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">두루미 광안</span>
+                </div>
+                <button onclick="speakKorean('두루미 광안', 'Durumi廣安燒肉', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸店名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 수영구 남천바다로 38-10 1층</span>
+                </div>
+                <button onclick="speakKorean('부산 수영구 남천바다로 38-10 1층', 'Durumi燒肉地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
+            <div class="flex gap-1.5 pt-1">
               <button onclick="openTaxiModal('durumi')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
               </button>
-              <a href="https://maps.app.goo.gl/RJA6QNfYGHmVQAjF8" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps
+              <button onclick="speakDriverSentence('두루미 광안', '부산 수영구 남천바다로 38-10 1층', '對司機說：去廣安里Durumi燒肉', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <a href="https://maps.app.goo.gl/RJA6QNfYGHmVQAjF8" target="_blank" class="bg-blue-50 text-blue-700 text-xs font-bold py-1.5 px-2.5 rounded-lg text-center flex items-center justify-center gap-1">
+                <i class="fa-solid fa-map-location-dot"></i> 地圖
               </a>
-              <button onclick="copyAddress('부산 수영구 남천바다로 38-10 1층')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+              <button onclick="copyAddress('부산 수영구 남천바다로 38-10 1층')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-2.5 rounded-lg">複製</button>
             </div>
           </div>
         </div>
@@ -751,7 +1248,7 @@
                 <span class="text-[10px] bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded">免費沙灘防寒攻略</span>
               </div>
               <h3 class="text-base font-black text-white mt-1">💥 2026 釜山國際煙火節主秀 (20:00~21:00)</h3>
-              <p class="text-xs text-slate-300">沙灘展開折疊椅離地坐不受寒 ➔ 21:00 咖啡廳避難撤退</p>
+              <p class="text-xs text-slate-300 font-kr">광안리해수욕장・부산불꽃축제</p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
@@ -762,6 +1259,27 @@
               <div class="bg-white/10 p-2.5 rounded-xl border border-white/15 space-y-1">
                 <div class="text-amber-300 font-bold">☕ 21:00 避難撤退策略：</div>
                 <p>煙火剛結束<strong>千萬不要去擠地鐵站或搶計程車</strong>！先走進沙灘後排景觀咖啡廳喝熱飲休息 1 小時，待第一波散場人潮散去，再從容搭車回海雲台。</p>
+              </div>
+              <!-- 地點與地址語音盒 -->
+              <div class="bg-white/10 p-2.5 rounded-xl border border-white/20 space-y-1.5">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="min-w-0">
+                    <span class="text-[10px] text-amber-300 font-bold block">📍 韓文地名 (廣安里海水浴場)</span>
+                    <span class="font-kr font-black text-white text-xs">광안리해수욕장</span>
+                  </div>
+                  <button onclick="speakKorean('광안리해수욕장', '廣安里海水浴場', this, event)" class="tts-btn shrink-0 bg-amber-400 text-slate-950 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                    <i class="fa-solid fa-volume-high"></i> 唸地名
+                  </button>
+                </div>
+                <div class="flex items-center justify-between gap-2 pt-1 border-t border-white/10">
+                  <div class="min-w-0">
+                    <span class="text-[10px] text-slate-300 font-bold block">🏠 韓文地址</span>
+                    <span class="font-kr font-bold text-slate-100 text-[11px]">부산 수영구 광안해변로 219</span>
+                  </div>
+                  <button onclick="speakKorean('부산 수영구 광안해변로 219', '廣安里海水浴場地址', this, event)" class="tts-btn shrink-0 bg-white/20 text-white px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                    <i class="fa-solid fa-volume-high"></i> 唸地址
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -795,9 +1313,45 @@
               • <strong>10:30 Skyline Luge 天空滑車：</strong>坐吊椅上山、坐車順坡滑下，不費腿力又好玩！<br>
               • <strong>11:45 樂天 Premium Outlet 東釜山店：</strong>享用午餐與全室內平路舒適逛街。
             </p>
+            <!-- 三處景點地名與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 1. 海東龍宮寺 (해동용궁사)</span>
+                  <span class="font-kr font-bold text-slate-800 text-[11px]">부산 기장군 기장읍 용궁길 86</span>
+                </div>
+                <div class="flex gap-1 shrink-0">
+                  <button onclick="speakKorean('해동용궁사', '海東龍宮寺', this, event)" class="tts-btn bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地名</button>
+                  <button onclick="speakKorean('부산 기장군 기장읍 용궁길 86', '海東龍宮寺地址', this, event)" class="tts-btn bg-amber-50 text-amber-800 border border-amber-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地址</button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 2. Skyline Luge 釜山 (스카이라인 루지 부산)</span>
+                  <span class="font-kr font-bold text-slate-800 text-[11px]">부산 기장군 기장읍 기장해안로 205</span>
+                </div>
+                <div class="flex gap-1 shrink-0">
+                  <button onclick="speakKorean('스카이라인 루지 부산', 'Skyline Luge釜山', this, event)" class="tts-btn bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地名</button>
+                  <button onclick="speakKorean('부산 기장군 기장읍 기장해안로 205', 'Skyline Luge地址', this, event)" class="tts-btn bg-amber-50 text-amber-800 border border-amber-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地址</button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 3. 樂天 Outlet 東釜山店 (롯데프리미엄아울렛 동부산점)</span>
+                  <span class="font-kr font-bold text-slate-800 text-[11px]">부산 기장군 기장읍 기장해안로 147</span>
+                </div>
+                <div class="flex gap-1 shrink-0">
+                  <button onclick="speakKorean('롯데프리미엄아울렛 동부산점', '樂天Outlet東釜山店', this, event)" class="tts-btn bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地名</button>
+                  <button onclick="speakKorean('부산 기장군 기장읍 기장해안로 147', '樂天Outlet東釜山店地址', this, event)" class="tts-btn bg-amber-50 text-amber-800 border border-amber-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地址</button>
+                </div>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <button onclick="openTaxiModal('dragon')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
-                <i class="fa-solid fa-address-card"></i> 司機卡
+                <i class="fa-solid fa-address-card"></i> 司機卡 (龍宮寺)
+              </button>
+              <button onclick="speakDriverSentence('해동용궁사', '부산 기장군 기장읍 용궁길 86', '對司機說：去海東龍宮寺', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
               </button>
               <button onclick="copyAddress('부산 기장군 기장읍 용궁길 86')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
@@ -821,9 +1375,33 @@
             <p class="mt-2.5">
               4 人包廂獨立坐著看無敵海景，全程 30 分鐘無死角海景動線，零步行動線。抵達尾浦後，14:45 回飯店午睡放鬆雙腳！
             </p>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 韓文地名 (海雲台藍線公園青沙浦站)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">해운대 블루라인파크 청사포정거장</span>
+                </div>
+                <button onclick="speakKorean('해운대 블루라인파크 청사포정거장', '膠囊列車青沙浦站', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 청사포로 116</span>
+                </div>
+                <button onclick="speakKorean('부산 해운대구 청사포로 116', '膠囊列車青沙浦站地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <button onclick="openTaxiModal('cheongsapo')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡 (青沙浦)
+              </button>
+              <button onclick="speakDriverSentence('해운대 블루라인파크 청사포정거장', '부산 해운대구 청사포로 116', '對司機說：去青沙浦站', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
               </button>
               <button onclick="copyAddress('부산 해운대구 청사포로 116')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
@@ -842,9 +1420,33 @@
           </div>
           <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
             <p class="mt-2.5">五星級天然溫泉汗蒸幕與檜木足湯，讓長輩躺在溫熱的休息房徹底放鬆全身筋骨、消除累積疲倦。</p>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 韓文地名 (新世界 Centum City SPA LAND 4號門)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">신세계 센텀시티 스파랜드 4번 게이트</span>
+                </div>
+                <button onclick="speakKorean('신세계 센텀시티 스파랜드 사번 게이트', '新世界SPA LAND 4號門', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 센텀남대로 35</span>
+                </div>
+                <button onclick="speakKorean('부산 해운대구 센텀남대로 35', '新世界SPA LAND地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <button onclick="openTaxiModal('spaland')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
+              </button>
+              <button onclick="speakDriverSentence('신세계 센텀시티 스파랜드 사번 게이트', '부산 해운대구 센텀남대로 35', '對司機說：去新世界SPA LAND', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
               </button>
               <button onclick="copyAddress('부산 해운대구 센텀남대로 35')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
@@ -868,14 +1470,48 @@
             <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
               <p>🥩 店員使用測溫槍全程代烤 3.5cm 厚切黃金五花肉，外酥內嫩多汁！可用 CatchTable 先線上取號。（備案：海雲台人氣韓牛炭火燒肉就在附近）。</p>
             </div>
-            <div class="flex gap-2 pt-1">
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-white p-2.5 rounded-xl border border-amber-300 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 餐廳韓文名稱 (味贊王鹽烤肉海雲台店)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">맛찬들 왕소금구이 해운대점</span>
+                </div>
+                <button onclick="speakKorean('맛찬들 왕소금구이 해운대점', '味贊王鹽烤肉海雲台店', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸店名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 해운대로608번길 46</span>
+                </div>
+                <button onclick="speakKorean('부산 해운대구 해운대로608번길 46', '味贊王鹽烤肉地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🥩 備案：海雲台傳奇韓牛 (해운대암소갈비집)</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 해운대해변로 333</span>
+                </div>
+                <div class="flex gap-1 shrink-0">
+                  <button onclick="speakKorean('해운대암소갈비집', '海雲台母牛排骨店', this, event)" class="tts-btn bg-rose-50 text-rose-700 border border-rose-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 店名</button>
+                  <button onclick="speakKorean('부산 해운대구 해운대해변로 333', '海雲台韓牛地址', this, event)" class="tts-btn bg-amber-50 text-amber-800 border border-amber-200 px-2 py-1 rounded-lg font-bold text-[10px]"><i class="fa-solid fa-volume-high"></i> 地址</button>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-1.5 pt-1">
               <button onclick="openTaxiModal('matchandeul')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
               </button>
-              <a href="https://maps.app.goo.gl/qBZ3EkFfYTKMT9Ht9" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps
+              <button onclick="speakDriverSentence('맛찬들 해운대점', '부산 해운대구 해운대로608번길 46', '對司機說：去味贊王海雲台店', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <a href="https://maps.app.goo.gl/qBZ3EkFfYTKMT9Ht9" target="_blank" class="bg-blue-50 text-blue-700 text-xs font-bold py-1.5 px-2.5 rounded-lg text-center flex items-center justify-center gap-1">
+                <i class="fa-solid fa-map-location-dot"></i> 地圖
               </a>
-              <button onclick="copyAddress('부산 해운대구 해운대로608번길 46')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+              <button onclick="copyAddress('부산 해운대구 해운대로608번길 46')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-2.5 rounded-lg">複製</button>
             </div>
           </div>
         </div>
@@ -902,8 +1538,16 @@
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
-          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-1 border-t border-slate-100">
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
             <p class="mt-2.5">退房後行李直接上 Venti 大型休旅車，免去搬運行李的麻煩，一路前往大淵站早午餐。</p>
+            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200/80 flex items-center justify-between">
+              <div class="text-[11px] font-kr text-slate-700">
+                <span class="font-bold text-slate-900">請幫我開後車廂：</span>트렁크 좀 열어 주세요
+              </div>
+              <button onclick="speakKorean('트렁크 좀 열어 주세요', '請幫我開後車廂', this, event)" class="tts-btn bg-purple-50 text-purple-700 border border-purple-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-volume-high"></i> 發音
+              </button>
+            </div>
           </div>
         </div>
 
@@ -924,14 +1568,47 @@
             <p class="mt-2.5">
               🚗 <strong>機場順路絕妙安排：</strong>大淵站正好在通往機場的高架橋樞紐！招牌白切肉套餐（수육백반），熱騰騰甘醇大骨高湯配軟嫩切片五花白肉，上機前暖身暖胃。
             </p>
-            <div class="flex gap-2 pt-1">
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 餐廳韓文名稱 (雙胞胎豬肉湯飯大淵本店)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">쌍둥이돼지국밥 대연본점</span>
+                </div>
+                <button onclick="speakKorean('쌍둥이돼지국밥 대연본점', '雙胞胎豬肉湯飯大淵本店', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸店名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 남구 유엔평화로 35-1</span>
+                </div>
+                <button onclick="speakKorean('부산 남구 유엔평화로 35-1', '雙胞胎豬肉湯飯地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🍲 點餐韓文語音 (白切肉套餐 4 份)</span>
+                  <span class="font-kr font-bold text-rose-700 text-[11px]">수육백반 네 개 주세요</span>
+                </div>
+                <button onclick="speakKorean('수육백반 네 개 주세요', '點餐：請給我4份白切肉套餐', this, event)" class="tts-btn shrink-0 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 點餐語音
+                </button>
+              </div>
+            </div>
+            <div class="flex gap-1.5 pt-1">
               <button onclick="openTaxiModal('ssangdoongi')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機卡
               </button>
-              <a href="https://maps.app.goo.gl/aACjUwe4ZrfcGuni9" target="_blank" class="flex-1 bg-blue-50 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps
+              <button onclick="speakDriverSentence('쌍둥이돼지국밥 대연본점', '부산 남구 유엔평화로 35-1', '對司機說：去雙胞胎豬肉湯飯', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <a href="https://maps.app.goo.gl/aACjUwe4ZrfcGuni9" target="_blank" class="bg-blue-50 text-blue-700 text-xs font-bold py-1.5 px-2.5 rounded-lg text-center flex items-center justify-center gap-1">
+                <i class="fa-solid fa-map-location-dot"></i> 地圖
               </a>
-              <button onclick="copyAddress('부산 남구 유엔평화로 35-1')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
+              <button onclick="copyAddress('부산 남구 유엔평화로 35-1')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-2.5 rounded-lg">複製</button>
             </div>
           </div>
         </div>
@@ -945,7 +1622,7 @@
                 <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-1.5 py-0.5 rounded">14:00 起飛</span>
               </div>
               <h3 class="text-sm font-bold text-slate-900 mt-1">金海國際機場直達出境大廳 ➔ 飛返台中</h3>
-              <p class="text-xs text-slate-500">真航空 LJ585 (14:00 釜山 ➔ 15:15 台中清泉崗)</p>
+              <p class="text-xs text-slate-500 font-kr">김해국제공항 국제선 출발층 · LJ585</p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
@@ -953,11 +1630,35 @@
             <p class="mt-2.5">
               計程車直達金海機場國際線出境大廳門口，托運行李、退稅與免稅品採買。搭乘真航空 LJ585 準時起飛，15:15 抵達台中，圓滿結束 6 天 5 夜家庭美滿旅程！
             </p>
+            <!-- 地點與地址語音盒 -->
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 韓文地名 (金海國際機場國際線出境大廳)</span>
+                  <span class="font-kr font-black text-slate-900 text-xs">김해국제공항 국제선 청사 출발층</span>
+                </div>
+                <button onclick="speakKorean('김해국제공항 국제선 청사 출발층', '金海國際機場國際線出境大廳', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地名
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 강서구 공항진입로 108</span>
+                </div>
+                <button onclick="speakKorean('부산 강서구 공항진입로 108', '金海國際機場地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-volume-high"></i> 唸地址
+                </button>
+              </div>
+            </div>
             <div class="flex gap-2 pt-1">
               <button onclick="openTaxiModal('airport')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 機場司機卡
               </button>
-              <button onclick="copyAddress('김해국제공항 국제선 청사')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製韓文地址</button>
+              <button onclick="speakDriverSentence('김해국제공항 국제선 청사 출발층', '부산 강서구 공항진입로 108', '對司機說：去金海機場國際線', this, event)" class="tts-btn bg-rose-600 text-white text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+                <i class="fa-solid fa-volume-high"></i> 對司機說
+              </button>
+              <button onclick="copyAddress('부산 강서구 공항진입로 108')" class="bg-slate-100 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg">複製地址</button>
             </div>
           </div>
         </div>
@@ -1077,39 +1778,74 @@
         </div>
       </div>
 
-      <!-- 3. 長輩實用溝通韓語小卡 -->
+      <!-- 3. 長輩實用溝通韓語小卡 (含真人韓文語音發音) -->
       <div class="bg-white rounded-2xl card-shadow border border-slate-200 p-3.5 space-y-2.5">
-        <h3 class="text-xs font-black text-slate-900 flex items-center gap-1.5">
-          <i class="fa-solid fa-language text-purple-600"></i> 長輩安心常用韓文卡
-        </h3>
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-black text-slate-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-language text-purple-600"></i> 長輩安心常用韓文發音卡
+          </h3>
+          <span class="text-[10px] bg-rose-50 text-rose-700 font-bold px-2 py-0.5 rounded-full">點擊 🔊 即可發音</span>
+        </div>
         <div class="space-y-2 text-xs">
-          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between">
-            <div>
+          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between gap-2">
+            <div class="min-w-0">
               <div class="font-bold text-slate-800">司機先生，請載我到這裡</div>
               <div class="text-slate-500 font-kr">기사님, 여기로 가 주세요 (Ki-sa-nim, yeo-gi-ro ga ju-se-yo)</div>
             </div>
-            <button onclick="copyPhrase('기사님, 여기로 가 주세요')" class="text-brand-blue p-1.5 active:scale-90"><i class="fa-regular fa-copy"></i></button>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="speakKorean('기사님, 여기로 가 주세요', '司機先生，請載我到這裡', this, event)" class="tts-btn bg-rose-600 text-white px-2.5 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-sm"><i class="fa-solid fa-volume-high"></i> 發音</button>
+              <button onclick="copyPhrase('기사님, 여기로 가 주세요')" class="text-brand-blue bg-white border border-slate-200 p-1.5 rounded-lg active:scale-90"><i class="fa-regular fa-copy"></i></button>
+            </div>
           </div>
-          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between">
-            <div>
+          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="font-bold text-slate-800">請幫我打開後車廂（放行李）</div>
+              <div class="text-slate-500 font-kr">트렁크 좀 열어 주세요 (Teu-reong-keu jom yeol-eo ju-se-yo)</div>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="speakKorean('트렁크 좀 열어 주세요', '請幫我打開後車廂', this, event)" class="tts-btn bg-rose-600 text-white px-2.5 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-sm"><i class="fa-solid fa-volume-high"></i> 發音</button>
+              <button onclick="copyPhrase('트렁크 좀 열어 주세요')" class="text-brand-blue bg-white border border-slate-200 p-1.5 rounded-lg active:scale-90"><i class="fa-regular fa-copy"></i></button>
+            </div>
+          </div>
+          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="font-bold text-slate-800">請在這裡讓我下車</div>
+              <div class="text-slate-500 font-kr">여기서 내려 주세요 (Yeo-gi-seo nae-ryeo ju-se-yo)</div>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="speakKorean('여기서 내려 주세요', '請在這裡讓我下車', this, event)" class="tts-btn bg-rose-600 text-white px-2.5 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-sm"><i class="fa-solid fa-volume-high"></i> 發音</button>
+              <button onclick="copyPhrase('여기서 내려 주세요')" class="text-brand-blue bg-white border border-slate-200 p-1.5 rounded-lg active:scale-90"><i class="fa-regular fa-copy"></i></button>
+            </div>
+          </div>
+          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between gap-2">
+            <div class="min-w-0">
               <div class="font-bold text-slate-800">4 位（請安排 4 人座）</div>
               <div class="text-slate-500 font-kr">네 명이요 (Ne-myeong-i-yo)</div>
             </div>
-            <button onclick="copyPhrase('네 명이요')" class="text-brand-blue p-1.5 active:scale-90"><i class="fa-regular fa-copy"></i></button>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="speakKorean('네 명이요', '我們有4位', this, event)" class="tts-btn bg-rose-600 text-white px-2.5 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-sm"><i class="fa-solid fa-volume-high"></i> 發音</button>
+              <button onclick="copyPhrase('네 명이요')" class="text-brand-blue bg-white border border-slate-200 p-1.5 rounded-lg active:scale-90"><i class="fa-regular fa-copy"></i></button>
+            </div>
           </div>
-          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between">
-            <div>
+          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between gap-2">
+            <div class="min-w-0">
               <div class="font-bold text-slate-800">請不要放辣椒（長輩不吃辣）</div>
               <div class="text-slate-500 font-kr">안 맵게 해 주세요 (An maep-ge hae ju-se-yo)</div>
             </div>
-            <button onclick="copyPhrase('안 맵게 해 주세요')" class="text-brand-blue p-1.5 active:scale-90"><i class="fa-regular fa-copy"></i></button>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="speakKorean('안 맵게 해 주세요', '請不要做太辣', this, event)" class="tts-btn bg-rose-600 text-white px-2.5 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-sm"><i class="fa-solid fa-volume-high"></i> 發音</button>
+              <button onclick="copyPhrase('안 맵게 해 주세요')" class="text-brand-blue bg-white border border-slate-200 p-1.5 rounded-lg active:scale-90"><i class="fa-regular fa-copy"></i></button>
+            </div>
           </div>
-          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between">
-            <div>
+          <div class="p-2.5 bg-slate-50 rounded-xl flex items-center justify-between gap-2">
+            <div class="min-w-0">
               <div class="font-bold text-slate-800">廁所在哪裡？</div>
               <div class="text-slate-500 font-kr">화장실 어디예요? (Hwa-jang-sil eo-di-ye-yo)</div>
             </div>
-            <button onclick="copyPhrase('화장실 어디예요?')" class="text-brand-blue p-1.5 active:scale-90"><i class="fa-regular fa-copy"></i></button>
+            <div class="flex items-center gap-1 shrink-0">
+              <button onclick="speakKorean('화장실 어디예요?', '請問廁所在哪裡？', this, event)" class="tts-btn bg-rose-600 text-white px-2.5 py-1.5 rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-sm"><i class="fa-solid fa-volume-high"></i> 發音</button>
+              <button onclick="copyPhrase('화장실 어디예요?')" class="text-brand-blue bg-white border border-slate-200 p-1.5 rounded-lg active:scale-90"><i class="fa-regular fa-copy"></i></button>
+            </div>
           </div>
         </div>
       </div>
@@ -1161,31 +1897,46 @@
 
   <!-- ================= 司機大字小卡 全螢幕彈窗 MODAL ================= -->
   <div id="driver-modal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-opacity duration-200">
-    <div class="bg-white w-full max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-slate-200 transform transition-transform duration-200 max-h-[90vh] overflow-y-auto custom-scroll">
+    <div class="bg-white w-full max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden border border-slate-200 transform transition-transform duration-200 max-h-[92vh] overflow-y-auto custom-scroll">
       
-      <!-- 頂部高對比給司機看的指示條 -->
-      <div class="bg-amber-400 px-4 py-3 text-center">
-        <span class="text-[11px] font-bold text-slate-900 tracking-wider block">請將此手機畫面直接遞給司機觀看</span>
-        <h3 class="text-xl font-black text-slate-950 mt-0.5 font-kr">기사님, 여기로 가 주세요!</h3>
-        <p class="text-[10px] text-slate-800 font-medium">(司機先生，請載我們到這裡！)</p>
+      <!-- 頂部高對比給司機看的指示條 + 一鍵整句語音 -->
+      <div class="bg-amber-400 px-4 py-3 text-center space-y-1.5">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-bold text-slate-900 tracking-wider">請將此畫面遞給司機或播放語音</span>
+          <button onclick="toggleSpeechRate()" id="modal-rate-btn" class="text-[10px] bg-slate-950 text-amber-300 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+            <i class="fa-solid fa-gauge-high text-[9px]"></i>
+            <span id="modal-rate-label">語速: 正常</span>
+          </button>
+        </div>
+        <h3 class="text-xl font-black text-slate-950 font-kr">기사님, 여기로 가 주세요!</h3>
+        <button id="modal-speak-sentence-btn" class="tts-btn w-full bg-rose-600 hover:bg-rose-700 text-white font-black py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md">
+          <i class="fa-solid fa-volume-high"></i> 🗣️ 整句韓文念給司機聽 (含地名+地址)
+        </button>
       </div>
 
       <!-- 核心地址與超大韓文字體區 -->
-      <div class="p-5 text-center space-y-3.5">
-        <div>
-          <span id="modal-category" class="inline-block text-[11px] font-bold text-white bg-brand-blue px-2.5 py-0.5 rounded-full mb-1">
-            目的地分類
-          </span>
-          <h2 id="modal-name-zh" class="text-base font-bold text-slate-700">目的地中文</h2>
-          <h1 id="modal-name-kr" class="text-2xl font-black text-slate-950 font-kr tracking-tight mt-1 leading-snug">
+      <div class="p-4 text-center space-y-3">
+        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+          <div class="flex items-center justify-between mb-1">
+            <span id="modal-category" class="inline-block text-[10px] font-bold text-white bg-brand-blue px-2.5 py-0.5 rounded-full">
+              目的地分類
+            </span>
+            <button id="modal-speak-place-btn" class="tts-btn bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold px-2.5 py-1 rounded-lg text-xs flex items-center gap-1">
+              <i class="fa-solid fa-volume-high"></i> 唸地點名稱
+            </button>
+          </div>
+          <h2 id="modal-name-zh" class="text-sm font-bold text-slate-600 text-left">目的地中文</h2>
+          <h1 id="modal-name-kr" class="text-2xl font-black text-slate-950 font-kr tracking-tight mt-1 leading-snug text-left">
             목적지 한국어 이름
           </h1>
         </div>
 
-        <div class="bg-slate-100 p-3.5 rounded-2xl border border-slate-200 text-left">
-          <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1 flex items-center justify-between">
-            <span>주소 (韓文地址)</span>
-            <span class="text-[10px] text-brand-blue font-bold">可複製</span>
+        <div class="bg-slate-100 p-3.5 rounded-2xl border border-slate-200 text-left space-y-1.5">
+          <div class="text-[11px] text-slate-500 font-bold uppercase tracking-wider flex items-center justify-between">
+            <span>🏠 주소 (韓文地址)</span>
+            <button id="modal-speak-addr-btn" class="tts-btn bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-2.5 py-1 rounded-lg text-xs flex items-center gap-1 shadow-sm">
+              <i class="fa-solid fa-volume-high"></i> 唸韓文地址
+            </button>
           </div>
           <p id="modal-address-kr" class="text-sm font-black text-slate-900 font-kr leading-relaxed">
             부산광역시...
@@ -1253,17 +2004,162 @@
   </div>
 
 
-  <!-- ================= 浮動 Toast 提示 ================= -->
-  <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900/95 text-amber-300 text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2 border border-amber-400/30">
-    <i class="fa-solid fa-circle-check text-emerald-400"></i>
-    <span id="toast-text">已複製韓文地址</span>
+  <!-- ================= 浮動 Toast 與語音朗讀狀態提示 ================= -->
+  <div id="toast" onclick="stopSpeaking()" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900/95 text-amber-300 text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2 border border-amber-400/30 max-w-[92vw] truncate cursor-pointer">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 shrink-0"></i>
+    <span id="toast-text" class="truncate">已複製韓文地址</span>
   </div>
 
 
   <!-- ================= 核心互動邏輯與完整資料庫 ================= -->
   <script>
     // ==========================================
-    // 1. 計程車站名卡完整 15 筆資料庫 (題目指定)
+    // 0. 韓文語音朗讀引擎 (Web Speech API + 雲端音訊備援)
+    // ==========================================
+    let currentSpeechRate = 0.9; // 預設 0.9x 清晰自然語速
+    let activeTtsBtn = null;
+    let fallbackAudio = null;
+    let cachedKoreanVoice = null;
+    let toastTimer = null;
+
+    function initKoreanVoices() {
+      if (!('speechSynthesis' in window)) return;
+      const findBestKoVoice = () => {
+        const voices = window.speechSynthesis.getVoices() || [];
+        const koVoices = voices.filter(v => v.lang && (v.lang.toLowerCase().includes('ko')));
+        if (koVoices.length > 0) {
+          cachedKoreanVoice = koVoices.find(v =>
+            v.name.includes('Yuna') ||
+            v.name.includes('SunHi') ||
+            v.name.includes('InJoon') ||
+            v.name.includes('Google') ||
+            v.name.includes('Natural')
+          ) || koVoices[0];
+        }
+      };
+      findBestKoVoice();
+      if (window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = findBestKoVoice;
+      }
+    }
+
+    function toggleSpeechRate() {
+      currentSpeechRate = currentSpeechRate === 0.9 ? 0.72 : 0.9;
+      const modeText = currentSpeechRate === 0.9 ? '正常' : '慢速清晰';
+      const headerLabel = document.getElementById('header-rate-label');
+      const modalLabel = document.getElementById('modal-rate-label');
+      if (headerLabel) headerLabel.innerText = '語音: ' + modeText;
+      if (modalLabel) modalLabel.innerText = '語速: ' + modeText;
+      showToast(`🔊 韓文語音已切換為「${modeText} (${currentSpeechRate}x)」`, 'fa-volume-high text-amber-400');
+    }
+
+    function cleanKoreanForSpeech(text) {
+      return text
+        .replace(/31cm/gi, '삼십일센티')
+        .replace(/bhc/gi, '비에이치씨')
+        .replace(/1층/g, '일층')
+        .replace(/4번/g, '사번')
+        .replace(/\(.*?\)/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function clearActiveTtsButton() {
+      if (activeTtsBtn) {
+        activeTtsBtn.classList.remove('speaking-active');
+        activeTtsBtn = null;
+      }
+    }
+
+    function stopSpeaking() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (fallbackAudio) {
+        fallbackAudio.pause();
+        fallbackAudio.currentTime = 0;
+        fallbackAudio = null;
+      }
+      clearActiveTtsButton();
+    }
+
+    function speakKorean(rawText, labelDesc = '', btnEl = null, evt = null) {
+      if (evt) {
+        evt.stopPropagation();
+      }
+      // 若點擊同一個正在播放的按鈕則停止
+      if (btnEl && activeTtsBtn === btnEl) {
+        stopSpeaking();
+        showToast('⏹️ 已停止語音播放', 'fa-circle-stop text-slate-400', 1200);
+        return;
+      }
+
+      stopSpeaking();
+
+      const cleanText = cleanKoreanForSpeech(rawText);
+      if (!cleanText) return;
+
+      if (btnEl) {
+        activeTtsBtn = btnEl;
+        btnEl.classList.add('speaking-active');
+      }
+
+      const displayMsg = labelDesc
+        ? `🔊 正在朗讀 (${labelDesc})：${rawText}`
+        : `🔊 正在朗讀韓文：${rawText}`;
+      showToast(displayMsg, 'fa-volume-high text-rose-400 fa-beat-fade', 4500);
+
+      if ('speechSynthesis' in window) {
+        try {
+          const utter = new SpeechSynthesisUtterance(cleanText);
+          utter.lang = 'ko-KR';
+          utter.rate = currentSpeechRate;
+          utter.pitch = 1.0;
+          if (!cachedKoreanVoice) initKoreanVoices();
+          if (cachedKoreanVoice) {
+            utter.voice = cachedKoreanVoice;
+          }
+          utter.onend = () => {
+            clearActiveTtsButton();
+          };
+          utter.onerror = () => {
+            clearActiveTtsButton();
+            playCloudFallbackTts(cleanText, btnEl);
+          };
+          window.speechSynthesis.speak(utter);
+          return;
+        } catch (e) {
+          // 降級至雲端 TTS
+        }
+      }
+      playCloudFallbackTts(cleanText, btnEl);
+    }
+
+    function playCloudFallbackTts(cleanText, btnEl) {
+      try {
+        const url = 'https://translate.google.com/translate_tts?ie=UTF-8&tl=ko&client=tw-ob&q=' + encodeURIComponent(cleanText);
+        fallbackAudio = new Audio(url);
+        fallbackAudio.playbackRate = currentSpeechRate;
+        if (btnEl) {
+          activeTtsBtn = btnEl;
+          btnEl.classList.add('speaking-active');
+        }
+        fallbackAudio.onended = () => clearActiveTtsButton();
+        fallbackAudio.onerror = () => clearActiveTtsButton();
+        fallbackAudio.play().catch(() => clearActiveTtsButton());
+      } catch (err) {
+        clearActiveTtsButton();
+      }
+    }
+
+    function speakDriverSentence(placeKr, addressKr, labelDesc = '對司機說', btnEl = null, evt = null) {
+      const cleanPlace = cleanKoreanForSpeech(placeKr);
+      const sentence = `기사님, ${cleanPlace} 으로 가 주세요. 주소는 ${addressKr} 입니다.`;
+      speakKorean(sentence, labelDesc, btnEl, evt);
+    }
+
+    // ==========================================
+    // 1. 計程車站名卡完整資料庫 (含 15 核心卡 + 順遊站點)
     // ==========================================
     const taxiCardsData = [
       {
@@ -1287,7 +2183,7 @@
         nameKr: '감천문화마을 안내센터 앞',
         addressKr: '부산 사하구 감내2로 203',
         tip: '★請務必開至最頂端諮詢處大馬路！長輩只走平坦水平街看海景與小王子，不走縱向陡階梯。',
-        googleMap: 'https://maps.app.goo.gl/4M4f8d6Xp7T8zXw97'
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=부산+사하구+감내2로+203'
       },
       {
         id: 'songdo',
@@ -1298,7 +2194,7 @@
         nameKr: '송도해상케이블카 송도베이스테이션',
         addressKr: '부산 서구 송도해변로 171',
         tip: '請停在松島海灘東側纜車站入口，平路搭電梯直達售票與搭乘處。',
-        googleMap: 'https://maps.app.goo.gl/9R6hF9w2v8T8qXy56'
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=부산+서구+송도해변로+171'
       },
       {
         id: 'busandaek',
@@ -1320,7 +2216,7 @@
         nameKr: '흰여울문화마을 (절영로)',
         addressKr: '부산 영도구 절영로 194',
         tip: '★請停在上方「絕影路 194」馬路旁！只走水平平路看海與進景觀咖啡廳，嚴禁下切海邊長階梯。',
-        googleMap: 'https://maps.app.goo.gl/1w8y5T6Z8qX9zXy45'
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=부산+영도구+절영로+194'
       },
       {
         id: 'baekhwa',
@@ -1342,7 +2238,7 @@
         nameKr: '용두산공원 주차장 (부산타워 앞)',
         addressKr: '부산 중구 용두산길 37-55',
         tip: '★計程車可直接開上山頂圓環！下車直達高速電梯登塔，避開光復路單向手扶梯與回程陡下階梯。',
-        googleMap: 'https://maps.app.goo.gl/6X8y5T6Z8qX9zXy45'
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=부산+중구+용두산길+37-55'
       },
       {
         id: 'bujebi',
@@ -1364,7 +2260,7 @@
         nameKr: '해동용궁사',
         addressKr: '부산 기장군 기장읍 용궁길 86',
         tip: '請開到最靠近入口之停車場。沿途步道有扶手，清晨人少漫步祈福看海。',
-        googleMap: 'https://maps.app.goo.gl/3w8y5T6Z8qX9zXy45'
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=부산+기장군+기장읍+용궁길+86'
       },
       {
         id: 'kalguksu31',
@@ -1419,7 +2315,7 @@
         nameKr: '옵스 해운대점',
         addressKr: '부산 해운대구 중동1로 31',
         tip: '海雲台名物烘焙屋！巨型香草卡士達泡芙、原味蘋果派與學士麵包。',
-        googleMap: 'https://maps.app.goo.gl/5X8y5T6Z8qX9zXy45'
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=부산+해운대구+중동1로+31'
       },
       {
         id: 'airport',
@@ -1428,14 +2324,38 @@
         type: 'hotel',
         nameZh: '金海國際機場 (國際線出境大廳)',
         nameKr: '김해국제공항 국제선 청사',
-        addressKr: '김해국제공항 국제선 청사',
-        tip: '請直接停在國際線（국제선）出境航廈門口，方便搬運行李推車辦理退稅手續。',
-        googleMap: 'https://maps.app.goo.gl/airport'
+        addressKr: '부산 강서구 공항진입로 108',
+        tip: '請直接停在國際線（국제선）出境航廈 2 樓門口，方便搬運行李推車辦理退稅手續。',
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=김해국제공항+국제선'
+      },
+      {
+        id: 'cheongsapo',
+        num: '16',
+        category: '熱門景點',
+        type: 'spot',
+        nameZh: '海雲台天空膠囊列車 (青沙浦站)',
+        nameKr: '해운대 블루라인파크 청사포정거장',
+        addressKr: '부산 해운대구 청사포로 116',
+        tip: '請停在青沙浦乘車站入口旁，方便長輩平路搭乘 14:00 膠囊列車往尾浦。',
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=부산+해운대구+청사포로+116',
+        extra: true
+      },
+      {
+        id: 'spaland',
+        num: '17',
+        category: '熱門景點',
+        type: 'spot',
+        nameZh: '新世界百貨 SPA LAND 汗蒸幕',
+        nameKr: '신세계 센텀시티 스파랜드 (4번 게이트)',
+        addressKr: '부산 해운대구 센텀남대로 35',
+        tip: '請停在新世界百貨 Centum City 店 4 號門（Gate 4），進去即是 SPA LAND 專用電梯。',
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=부산+해운대구+센텀남대로+35',
+        extra: true
       }
     ];
 
     // ==========================================
-    // 2. 美食地圖完整資料庫 (依 4 大分類)
+    // 2. 美食地圖完整資料庫 (依 4 大分類，附點餐語音)
     // ==========================================
     const foodItemsData = [
       // ⭐ 激推必吃
@@ -1448,6 +2368,8 @@
         nameKr: '부산댁',
         area: '西面',
         signature: '招牌厚切嚴選豬五花、豬頸肉、海鮮大醬湯、現蒸高麗菜包肉',
+        orderKr: '부산댁 모둠 한 판 주세요',
+        orderZh: '請給我們一份釜山宅綜合拼盤',
         seniorHighlight: '店員在專用炭火台全程烤好上桌、零油煙撲面、免動手翻烤、平路進店免爬階梯！',
         addressKr: '부산 부산진구 동천로107번길 14 1층',
         googleMap: 'https://maps.app.goo.gl/6rKh3c9e61vQ1MLm9'
@@ -1461,6 +2383,8 @@
         nameKr: '백화양곱창',
         area: '札嘎其',
         signature: '炭火鹽烤牛小腸、特選牛皺胃、特製泡菜炒飯',
+        orderKr: '소금구이 모둠 네 명분 주세요',
+        orderZh: '請給我們4人份鹽烤綜合牛腸',
         seniorHighlight: '中午 12:00 開門首輪入場免排隊久站、阿姨桌邊炭火代烤代剪、平路進店。',
         addressKr: '부산 중구 자갈치로23번길 6',
         googleMap: 'https://maps.app.goo.gl/EunVKNUqanqDGmDy9'
@@ -1474,6 +2398,8 @@
         nameKr: '부제비',
         area: '西面田浦',
         signature: '鮮美蛤蜊刀削麵、手工Q彈麵疙瘩、清爽切片五花白肉（包肉）',
+        orderKr: '칼국수 두 개랑 수제비 하나, 보쌈 주세요',
+        orderZh: '請給我們2碗刀削麵、1碗麵疙瘩與包肉',
         seniorHighlight: '海鮮高湯溫和甘甜不辣、麵體軟嫩易消化、全熟熱湯溫暖長輩胃腸、平坦街區。',
         addressKr: '부산 부산진구 서전로38번길 43-3',
         googleMap: 'https://maps.app.goo.gl/5iNXxxvutC9YocLj9'
@@ -1487,6 +2413,8 @@
         nameKr: '해운대31cm해물칼국수',
         area: '海雲台',
         signature: '直徑31cm超大鋼盆海鮮刀削麵（堆積如山的大蛤蜊、扇貝、淡菜）',
+        orderKr: '해물칼국수 네 명분 안 맵게 주세요',
+        orderZh: '請給我們4人份海鮮刀削麵(不辣)',
         seniorHighlight: '水族館旁全平路直達、原汁原味清甜無辣熱貝類高湯、暖身補充體力。',
         addressKr: '부산 해운대구 구남로41번길 46',
         googleMap: 'https://maps.app.goo.gl/Ne7wW8AH3qskiDjp7'
@@ -1500,6 +2428,8 @@
         nameKr: '두루미 광안',
         area: '廣安里',
         signature: '頂級熟成濟州黑豬五花肉、特選豬頸肉、煎桔梗泡菜',
+        orderKr: '숙성 삼겹살이랑 목살 주세요',
+        orderZh: '請給我們熟成五花肉與梅花肉',
         seniorHighlight: '煙火節前 15:30 提早用餐避開百萬人潮、專人代烤金黃酥脆全熟肉塊、高熱量蓄熱禦寒。',
         addressKr: '부산 수영구 남천바다로 38-10 1층',
         googleMap: 'https://maps.app.goo.gl/RJA6QNfYGHmVQAjF8'
@@ -1513,6 +2443,8 @@
         nameKr: '맛찬들 해운대점',
         area: '海雲台',
         signature: '3.5cm 極厚熟成鹽烤豬五花、烤韓式石鍋飯、濃郁海鮮大醬湯',
+        orderKr: '숙성 생삼겹살 네 인분이랑 돌솥밥 주세요',
+        orderZh: '請給我們4人份熟成五花肉與石鍋飯',
         seniorHighlight: '紅外線測溫槍精準代烤、全程專人桌邊剪肉服務免動手、CatchTable可線上取號免久站。',
         addressKr: '부산 해운대구 해운대로608번길 46',
         googleMap: 'https://maps.app.goo.gl/qBZ3EkFfYTKMT9Ht9'
@@ -1528,6 +2460,8 @@
         nameKr: '쌍둥이돼지국밥',
         area: '大淵站',
         signature: '招牌白切肉套餐 (수육백반)、清甜豬骨濃高湯、自製韭菜拌醬',
+        orderKr: '수육백반 네 개 주세요',
+        orderZh: '請給我們4份白切肉湯飯套餐',
         seniorHighlight: '退房後計程車順路節點、白切肉溫熱軟嫩無肥膩感、熱骨湯好入口易消化。',
         addressKr: '부산 남구 유엔평화로 35-1',
         googleMap: 'https://maps.app.goo.gl/aACjUwe4ZrfcGuni9'
@@ -1541,9 +2475,11 @@
         nameKr: '중리해녀촌',
         area: '影島',
         signature: '現撈新鮮海膽紫菜包飯、現煮鮑魚海鮮拉麵',
+        orderKr: '성게김밥이랑 해물라면 주세요',
+        orderZh: '請給我們海膽紫菜包飯與海鮮拉麵',
         seniorHighlight: '影島海邊坐看壯麗海景、現撈海味新鮮清甜、計程車直達門口免爬長階梯。',
         addressKr: '부산 영도구 중리남로 2-36',
-        googleMap: 'https://maps.app.goo.gl/haenyeo'
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=부산+영도구+중리남로+2-36'
       },
       {
         id: 'f_haesong',
@@ -1554,6 +2490,8 @@
         nameKr: '해운대암소갈비집',
         area: '海雲台',
         signature: '傳統醬醃炭火韓牛牛小排、招牌肉汁馬鈴薯麵',
+        orderKr: '양념갈비 네 인분이랑 감자사리 주세요',
+        orderZh: '請給我們4人份醬醃牛排骨與馬鈴薯麵',
         seniorHighlight: '百年韓屋典雅包廂環境、韓牛肉質軟嫩入口即化、店員熟練桌邊炙烤。',
         addressKr: '부산 해운대구 해운대해변로 333',
         googleMap: 'https://maps.app.goo.gl/CpoBzfjB9uwgdbfBA'
@@ -1569,6 +2507,8 @@
         nameKr: 'bhc치킨 해운대점',
         area: '海雲台',
         signature: '招牌起司粉炸雞（뿌링클）、香濃流心起司球',
+        orderKr: '뿌링클 한 마리랑 치즈볼 포장해 주세요',
+        orderZh: '請幫我外帶一份起司炸雞與起司球',
         seniorHighlight: '派年輕人外帶回飯店房內、長輩舒適坐沙發配熱茶啤酒享用、無須外出吹冷風。',
         addressKr: '부산 해운대구 해운대해변로298번길 24',
         googleMap: 'https://maps.app.goo.gl/NowtfHpNxyqEDKT17'
@@ -1582,9 +2522,11 @@
         nameKr: '옵스 해운대점',
         area: '海雲台',
         signature: '巨型天然香草卡士達泡芙、原味香酥蘋果派、學士麵包',
+        orderKr: '슈크림빵이랑 학원전 포장해 주세요',
+        orderZh: '請幫我打包卡士達泡芙與學士麵包',
         seniorHighlight: '飯店步行 6 分鐘平路直達、外帶回房當悠閒早餐點心、甜度適中長輩喜愛。',
         addressKr: '부산 해운대구 중동1로 31',
-        googleMap: 'https://maps.app.goo.gl/ops'
+        googleMap: 'https://www.google.com/maps/search/?api=1&query=부산+해운대구+중동1로+31'
       },
       {
         id: 'f_horangi',
@@ -1595,6 +2537,8 @@
         nameKr: '호랑이젤라떡',
         area: '海雲台尾浦',
         signature: '現包義式冰淇淋麻糬（海鹽、開心果、烤綠茶口味）',
+        orderKr: '해운대 소금우유랑 피스타치오 맛 주세요',
+        orderZh: '請給我們海雲台海鹽牛奶與開心果口味',
         seniorHighlight: '膠囊列車尾浦站旁平路、薄軟Q麻糬皮好咬不黏牙、一人一顆份量適中。',
         addressKr: '부산 해운대구 달맞이길62번길 38 1층',
         googleMap: 'https://maps.app.goo.gl/SRYBm4VDjRjKdxsQ8'
@@ -1608,6 +2552,8 @@
         nameKr: '씨앗호떡 (BIFF광장)',
         area: 'BIFF 廣場',
         signature: '南浦洞傳統黑糖煎餅包葵花子、南瓜子、花生綜合堅果',
+        orderKr: '씨앗호떡 네 개 주세요',
+        orderZh: '請給我們4個堅果糖餅',
         seniorHighlight: 'BIFF 廣場全平路漫步邊走邊吃、現點現煎熱氣騰騰、堅果香脆甜而不膩。',
         addressKr: '부산 중구 비프광장로 36',
         googleMap: 'https://maps.app.goo.gl/8iuiNdSKoip9DLF9A'
@@ -1621,6 +2567,8 @@
         nameKr: '거인통닭',
         area: '富平市場',
         signature: '釜山三大傳統香脆切塊炸雞（咖哩胡椒微甜風味、份量超大）',
+        orderKr: '반반치킨 한 마리 포장해 주세요',
+        orderZh: '請幫我外帶一份半半炸雞',
         seniorHighlight: '富平夜市平路直達、大份量酥香多汁、外帶回飯店當宵夜點心不費腳力。',
         addressKr: '부산 중구 중구로47번길 34',
         googleMap: 'https://maps.app.goo.gl/fCbtCcvDsLPVnqtV8'
@@ -1730,7 +2678,7 @@
     }
 
     // ==========================================
-    // 8. 司機大字小卡 Modal 控制 (15 處)
+    // 8. 司機大字小卡 Modal 控制 (含語音綁定)
     // ==========================================
     function openTaxiModal(cardId) {
       const item = taxiCardsData.find(c => c.id === cardId);
@@ -1750,10 +2698,32 @@
         copyAddress(item.addressKr);
       };
 
+      const speakPlaceBtn = document.getElementById('modal-speak-place-btn');
+      if (speakPlaceBtn) {
+        speakPlaceBtn.onclick = function(e) {
+          speakKorean(item.nameKr, item.nameZh + ' 地名', this, e);
+        };
+      }
+
+      const speakAddrBtn = document.getElementById('modal-speak-addr-btn');
+      if (speakAddrBtn) {
+        speakAddrBtn.onclick = function(e) {
+          speakKorean(item.addressKr, item.nameZh + ' 地址', this, e);
+        };
+      }
+
+      const speakSentenceBtn = document.getElementById('modal-speak-sentence-btn');
+      if (speakSentenceBtn) {
+        speakSentenceBtn.onclick = function(e) {
+          speakDriverSentence(item.nameKr, item.addressKr, '對司機說：' + item.nameZh, this, e);
+        };
+      }
+
       document.getElementById('driver-modal').classList.remove('hidden');
     }
 
     function closeTaxiModal() {
+      stopSpeaking();
       document.getElementById('driver-modal').classList.add('hidden');
     }
 
@@ -1796,28 +2766,33 @@
       }
     }
 
-    function showToast(msg) {
+    function showToast(msg, iconClass = 'fa-circle-check text-emerald-400', duration = 2600) {
       const toast = document.getElementById('toast');
       const toastText = document.getElementById('toast-text');
+      const toastIcon = document.getElementById('toast-icon');
+      if (toastIcon) {
+        toastIcon.className = 'fa-solid ' + iconClass + ' shrink-0';
+      }
       toastText.innerText = msg;
       toast.classList.remove('opacity-0', 'pointer-events-none');
-      setTimeout(() => {
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
         toast.classList.add('opacity-0', 'pointer-events-none');
-      }, 2400);
+      }, duration);
     }
 
     // ==========================================
-    // 10. 渲染計程車卡清單 (15 張)
+    // 10. 渲染計程車卡清單 (15 張核心卡，含地名與地址獨立語音鈕)
     // ==========================================
     function renderTaxiCards(filter = 'all') {
       const container = document.getElementById('taxi-cards-list');
       container.innerHTML = '';
 
-      taxiCardsData.forEach(item => {
+      taxiCardsData.filter(item => !item.extra).forEach(item => {
         if (filter !== 'all' && item.type !== filter) return;
 
         const card = document.createElement('div');
-        card.className = 'bg-white p-3.5 rounded-2xl card-shadow border border-slate-200 transition hover:border-amber-400 space-y-2';
+        card.className = 'bg-white p-3.5 rounded-2xl card-shadow border border-slate-200 transition hover:border-amber-400 space-y-2.5';
 
         let typeBadge = 'bg-slate-700 text-white';
         if (item.type === 'food') typeBadge = 'bg-rose-600 text-white font-bold';
@@ -1825,31 +2800,57 @@
         if (item.type === 'hotel') typeBadge = 'bg-brand-navy text-amber-300 font-bold';
 
         const naverLink = item.naverMap || ('https://map.naver.com/p/search/' + encodeURIComponent(item.nameKr.replace(/\(.*?\)/g, '').trim()));
+        const safeNameKr = item.nameKr.replace(/'/g, "\\'");
+        const safeAddrKr = item.addressKr.replace(/'/g, "\\'");
+        const safeNameZh = item.nameZh.replace(/'/g, "\\'");
 
         card.innerHTML = `
           <div class="flex items-start justify-between cursor-pointer active:opacity-80" onclick="if (!window.getSelection().toString().trim()) openTaxiModal('${item.id}')">
-            <div class="space-y-1 max-w-[82%]">
+            <div class="space-y-1 min-w-0 flex-1 pr-2">
               <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="text-[10px] font-black bg-slate-900 text-amber-300 px-1.5 py-0.5 rounded">${item.num}</span>
                 <span class="text-[10px] ${typeBadge} px-2 py-0.5 rounded">${item.category}</span>
               </div>
               <h3 class="text-sm font-bold text-slate-900">${item.nameZh}</h3>
-              <p class="text-xs text-slate-800 font-kr font-black tracking-tight">${item.nameKr}</p>
-              <p class="text-[11px] text-slate-500 font-kr truncate">${item.addressKr}</p>
             </div>
-            <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200">
+            <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-800 flex items-center justify-center shrink-0 border border-amber-200" title="開啟全螢幕司機大字卡">
               <i class="fa-solid fa-expand text-xs"></i>
             </div>
           </div>
 
-          <div class="flex gap-2 pt-1 border-t border-slate-100 text-xs">
+          <!-- 韓文地點名稱與韓文地址 + 雙語音按鈕 -->
+          <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <span class="text-[10px] text-slate-400 font-bold block">📍 韓文地點名稱</span>
+                <p class="text-xs text-slate-900 font-kr font-black tracking-tight">${item.nameKr}</p>
+              </div>
+              <button onclick="speakKorean('${safeNameKr}', '${safeNameZh} 地名', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-volume-high"></i> 唸地名
+              </button>
+            </div>
+            <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-200/60">
+              <div class="min-w-0">
+                <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                <p class="text-[11px] text-slate-700 font-kr font-bold">${item.addressKr}</p>
+              </div>
+              <button onclick="speakKorean('${safeAddrKr}', '${safeNameZh} 地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-volume-high"></i> 唸地址
+              </button>
+            </div>
+          </div>
+
+          <div class="flex gap-1.5 pt-1 text-xs">
             <button onclick="openTaxiModal('${item.id}')" class="flex-1 bg-brand-navy hover:bg-slate-800 text-amber-300 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
               <i class="fa-solid fa-address-card text-[11px]"></i> 司機大字卡
             </button>
-            <button onclick="copyAddress('${item.addressKr}')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-1.5 rounded-lg flex items-center justify-center gap-1">
-              <i class="fa-regular fa-copy text-[11px]"></i> 複製韓文地址
+            <button onclick="speakDriverSentence('${safeNameKr}', '${safeAddrKr}', '對司機說：${safeNameZh}', this, event)" class="tts-btn bg-rose-600 hover:bg-rose-700 text-white font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+              <i class="fa-solid fa-volume-high text-[11px]"></i> 對司機說
             </button>
-            <a href="${naverLink}" target="_blank" class="w-9 h-8 bg-emerald-50 text-emerald-700 rounded-lg flex items-center justify-center font-bold">
+            <button onclick="copyAddress('${safeAddrKr}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1">
+              <i class="fa-regular fa-copy text-[11px]"></i> 複製
+            </button>
+            <a href="${naverLink}" target="_blank" class="w-8 h-8 bg-emerald-50 text-emerald-700 rounded-lg flex items-center justify-center font-bold shrink-0">
               <i class="fa-solid fa-compass text-xs"></i>
             </a>
           </div>
@@ -1872,7 +2873,7 @@
     }
 
     // ==========================================
-    // 11. 渲染美食地圖 (4 大分類 & 亮點)
+    // 11. 渲染美食地圖 (4 大分類 & 店名/地址/點餐三語音)
     // ==========================================
     let currentFoodCat = 'all';
 
@@ -1897,6 +2898,12 @@
         const card = document.createElement('div');
         card.className = `bg-white rounded-2xl p-3.5 card-shadow border transition-all ${isDone ? 'border-emerald-400 bg-emerald-50/20' : 'border-slate-200'} space-y-2.5`;
 
+        const safeNameKr = item.nameKr.replace(/'/g, "\\'");
+        const safeAddrKr = item.addressKr.replace(/'/g, "\\'");
+        const safeNameZh = item.nameZh.replace(/'/g, "\\'");
+        const safeOrderKr = (item.orderKr || item.nameKr).replace(/'/g, "\\'");
+        const safeOrderZh = (item.orderZh || '點餐').replace(/'/g, "\\'");
+
         card.innerHTML = `
           <div class="flex items-start justify-between">
             <div class="space-y-1">
@@ -1905,7 +2912,6 @@
                 <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-bold">${item.area}</span>
               </div>
               <h3 class="text-base font-black text-slate-900 mt-1">${item.nameZh}</h3>
-              <p class="text-xs text-slate-600 font-kr font-bold">${item.nameKr}</p>
             </div>
             
             <button onclick="toggleFoodCheck('${item.id}')" class="px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${isDone ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
@@ -1914,8 +2920,39 @@
             </button>
           </div>
 
+          <!-- 韓文店名、韓文地址與點餐語音盒 -->
+          <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5 text-xs">
+            <div class="flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <span class="text-[10px] text-slate-400 font-bold block">📍 韓文店名</span>
+                <span class="font-kr font-black text-slate-900">${item.nameKr}</span>
+              </div>
+              <button onclick="speakKorean('${safeNameKr}', '${safeNameZh} 店名', this, event)" class="tts-btn shrink-0 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-volume-high"></i> 唸店名
+              </button>
+            </div>
+            <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-200/60">
+              <div class="min-w-0">
+                <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                <span class="font-kr font-bold text-slate-700 text-[11px]">${item.addressKr}</span>
+              </div>
+              <button onclick="speakKorean('${safeAddrKr}', '${safeNameZh} 地址', this, event)" class="tts-btn shrink-0 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-volume-high"></i> 唸地址
+              </button>
+            </div>
+            <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-200/60">
+              <div class="min-w-0">
+                <span class="text-[10px] text-slate-400 font-bold block">🍽️ 招牌點餐韓文 (${item.orderZh})</span>
+                <span class="font-kr font-bold text-purple-800 text-[11px]">${item.orderKr}</span>
+              </div>
+              <button onclick="speakKorean('${safeOrderKr}', '點餐：${safeOrderZh}', this, event)" class="tts-btn shrink-0 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                <i class="fa-solid fa-volume-high"></i> 點餐語音
+              </button>
+            </div>
+          </div>
+
           <!-- 招牌菜色 -->
-          <div class="text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1">
+          <div class="text-xs bg-slate-50/70 p-2.5 rounded-xl border border-slate-100 space-y-1">
             <div class="font-bold text-slate-900 flex items-center gap-1">
               <i class="fa-solid fa-plate-wheat text-amber-600"></i> 招牌菜色：
             </div>
@@ -1931,15 +2968,18 @@
           </div>
 
           <!-- 地址與外部導航按鈕 -->
-          <div class="pt-1 flex gap-2 border-t border-slate-100">
+          <div class="pt-1 flex gap-1.5 border-t border-slate-100">
+            <button onclick="speakDriverSentence('${safeNameKr}', '${safeAddrKr}', '對司機說：去${safeNameZh}', this, event)" class="tts-btn bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1 shadow-sm">
+              <i class="fa-solid fa-volume-high"></i> 對司機說
+            </button>
             <a href="${item.googleMap}" target="_blank" class="flex-1 bg-blue-50 hover:bg-blue-100 text-brand-blue text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-              <i class="fa-solid fa-map-location-dot"></i> Google Maps
+              <i class="fa-solid fa-map-location-dot"></i> Google
             </a>
             <a href="https://map.naver.com/p/search/${encodeURIComponent(item.nameKr)}" target="_blank" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-              <i class="fa-solid fa-compass"></i> Naver Map
+              <i class="fa-solid fa-compass"></i> Naver
             </a>
-            <button onclick="copyAddress('${item.addressKr}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center justify-center gap-1">
-              <i class="fa-regular fa-copy"></i> 複製地址
+            <button onclick="copyAddress('${safeAddrKr}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-1.5 px-2.5 rounded-lg flex items-center justify-center gap-1">
+              <i class="fa-regular fa-copy"></i> 複製
             </button>
           </div>
         `;
@@ -2020,13 +3060,39 @@
       if (e.target.id === 'senior-modal') closeSeniorModal();
     });
 
+    // 為每日行程卡片標題列的韓文副標題自動加上迷你發音提示與點擊發音
+    function enhanceItineraryHeaderSubtitles() {
+      document.querySelectorAll('#tab-itinerary .accordion-header p.font-kr').forEach(pEl => {
+        const text = pEl.innerText.trim();
+        // 只擷取韓文部分供發音
+        const krMatches = text.match(/[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F0-9\s]+/g);
+        if (!krMatches) return;
+        const krSpeech = krMatches.join(' ').replace(/\s+/g, ' ').trim();
+        if (krSpeech.length < 2) return;
+
+        pEl.classList.add('inline-flex', 'items-center', 'gap-1', 'hover:text-rose-600', 'transition');
+        const badge = document.createElement('span');
+        badge.className = 'tts-btn inline-flex items-center justify-center w-4 h-4 rounded-full bg-rose-100 text-rose-600 text-[9px] shrink-0 ml-0.5';
+        badge.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+        badge.title = '點擊朗讀韓文地名';
+        pEl.appendChild(badge);
+
+        pEl.addEventListener('click', e => {
+          e.stopPropagation();
+          speakKorean(krSpeech, '標題韓文地名', badge, e);
+        });
+      });
+    }
+
     // ==========================================
     // 初始化
     // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
+      initKoreanVoices();
       renderTaxiCards('all');
       renderFoodItems('all');
       renderChecklist();
+      enhanceItineraryHeaderSubtitles();
     });
   </script>
 
