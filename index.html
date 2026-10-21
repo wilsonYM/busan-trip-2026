@@ -14,6 +14,10 @@
   <!-- Font Awesome 6 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
+  <!-- Leaflet Map CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <!-- Google Fonts: Noto Sans TC & KR -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,6 +101,50 @@
     @keyframes copyFlash {
       0% { background-color: rgba(254, 243, 199, 0.9); }
       100% { background-color: transparent; }
+    }
+    /* 每日行程地圖樣式 */
+    .day-map-canvas {
+      height: 230px;
+      width: 100%;
+      border-radius: 0.75rem;
+      z-index: 10;
+    }
+    .leaflet-popup-content-wrapper {
+      border-radius: 0.85rem !important;
+      padding: 2px !important;
+      box-shadow: 0 10px 25px -5px rgba(15, 35, 58, 0.25) !important;
+    }
+    .leaflet-popup-content {
+      margin: 10px 12px !important;
+      line-height: 1.4 !important;
+    }
+    .map-pin-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 9999px;
+      font-weight: 900;
+      font-size: 12px;
+      color: #ffffff;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 3px 8px rgba(15, 35, 58, 0.35);
+      font-family: "Noto Sans TC", sans-serif;
+    }
+    .leaflet-tooltip.map-stop-label {
+      background-color: rgba(255, 255, 255, 0.94);
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 1px 6px;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #0f233a;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+      white-space: nowrap;
+    }
+    .leaflet-tooltip.map-stop-label::before {
+      display: none;
     }
   </style>
 </head>
@@ -214,6 +262,9 @@
           <h2 class="text-base font-bold mt-1">抵達海雲台 ➔ 計程車直奔飯店 ➔ 宵夜 BHC 炸雞</h2>
           <p class="text-xs text-slate-200 mt-0.5">搭乘真航空直飛，4人行李搭 Kakao T 大車直達飯店門口</p>
         </div>
+
+        <!-- Day 1 當日景點動線地圖 -->
+        <div id="day-map-wrapper-1"></div>
 
         <!-- 卡片 1-1: 航班時間 -->
         <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
@@ -461,6 +512,9 @@
           <h2 class="text-base font-bold mt-1">甘川洞 ➔ 松島纜車 ➔ 西面 ➔ 釜山宅燒肉⭐</h2>
           <p class="text-xs text-slate-200 mt-0.5">只走水平路看彩色山城、水晶纜車坐看海景、17:00免排隊代烤燒肉</p>
         </div>
+
+        <!-- Day 2 當日景點動線地圖 -->
+        <div id="day-map-wrapper-2"></div>
 
         <!-- 2-1: 甘川洞文化村 -->
         <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
@@ -733,6 +787,9 @@
           <h2 class="text-base font-bold mt-1">影島海女村 ➔ 百花烤腸⭐ ➔ 釜山塔 ➔ Bujebi⭐</h2>
           <p class="text-xs text-slate-200 mt-0.5">白淺灘走平路絕影路、中午吃阿姨代烤牛腸、車直上釜山塔圓環</p>
         </div>
+
+        <!-- Day 3 當日景點動線地圖 -->
+        <div id="day-map-wrapper-3"></div>
 
         <!-- 3-1: 白淺灘文化村 -->
         <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
@@ -1088,6 +1145,9 @@
           <p class="text-xs text-amber-100 mt-0.5">OPS烘焙屋、水族館、31cm刀削麵、4張折疊椅沙灘防寒卡位</p>
         </div>
 
+        <!-- Day 4 當日景點動線地圖 -->
+        <div id="day-map-wrapper-4"></div>
+
         <!-- 4-1: OPS 烘焙屋晨間採買 -->
         <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
           <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
@@ -1411,6 +1471,9 @@
           <p class="text-xs text-slate-200 mt-0.5">平緩步道祈福、天空膠囊吹冷氣看海、五星級溫泉足湯、厚切五花肉</p>
         </div>
 
+        <!-- Day 5 當日景點動線地圖 -->
+        <div id="day-map-wrapper-5"></div>
+
         <!-- 5-1: 海東龍宮寺 & Skyline Luge & Lotte Premium Outlets 東釜山店 -->
         <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
           <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
@@ -1667,6 +1730,9 @@
           <h2 class="text-base font-bold mt-1">退房 ➔ 雙胞胎豬肉湯飯 ➔ 金海機場返台</h2>
           <p class="text-xs text-slate-200 mt-0.5">Kakao T Venti 大型車行李全上車、大淵店順路吃白切肉、直達機場</p>
         </div>
+
+        <!-- Day 6 當日景點動線地圖 -->
+        <div id="day-map-wrapper-6"></div>
 
         <!-- 6-1: 退房上車 -->
         <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
@@ -2604,10 +2670,246 @@
     ];
 
     // ==========================================
-    // 4. 狀態管理 (LocalStorage)
+    // 4. 狀態管理 (LocalStorage) 與每日地圖路線資料
     // ==========================================
     let savedChecks = JSON.parse(localStorage.getItem('busan_2026_checklist') || '{}');
     let foodChecked = JSON.parse(localStorage.getItem('busan_2026_food') || '{}');
+    let currentDayNum = 1;
+    const dayMapInstances = {};
+
+    const dailyMapRoutes = {
+      1: {
+        title: 'Day 1 動線地圖：金海機場 ➔ 海雲台飯店 ➔ BHC 炸雞',
+        regionBadge: '機場 ➔ 海雲台',
+        stops: [
+          { num: '1', time: '19:35', nameZh: '釜山/金海國際機場', nameKr: '김해국제공항', lat: 35.1732, lng: 128.9465, type: 'airport', dir: 'top', offset: [0, -12], taxiId: 'airport', googleMap: 'https://maps.app.goo.gl/buvkJ1cZ5rFDK4qm8', naverMap: 'https://naver.me/GNRjwFwb' },
+          { num: '2', time: '21:20', nameZh: 'Raviens 飯店 (連住5晚)', nameKr: '라비앙즈메종드호텔', lat: 35.1612, lng: 129.1568, type: 'hotel', dir: 'left', offset: [-12, 0], taxiId: 'hotel', googleMap: 'https://maps.app.goo.gl/7gS1ZfsMyn9AbqrNA', naverMap: 'https://naver.me/FgTCLh2K' },
+          { num: '3', time: '21:45', nameZh: 'BHC 炸雞 (海雲台店)', nameKr: 'BHC치킨 해운대팔래드점', lat: 35.1608, lng: 129.1669, type: 'food', dir: 'right', offset: [12, 0], googleMap: 'https://maps.app.goo.gl/k4buRvEevjT8neY38', naverMap: 'https://naver.me/GkRAbIjX' }
+        ]
+      },
+      2: {
+        title: 'Day 2 動線地圖：甘川洞 ➔ 松島三景點 ➔ 西面 ➔ 釜山宅燒肉',
+        regionBadge: '沙下/松島 ➔ 西面 ➔ 海雲台',
+        stops: [
+          { num: '1', time: '09:30', nameZh: '甘川洞文化村 (諮詢處)', nameKr: '아미비석문화마을안내센터', lat: 35.0975, lng: 129.0106, type: 'spot', dir: 'top', offset: [0, -12], taxiId: 'gamcheon', googleMap: 'https://maps.app.goo.gl/ZoyTY3WjpEPftk4U7', naverMap: 'https://naver.me/xy7jSC56' },
+          { num: '2', time: '11:45', nameZh: '松島海上纜車 & 天空步道', nameKr: '송도해상케이블카 / 송도구름산책로', lat: 35.0761, lng: 129.0235, type: 'spot', dir: 'right', offset: [12, -4], taxiId: 'songdo', googleMap: 'https://maps.app.goo.gl/YqTEpAd35MEwpPQ97', naverMap: 'https://naver.me/Fmf6KBhZ' },
+          { num: '3', time: '12:30', nameZh: '松島龍宮空中步道', nameKr: '송도용궁구름다리', lat: 35.0619, lng: 129.0222, type: 'spot', dir: 'bottom', offset: [0, 12], googleMap: 'https://maps.app.goo.gl/hqsasqyd2cUMdn4t8', naverMap: 'https://naver.me/5T4AUbEV' },
+          { num: '4', time: '15:30', nameZh: '西面市場', nameKr: '서면시장', lat: 35.1566, lng: 129.0581, type: 'spot', dir: 'left', offset: [-12, 0], googleMap: 'https://maps.app.goo.gl/ATFyzwuipMQUhV5ZA', naverMap: 'https://naver.me/x8tLVWqk' },
+          { num: '5', time: '17:00', nameZh: '釜山宅 燒肉 (西面本店)', nameKr: '부산댁 서면본점', lat: 35.1564, lng: 129.0628, type: 'food', dir: 'right', offset: [12, 0], taxiId: 'busandaek', googleMap: 'https://maps.app.goo.gl/T4NhiiDbjzUWpYma9', naverMap: 'https://naver.me/Gald2Ews' },
+          { num: '6', time: '18:40', nameZh: '回 Raviens 飯店', nameKr: '라비앙즈메종드호텔', lat: 35.1612, lng: 129.1568, type: 'hotel', dir: 'top', offset: [0, -12], taxiId: 'hotel', googleMap: 'https://maps.app.goo.gl/7gS1ZfsMyn9AbqrNA', naverMap: 'https://naver.me/FgTCLh2K' }
+        ]
+      },
+      3: {
+        title: 'Day 3 動線地圖：影島 ➔ 札嘎其/南浦洞 ➔ 西面 Bujebi',
+        regionBadge: '影島 ➔ 南浦洞 ➔ 西面',
+        stops: [
+          { num: '1', time: '09:30', nameZh: '白淺灘文化村', nameKr: '흰여울문화마을거점센터', lat: 35.0784, lng: 129.0449, type: 'spot', dir: 'right', offset: [12, 0], taxiId: 'huinnyeoul', googleMap: 'https://maps.app.goo.gl/hJhRRLcPFCD2JcWh6', naverMap: 'https://naver.me/x4FjXEvB' },
+          { num: '2', time: '11:30', nameZh: '影島海女村', nameKr: '중리해녀촌', lat: 35.0637, lng: 129.0598, type: 'food', dir: 'bottom', offset: [0, 12], googleMap: 'https://maps.app.goo.gl/2WGZbsG4kvnhLB2d8', naverMap: 'https://naver.me/GL81cTHN' },
+          { num: '3', time: '12:30', nameZh: '百花烤腸 (札嘎其市場)', nameKr: '백화양곱창', lat: 35.0968, lng: 129.0273, type: 'food', dir: 'left', offset: [-12, 6], taxiId: 'baekhwa', googleMap: 'https://maps.app.goo.gl/KJ4bKeN9vDmbvT9A6', naverMap: 'https://naver.me/F5D1zR9o' },
+          { num: '4', time: '14:00', nameZh: '龍頭山公園・釜山塔', nameKr: '용두산공원', lat: 35.1007, lng: 129.0326, type: 'spot', dir: 'top', offset: [0, -12], taxiId: 'busantower', googleMap: 'https://maps.app.goo.gl/kCyoJ6tySE9UUDjt9', naverMap: 'https://naver.me/xAFCXBOE' },
+          { num: '5', time: '15:00', nameZh: '南浦洞BIFF堅果黑糖餅', nameKr: '남포동 원조 찹쌀호떡 본점', lat: 35.0987, lng: 129.0285, type: 'food', dir: 'left', offset: [-12, -6], googleMap: 'https://maps.app.goo.gl/9XYEAjNe4Lu92QV88', naverMap: 'https://naver.me/FMcgFvvZ' },
+          { num: '6', time: '15:45', nameZh: '釜山巨人炸雞 東大新站店', nameKr: '거인통닭', lat: 35.1105, lng: 129.0176, type: 'food', dir: 'left', offset: [-12, 0], googleMap: 'https://maps.app.goo.gl/kQtSc553MpNTiAvD8', naverMap: 'https://naver.me/FG7xnzQ7' },
+          { num: '7', time: '16:30', nameZh: '樂天百貨公司 光復店', nameKr: '롯데백화점 광복점', lat: 35.0981, lng: 129.0365, type: 'spot', dir: 'right', offset: [12, 4], googleMap: 'https://maps.app.goo.gl/7X3hbxsN1RuF3nSs5', naverMap: 'https://naver.me/xucpJ9UW' },
+          { num: '8', time: '18:30', nameZh: 'Bujebi 海鮮刀削麵', nameKr: '부제비', lat: 35.1563, lng: 129.0642, type: 'food', dir: 'top', offset: [0, -12], taxiId: 'bujebi', googleMap: 'https://maps.app.goo.gl/JR4Pgr3s1EnxeHfx9', naverMap: 'https://naver.me/FjCkwY0J' }
+        ]
+      },
+      4: {
+        title: 'Day 4 動線地圖：海雲台慢遊 ➔ Durumi 燒肉 ➔ 廣安里煙火節',
+        regionBadge: '海雲台 ➔ 廣安里海水浴場',
+        stops: [
+          { num: '1', time: '08:30', nameZh: 'OPS 烘焙屋 (海雲台店)', nameKr: '옵스 해운대점', lat: 35.1624, lng: 129.1625, type: 'food', dir: 'top', offset: [0, -12], taxiId: 'ops', googleMap: 'https://maps.app.goo.gl/hCW9DYnU4z5Ai4pi9', naverMap: 'https://naver.me/Fnm0a9Rj' },
+          { num: '2', time: '10:00', nameZh: 'SEA LIFE 釜山水族館', nameKr: '씨라이프부산아쿠아리움', lat: 35.1592, lng: 129.1610, type: 'spot', dir: 'bottom', offset: [0, 12], googleMap: 'https://maps.app.goo.gl/fcoj758ATD7TMDW68', naverMap: 'https://naver.me/FoENALrx' },
+          { num: '3', time: '12:00', nameZh: '海雲台 31cm 海鮮刀削麵', nameKr: '해운대31cm해물칼국수', lat: 35.1616, lng: 129.1621, type: 'food', dir: 'right', offset: [12, 2], taxiId: 'kalguksu31', googleMap: 'https://maps.app.goo.gl/9px78Nc2d49WsbGX8', naverMap: 'https://naver.me/5XJI630U' },
+          { num: '4', time: '13:15', nameZh: '老虎吉拉朵麻糬冰', nameKr: '호랑이젤라떡 부산해운대본점', lat: 35.1583, lng: 129.1704, type: 'food', dir: 'right', offset: [12, 0], googleMap: 'https://maps.app.goo.gl/CDB8WrnLGFW3bwER9', naverMap: 'https://naver.me/GeURWn5w' },
+          { num: '5', time: '13:45', nameZh: 'Raviens 飯店 (午休整裝)', nameKr: '라비앙즈메종드호텔', lat: 35.1612, lng: 129.1568, type: 'hotel', dir: 'left', offset: [-12, 0], taxiId: 'hotel', googleMap: 'https://maps.app.goo.gl/7gS1ZfsMyn9AbqrNA', naverMap: 'https://naver.me/FgTCLh2K' },
+          { num: '6', time: '15:30', nameZh: 'Durumi Gwangan 燒肉', nameKr: '두루미 광안점', lat: 35.1477, lng: 129.1147, type: 'food', dir: 'bottom', offset: [0, 12], taxiId: 'durumi', googleMap: 'https://maps.app.goo.gl/xWfBmi9mJcyyHzY17', naverMap: 'https://naver.me/xQe2HCle' },
+          { num: '7', time: '17:00', nameZh: '廣安里海水浴場 (煙火節)', nameKr: '광안리해수욕장', lat: 35.1532, lng: 129.1186, type: 'spot', dir: 'top', offset: [0, -12], googleMap: 'https://maps.app.goo.gl/4jXF3bVpKU2MtBty7', naverMap: 'https://naver.me/xzxmzK1j' }
+        ]
+      },
+      5: {
+        title: 'Day 5 動線地圖：東釜山三景點 ➔ 膠囊列車 ➔ SPA LAND ➔ 味贊王',
+        regionBadge: '機張東釜山 ➔ 尾浦 ➔ Centum ➔ 海雲台',
+        stops: [
+          { num: '1', time: '08:45', nameZh: '海東龍宮寺', nameKr: '해동용궁사', lat: 35.1884, lng: 129.2233, type: 'spot', dir: 'right', offset: [12, 4], taxiId: 'dragon', googleMap: 'https://maps.app.goo.gl/gVE6NTgnt4o4XpVm9', naverMap: 'https://naver.me/58NdWaSm' },
+          { num: '2', time: '10:30', nameZh: 'Skyline Luge(斜坡滑車)', nameKr: '스카이라인루지 부산', lat: 35.1963, lng: 129.2163, type: 'spot', dir: 'top', offset: [0, -12], googleMap: 'https://maps.app.goo.gl/1jDoKZqLZDZddyU86', naverMap: 'https://naver.me/IDFUcLWo' },
+          { num: '3', time: '11:45', nameZh: 'Lotte Outlets 東釜山店', nameKr: '롯데마트 동부산점', lat: 35.1924, lng: 129.2128, type: 'spot', dir: 'left', offset: [-12, 2], googleMap: 'https://maps.app.goo.gl/knt5jdqviBJ6PUBA6', naverMap: 'https://naver.me/57VZX0l0' },
+          { num: '4', time: '14:00', nameZh: '海雲台天空膠囊列車 (尾浦)', nameKr: '해운대블루라인파크 미포정거장', lat: 35.1579, lng: 129.1714, type: 'spot', dir: 'bottom', offset: [0, 12], taxiId: 'cheongsapo', googleMap: 'https://maps.app.goo.gl/eCKWxCyoEohduTcd9', naverMap: 'https://naver.me/FafyrnAe' },
+          { num: '5', time: '16:45', nameZh: '新世界百貨 SPA LAND', nameKr: '센텀 스파랜드', lat: 35.1689, lng: 129.1296, type: 'spot', dir: 'top', offset: [0, -12], taxiId: 'spaland', googleMap: 'https://maps.app.goo.gl/VpXSopFgCiuWPYRV8', naverMap: 'https://naver.me/5Q372Aqt' },
+          { num: '6', time: '19:30', nameZh: '味贊王鹽烤肉 海雲台店', nameKr: '맛찬들왕소금구이 해운대점', lat: 35.1627, lng: 129.1597, type: 'food', dir: 'left', offset: [-12, -4], taxiId: 'matchandeul', googleMap: 'https://maps.app.goo.gl/ZbAyYrPw5mvZDhEF9', naverMap: 'https://naver.me/GSDACPH7' },
+          { num: '7', time: '備案', nameZh: '海雲台人氣韓牛炭火燒肉', nameKr: '해운대암소갈비집', lat: 35.1621, lng: 129.1665, type: 'food', dir: 'right', offset: [12, -4], googleMap: 'https://maps.app.goo.gl/P64C9PNZmp1SL9NN6', naverMap: 'https://naver.me/5LHsNhM3' }
+        ]
+      },
+      6: {
+        title: 'Day 6 動線地圖：海雲台退房 ➔ 雙胞胎豬肉湯飯 ➔ 金海機場',
+        regionBadge: '海雲台 ➔ 大淵站 ➔ 金海機場',
+        stops: [
+          { num: '1', time: '09:30', nameZh: 'Raviens 飯店 (退房出發)', nameKr: '라비앙즈메종드호텔', lat: 35.1612, lng: 129.1568, type: 'hotel', dir: 'right', offset: [12, 0], taxiId: 'hotel', googleMap: 'https://maps.app.goo.gl/7gS1ZfsMyn9AbqrNA', naverMap: 'https://naver.me/FgTCLh2K' },
+          { num: '2', time: '10:00', nameZh: '雙胞胎豬肉湯飯 (大淵店)', nameKr: '쌍둥이돼지국밥 본점', lat: 35.1345, lng: 129.0928, type: 'food', dir: 'bottom', offset: [0, 12], taxiId: 'ssangdoongi', googleMap: 'https://maps.app.goo.gl/BsrMFXhM25qw4NKd6', naverMap: 'https://naver.me/5T4AZrvf' },
+          { num: '3', time: '11:15', nameZh: '釜山/金海國際機場', nameKr: '김해국제공항', lat: 35.1732, lng: 128.9465, type: 'airport', dir: 'top', offset: [0, -12], taxiId: 'airport', googleMap: 'https://maps.app.goo.gl/buvkJ1cZ5rFDK4qm8', naverMap: 'https://naver.me/GNRjwFwb' }
+        ]
+      }
+    };
+
+    function renderAllDayMapCards() {
+      for (let d = 1; d <= 6; d++) {
+        const wrapper = document.getElementById('day-map-wrapper-' + d);
+        const route = dailyMapRoutes[d];
+        if (!wrapper || !route) continue;
+
+        const pillsHtml = route.stops.map((s, idx) => {
+          let dotBg = 'bg-brand-blue text-white';
+          if (s.type === 'food') dotBg = 'bg-rose-600 text-white';
+          if (s.type === 'hotel' || s.type === 'airport') dotBg = 'bg-slate-900 text-amber-300';
+          return `
+            <button onclick="focusDayMapStop(${d}, ${idx})" class="shrink-0 bg-slate-50 hover:bg-amber-50 active:scale-95 border border-slate-200 hover:border-amber-300 rounded-xl px-2 py-1 text-[11px] font-bold text-slate-700 flex items-center gap-1.5 transition">
+              <span class="w-4 h-4 rounded-full ${dotBg} text-[10px] font-black flex items-center justify-center shrink-0">${s.num}</span>
+              <span class="text-[10px] text-slate-400 font-medium">${s.time}</span>
+              <span class="truncate max-w-[125px]">${s.nameZh}</span>
+            </button>
+          `;
+        }).join('<i class="fa-solid fa-arrow-right text-[9px] text-slate-300 shrink-0"></i>');
+
+        wrapper.innerHTML = `
+          <div class="bg-white rounded-2xl card-shadow border border-slate-200/90 overflow-hidden p-3 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-black text-slate-900 flex items-center gap-1">
+                    <i class="fa-solid fa-map-location-dot text-brand-blue"></i> 當日景點位置與動線圖
+                  </span>
+                  <span class="text-[10px] bg-blue-50 text-brand-blue font-bold px-2 py-0.5 rounded-full">共 ${route.stops.length} 站</span>
+                </div>
+                <p class="text-[11px] text-slate-500 truncate mt-0.5">${route.title}</p>
+              </div>
+              <button onclick="resetDayMapBounds(${d})" class="shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 transition" title="顯示當日完整路線視野">
+                <i class="fa-solid fa-expand text-[10px]"></i> 全覽路線
+              </button>
+            </div>
+
+            <!-- 互動式地圖畫布 -->
+            <div id="leaflet-map-day-${d}" class="day-map-canvas border border-slate-200"></div>
+
+            <!-- 景點順序快速定位列 -->
+            <div class="space-y-1">
+              <div class="flex items-center justify-between text-[10px] text-slate-400 font-bold px-0.5">
+                <span>👇 點擊下方編號可放大定位該景點：</span>
+                <span><span class="inline-block w-2 h-2 rounded-full bg-brand-blue mr-0.5"></span>景點 <span class="inline-block w-2 h-2 rounded-full bg-rose-600 ml-1.5 mr-0.5"></span>美食 <span class="inline-block w-2 h-2 rounded-full bg-slate-900 ml-1.5 mr-0.5"></span>住宿/機場</span>
+              </div>
+              <div class="flex items-center gap-1 overflow-x-auto custom-scroll pb-1 pt-0.5">
+                ${pillsHtml}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function ensureDayMapInitialized(dayNum) {
+      if (typeof L === 'undefined') return;
+      const route = dailyMapRoutes[dayNum];
+      const mapEl = document.getElementById('leaflet-map-day-' + dayNum);
+      if (!route || !mapEl) return;
+
+      if (dayMapInstances[dayNum]) {
+        setTimeout(() => {
+          dayMapInstances[dayNum].map.invalidateSize();
+          dayMapInstances[dayNum].map.fitBounds(dayMapInstances[dayNum].bounds, { padding: [28, 28], maxZoom: 15 });
+        }, 60);
+        return;
+      }
+
+      const map = L.map(mapEl, {
+        zoomControl: true,
+        attributionControl: false
+      });
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd'
+      }).addTo(map);
+
+      const latlngs = [];
+      const markers = [];
+
+      route.stops.forEach((s) => {
+        const pt = [s.lat, s.lng];
+        latlngs.push(pt);
+
+        let bgHex = '#1e3a5f';
+        if (s.type === 'food') bgHex = '#e11d48';
+        if (s.type === 'hotel' || s.type === 'airport') bgHex = '#0f233a';
+
+        const icon = L.divIcon({
+          className: '',
+          html: `<div class="map-pin-badge" style="background:${bgHex};">${s.num}</div>`,
+          iconSize: [26, 26],
+          iconAnchor: [13, 13],
+          popupAnchor: [0, -14]
+        });
+
+        const searchUrl = getGoogleSearchUrl(s.nameZh, s.nameKr);
+        const taxiBtnHtml = s.taxiId
+          ? `<button onclick="openTaxiModal('${s.taxiId}')" style="background:#0f233a;color:#fcd34d;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;">司機卡</button>`
+          : '';
+
+        const popupHtml = `
+          <div style="min-width:175px;font-family:'Noto Sans TC',sans-serif;">
+            <div style="font-size:10px;font-weight:800;color:#64748b;">第 ${s.num} 站 · ${s.time}</div>
+            <div style="font-size:13px;font-weight:900;color:#0f172a;margin-top:1px;">${s.nameZh}</div>
+            <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;">${s.nameKr}</div>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+              ${taxiBtnHtml}
+              <a href="${s.googleMap}" target="_blank" style="background:#eff6ff;color:#1d4ed8;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;text-decoration:none;">Google</a>
+              <a href="${s.naverMap}" target="_blank" style="background:#ecfdf5;color:#047857;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;text-decoration:none;">Naver</a>
+              <a href="${searchUrl}" target="_blank" style="background:#fef3c7;color:#92400e;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;text-decoration:none;">搜尋</a>
+            </div>
+          </div>
+        `;
+
+        const marker = L.marker(pt, { icon }).addTo(map).bindPopup(popupHtml);
+        marker.bindTooltip(`${s.num}. ${s.nameZh}`, {
+          permanent: true,
+          direction: s.dir || 'top',
+          offset: s.offset || [0, -12],
+          className: 'map-stop-label'
+        });
+
+        markers.push(marker);
+      });
+
+      // 繪製當日路線連接虛線
+      if (latlngs.length > 1) {
+        L.polyline(latlngs, {
+          color: '#1e3a5f',
+          weight: 3,
+          opacity: 0.75,
+          dashArray: '6, 6'
+        }).addTo(map);
+      }
+
+      const bounds = L.latLngBounds(latlngs);
+      dayMapInstances[dayNum] = { map, markers, bounds };
+
+      setTimeout(() => {
+        map.invalidateSize();
+        map.fitBounds(bounds, { padding: [28, 28], maxZoom: 15 });
+      }, 60);
+    }
+
+    function focusDayMapStop(dayNum, stopIdx) {
+      const inst = dayMapInstances[dayNum];
+      if (!inst || !inst.markers[stopIdx]) return;
+      const marker = inst.markers[stopIdx];
+      inst.map.setView(marker.getLatLng(), 16, { animate: true });
+      marker.openPopup();
+    }
+
+    function resetDayMapBounds(dayNum) {
+      const inst = dayMapInstances[dayNum];
+      if (!inst) return;
+      inst.map.closePopup();
+      inst.map.fitBounds(inst.bounds, { padding: [28, 28], maxZoom: 15 });
+    }
 
     // ==========================================
     // 5. 導航 Tab 切換控制
@@ -2626,6 +2928,9 @@
         targetBtn.classList.remove('text-slate-400', 'font-medium');
         targetBtn.classList.add('text-brand-navy', 'font-bold');
       }
+      if (tabId === 'itinerary') {
+        ensureDayMapInitialized(currentDayNum);
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -2633,6 +2938,7 @@
     // 6. 行程天數切換 (Day 1 - 6)
     // ==========================================
     function switchDay(dayNum) {
+      currentDayNum = dayNum;
       document.querySelectorAll('.day-detail').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.day-btn').forEach(btn => {
         btn.classList.remove('bg-brand-navy', 'text-amber-300', 'shadow');
@@ -2646,6 +2952,7 @@
         dayBtn.classList.add('bg-brand-navy', 'text-amber-300', 'shadow');
         dayBtn.classList.remove('text-slate-600', 'hover:bg-slate-50');
       }
+      ensureDayMapInitialized(dayNum);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -3090,6 +3397,8 @@
     // 初始化
     // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
+      renderAllDayMapCards();
+      ensureDayMapInitialized(1);
       renderTaxiCards('all');
       renderFoodItems('all');
       renderChecklist();
