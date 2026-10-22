@@ -2224,6 +2224,10 @@
           <p id="modal-address-kr" class="text-sm font-black text-slate-900 font-kr leading-relaxed">
             부산광역시...
           </p>
+          <div class="pt-1.5 border-t border-slate-200/80 flex items-center gap-1.5 text-xs text-amber-900 font-bold">
+            <i class="fa-regular fa-clock text-amber-600"></i>
+            <span id="modal-hours">營業時間載入中...</span>
+          </div>
         </div>
 
         <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-left text-xs text-amber-950">
@@ -2841,6 +2845,127 @@
       }
     };
 
+    // ==========================================
+    // 4A. 營業時間資料庫 (對應 店名地址.csv 全部 31 處)
+    // ==========================================
+    const placeHoursLookup = {
+      // 依韓文名稱索引
+      '부산댁 서면본점': '每日 17:00–24:00 (無公休)',
+      '백화양곱창': '12:00–24:00 (每月第1、3個週日公休)',
+      '부제비': '11:00–21:00 (午休 15:00–17:00)',
+      '해운대31cm해물칼국수': '10:50–21:30 (午休 14:40–16:00，週一公休)',
+      '두루미 광안점': '16:00–24:00 (週一公休)',
+      '맛찬들왕소금구이 해운대점': '12:00–23:00 (午休 15:00–17:00，最後點餐 22:00)',
+      '쌍둥이돼지국밥 본점': '每日 09:00–22:00 (全年無休)',
+      '중리해녀촌': '09:00–18:00 (視天氣及海浪狀況調整)',
+      '해운대암소갈비집': '11:30–22:00 (午休 15:00–17:00)',
+      'BHC치킨 해운대팔래드점': '每日 12:00–24:00 (全年無休)',
+      '옵스 해운대점': '每日 08:00–22:00 (全年無休)',
+      '호랑이젤라떡 부산해운대본점': '12:00–21:30 (午休 16:00–17:30，售完提早打烊)',
+      '남포동 원조 찹쌀호떡 본점': '10:00–22:00 (依現場攤位為準)',
+      '거인통닭': '11:30–20:30 (午休 14:30–15:30，週日公休，售完提早打烊)',
+      '라비앙즈메종드호텔': '24小時櫃檯 (入住 15:00 / 退房 11:00)',
+      '김해국제공항': '06:00–23:00 (依航班時刻營運)',
+      '아미비석문화마을안내센터': '09:00–18:00 (村落全天開放，11–2月諮詢處至17:00)',
+      '송도해상케이블카': '09:00–21:00 (售票至 20:30，視天氣調整)',
+      '송도해상케이블카 / 송도구름산책로': '纜車 09:00–21:00 / 天空步道 06:00–23:00',
+      '송도용궁구름다리': '09:00–17:00 (10–2月冬季時間，16:30最後入場；每月第1、3個週一休)',
+      '송도구름산책로': '每日 06:00–23:00 (全年無休)',
+      '서면시장': '09:00–22:00 (依各店鋪營業時間為準)',
+      '흰여울문화마을거점센터': '村落全天開放 (據點中心及周邊咖啡廳約 10:00–18:00)',
+      '용두산공원': '公園全天開放 / 釜山塔 10:00–22:00 (21:30最後入場)',
+      '롯데백화점 광복점': '10:30–20:30 (週五至週日延長至 21:00)',
+      '씨라이프부산아쿠아리움': '平日 10:00–19:00 / 週末(五~日) 10:00–20:00 (最後入場為閉館前1小時)',
+      '광안리해수욕장': '全天開放 (11/7 煙火節主秀 20:00–21:00)',
+      '해동용궁사': '每日 04:30–19:20 (18:50最後入場)',
+      '스카이라인루지 부산': '平日 10:00–19:00 / 週末 10:00–20:00 (最後入場為結束前30分鐘)',
+      '롯데마트 동부산점': 'Outlets 10:30–21:00 / 樂天超市 10:00–23:00 (每月第2、4個週三休)',
+      '해운대블루라인파크 미포정거장': '09:00–18:00 (11–2月冬季時間，依預約時段搭乘)',
+      '센텀 스파랜드': '每日 09:00–22:00 (最後入場 21:00)',
+
+      // 依韓文地址索引
+      '부산 부산진구 동천로107번길 14 1층': '每日 17:00–24:00 (無公休)',
+      '부산 중구 자갈치로23번길 6 1층': '12:00–24:00 (每月第1、3個週日公休)',
+      '부산 부산진구 서전로38번길 43-3 1층': '11:00–21:00 (午休 15:00–17:00)',
+      '부산 해운대구 구남로41번길 46': '10:50–21:30 (午休 14:40–16:00，週一公休)',
+      '부산 수영구 남천바다로 38-10 1층': '16:00–24:00 (週一公休)',
+      '부산 해운대구 해운대로608번길 46': '12:00–23:00 (午休 15:00–17:00，最後點餐 22:00)',
+      '부산 남구 유엔평화로 35-1': '每日 09:00–22:00 (全年無休)',
+      '부산 영도구 중리남로 2-36': '09:00–18:00 (視天氣及海浪狀況調整)',
+      '부산 해운대구 해운대해변로 333': '11:30–22:00 (午休 15:00–17:00)',
+      '부산 해운대구 해운대해변로298번길 24': '每日 12:00–24:00 (全年無休)',
+      '부산광역시 해운대구 중동 1394-82': '每日 08:00–22:00 (全年無休)',
+      '부산 해운대구 달맞이길62번길 38 115호, 116호': '12:00–21:30 (午休 16:00–17:30，售完提早打烊)',
+      '부산 중구 비프광장로 36': '10:00–22:00 (依現場攤位為準)',
+      '부산 서구 부용로38번길 3 1층': '11:30–20:30 (午休 14:30–15:30，週日公休，售完提早打烊)',
+      '부산 해운대구 해운대해변로209번나길 56': '24小時櫃檯 (入住 15:00 / 退房 11:00)',
+      '부산 강서구 공항진입로 108': '06:00–23:00 (依航班時刻營運)',
+      '부산 서구 아미로 51': '09:00–18:00 (村落全天開放，11–2月諮詢處至17:00)',
+      '부산 서구 송도해변로 171': '09:00–21:00 (售票至 20:30，視天氣調整)',
+      '부산 서구 암남동 620-53': '09:00–17:00 (10–2月冬季時間，16:30最後入場；每月第1、3個週一休)',
+      '부산 서구 암남동 129-4': '每日 06:00–23:00 (全年無休)',
+      '부산 부산진구 서면로 56': '09:00–22:00 (依各店鋪營業時間為準)',
+      '부산 영도구 절영로 194': '村落全天開放 (據點中心及周邊咖啡廳約 10:00–18:00)',
+      '부산 중구 용두산길 37-55': '公園全天開放 / 釜山塔 10:00–22:00 (21:30最後入場)',
+      '부산 중구 중앙대로 2 , 1층': '10:30–20:30 (週五至週日延長至 21:00)',
+      '부산 해운대구 해운대해변로 266': '平日 10:00–19:00 / 週末(五~日) 10:00–20:00 (最後入場為閉館前1小時)',
+      '부산 수영구 광안해변로 219': '全天開放 (11/7 煙火節主秀 20:00–21:00)',
+      '부산 기장군 기장읍 용궁길 86 해동용궁사': '每日 04:30–19:20 (18:50最後入場)',
+      '부산 기장군 기장읍 기장해안로 205': '平日 10:00–19:00 / 週末 10:00–20:00 (最後入場為結束前30分鐘)',
+      '부산 기장군 기장읍 기장해안로 147 2층 롯데마트 동부산점': 'Outlets 10:30–21:00 / 樂天超市 10:00–23:00 (每月第2、4個週三休)',
+      '부산 해운대구 달맞이길62번길 13': '09:00–18:00 (11–2月冬季時間，依預約時段搭乘)',
+      '부산 해운대구 센텀남대로 35 신세계백화점센텀시티점': '每日 09:00–22:00 (最後入場 21:00)'
+    };
+
+    function getPlaceHours(nameKr, addressKr) {
+      if (nameKr && placeHoursLookup[nameKr.trim()]) return placeHoursLookup[nameKr.trim()];
+      if (addressKr && placeHoursLookup[addressKr.trim()]) return placeHoursLookup[addressKr.trim()];
+      return '';
+    }
+
+    function injectItineraryOpeningHours() {
+      const itinerarySec = document.getElementById('tab-itinerary');
+      if (!itinerarySec) return;
+
+      const addrButtons = itinerarySec.querySelectorAll('button[onclick^="copyAddress("]');
+      addrButtons.forEach(btn => {
+        const onclickAttr = btn.getAttribute('onclick') || '';
+        const match = onclickAttr.match(/copyAddress\('([^']+)'\)/);
+        if (!match) return;
+        const addrKr = match[1];
+        const hours = getPlaceHours('', addrKr);
+        if (!hours) return;
+
+        const row = btn.closest('.flex.items-center.justify-between');
+        if (!row) return; // 跳過卡片底部獨立操作按鈕
+
+        const minW = row.querySelector('.min-w-0');
+        if (!minW) return;
+        if (row.dataset.hoursInjected === '1') return;
+        row.dataset.hoursInjected = '1';
+
+        const labelText = (minW.querySelector('span')?.textContent || '').trim();
+        const isCompactMultiRow = labelText.includes('📍') || labelText.includes('🥩');
+
+        if (isCompactMultiRow) {
+          const hoursLine = document.createElement('div');
+          hoursLine.className = 'text-[10px] text-amber-800 font-bold mt-0.5 flex items-center gap-1';
+          hoursLine.innerHTML = `<i class="fa-regular fa-clock text-amber-600 text-[9px]"></i><span>營業時間：${hours}</span>`;
+          minW.appendChild(hoursLine);
+        } else {
+          const hoursRow = document.createElement('div');
+          hoursRow.className = 'pt-1 border-t border-slate-200/60 flex items-center justify-between gap-2';
+          hoursRow.innerHTML = `
+            <div class="min-w-0">
+              <span class="text-[10px] text-slate-400 font-bold block">🕒 營業時間</span>
+              <span class="text-[11px] font-bold text-amber-800">${hours}</span>
+            </div>
+          `;
+          row.insertAdjacentElement('afterend', hoursRow);
+        }
+      });
+    }
+
     function renderAllDayMapCards() {
       for (let d = 1; d <= 6; d++) {
         const wrapper = document.getElementById('day-map-wrapper-' + d);
@@ -2949,15 +3074,20 @@
         });
 
         const searchUrl = getGoogleSearchUrl(s.nameZh, s.nameKr);
+        const stopHours = getPlaceHours(s.nameKr, '');
+        const hoursHtml = stopHours
+          ? `<div style="font-size:10px;font-weight:700;color:#92400e;background:#fffbeb;border:1px solid #fde68a;padding:2px 6px;border-radius:5px;margin-bottom:6px;">🕒 ${stopHours}</div>`
+          : '';
         const taxiBtnHtml = s.taxiId
           ? `<button onclick="openTaxiModal('${s.taxiId}')" style="background:#0f233a;color:#fcd34d;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;">司機卡</button>`
           : '';
 
         const popupHtml = `
-          <div style="min-width:175px;font-family:'Noto Sans TC',sans-serif;">
+          <div style="min-width:185px;font-family:'Noto Sans TC',sans-serif;">
             <div style="font-size:10px;font-weight:800;color:#64748b;">第 ${s.num} 站 · ${s.time}</div>
             <div style="font-size:13px;font-weight:900;color:#0f172a;margin-top:1px;">${s.nameZh}</div>
-            <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;">${s.nameKr}</div>
+            <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">${s.nameKr}</div>
+            ${hoursHtml}
             <div style="display:flex;gap:4px;flex-wrap:wrap;">
               ${taxiBtnHtml}
               <a href="${s.googleMap}" target="_blank" style="background:#eff6ff;color:#1d4ed8;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;text-decoration:none;">Google</a>
@@ -3117,15 +3247,20 @@
           });
 
           const searchUrl = getGoogleSearchUrl(s.nameZh, s.nameKr);
+          const stopHours = getPlaceHours(s.nameKr, '');
+          const hoursHtml = stopHours
+            ? `<div style="font-size:10px;font-weight:700;color:#92400e;background:#fffbeb;border:1px solid #fde68a;padding:2px 6px;border-radius:5px;margin-bottom:6px;">🕒 ${stopHours}</div>`
+            : '';
           const taxiBtnHtml = s.taxiId
             ? `<button onclick="openTaxiModal('${s.taxiId}')" style="background:#0f233a;color:#fcd34d;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;">司機卡</button>`
             : '';
 
           const popupHtml = `
-            <div style="min-width:185px;font-family:'Noto Sans TC',sans-serif;">
+            <div style="min-width:190px;font-family:'Noto Sans TC',sans-serif;">
               <div style="font-size:10px;font-weight:800;color:${badgeBg};">${dayColorPalette[d].name} · 第 ${s.num} 站 (${s.time})</div>
               <div style="font-size:13px;font-weight:900;color:#0f172a;margin-top:1px;">${s.nameZh}</div>
-              <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:6px;">${s.nameKr}</div>
+              <div style="font-size:11px;font-weight:700;color:#475569;margin-bottom:4px;">${s.nameKr}</div>
+              ${hoursHtml}
               <div style="display:flex;gap:4px;flex-wrap:wrap;">
                 ${taxiBtnHtml}
                 <a href="${s.googleMap}" target="_blank" style="background:#eff6ff;color:#1d4ed8;padding:3px 7px;border-radius:6px;font-weight:700;font-size:11px;text-decoration:none;">Google</a>
@@ -3237,6 +3372,7 @@
 
         const stopsRows = route.stops.map((s, idx) => {
           const searchUrl = getGoogleSearchUrl(s.nameZh, s.nameKr);
+          const stopHours = getPlaceHours(s.nameKr, '');
           return `
             <div class="flex items-center justify-between gap-2 py-1.5 border-t border-slate-100 first:border-t-0">
               <div onclick="focusAllMapStop(${d}, ${idx})" class="flex items-center gap-2 min-w-0 flex-1 cursor-pointer active:opacity-75">
@@ -3244,6 +3380,7 @@
                 <div class="min-w-0">
                   <div class="text-xs font-bold text-slate-900 truncate">${s.nameZh} <span class="text-[10px] text-slate-400 font-normal">${s.time}</span></div>
                   <div class="text-[10px] text-slate-500 font-kr truncate">${s.nameKr}</div>
+                  ${stopHours ? `<div class="text-[10px] text-amber-800 font-bold truncate"><i class="fa-regular fa-clock text-[9px] text-amber-600 mr-0.5"></i>${stopHours}</div>` : ''}
                 </div>
               </div>
               <div class="flex items-center gap-1 shrink-0">
@@ -3390,6 +3527,11 @@
       document.getElementById('modal-name-kr').innerText = item.nameKr;
       document.getElementById('modal-address-kr').innerText = item.addressKr;
       document.getElementById('modal-tip').innerText = item.tip;
+      const modalHoursEl = document.getElementById('modal-hours');
+      if (modalHoursEl) {
+        const hrs = getPlaceHours(item.nameKr, item.addressKr);
+        modalHoursEl.innerText = hrs ? `營業時間：${hrs}` : '營業時間：請依現場公告為準';
+      }
 
       const naverSearch = item.naverMap || ('https://map.naver.com/p/search/' + encodeURIComponent(item.nameKr.replace(/\(.*?\)/g, '').trim()));
       document.getElementById('modal-naver-link').href = naverSearch;
@@ -3537,6 +3679,11 @@
                 <i class="fa-regular fa-copy"></i> 複製地址
               </button>
             </div>
+            ${getPlaceHours(item.nameKr, item.addressKr) ? `
+            <div class="pt-1.5 border-t border-slate-200/60">
+              <span class="text-[10px] text-slate-400 font-bold block">🕒 營業時間</span>
+              <p class="text-[11px] font-bold text-amber-800">${getPlaceHours(item.nameKr, item.addressKr)}</p>
+            </div>` : ''}
           </div>
 
           <div class="flex gap-1.5 pt-1 text-xs">
@@ -3639,6 +3786,11 @@
                 <i class="fa-regular fa-copy"></i> 複製地址
               </button>
             </div>
+            ${getPlaceHours(item.nameKr, item.addressKr) ? `
+            <div class="pt-1.5 border-t border-slate-200/60">
+              <span class="text-[10px] text-slate-400 font-bold block">🕒 營業時間</span>
+              <span class="font-bold text-amber-800 text-[11px]">${getPlaceHours(item.nameKr, item.addressKr)}</span>
+            </div>` : ''}
             <div class="flex items-center justify-between gap-2 pt-1.5 border-t border-slate-200/60">
               <div class="min-w-0">
                 <span class="text-[10px] text-slate-400 font-bold block">🍽️ 招牌點餐韓文 (${item.orderZh})</span>
@@ -3764,6 +3916,7 @@
     // 初始化
     // ==========================================
     document.addEventListener('DOMContentLoaded', () => {
+      injectItineraryOpeningHours();
       renderAllDayMapCards();
       renderAllMapDirectory('all');
       ensureDayMapInitialized(1);
