@@ -1,4 +1,4 @@
-[text](https://wilsonym.github.io/busan-trip-2026/)
+[旅遊網站](https://wilsonym.github.io/busan-trip-2026/)
 # 2026 釜山 6 天 5 夜・煙火節與美食全制霸 (4 人長輩舒適版)
 
 專為 4 位家庭成員（含長輩同行）量身打造之釜山旅行互動手冊與高階 PWA 行程指南。
