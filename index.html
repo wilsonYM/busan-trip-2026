@@ -347,33 +347,42 @@
           </div>
         </div>
 
-        <!-- 卡片 1-2: 機場外搭 Kakao T 大車直達飯店 -->
+                <!-- 卡片 1-2: 機場外搭 Kakao T 大車直送 ＆ 入住 Raviens Maison de Hotel -->
         <div class="accordion-item bg-amber-50/70 border border-amber-300 rounded-2xl card-shadow overflow-hidden">
           <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
             <div>
-              <div class="flex items-center gap-1.5">
+              <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="text-[10px] font-black bg-brand-navy text-amber-300 px-2 py-0.5 rounded shadow-xs">D1-2</span>
-                <span class="text-[10px] font-bold text-white bg-amber-600 px-2 py-0.5 rounded-md">20:30 機場出發</span>
+                <span class="text-[10px] font-bold text-white bg-amber-600 px-2 py-0.5 rounded-md">20:30 ➔ 21:20</span>
                 <span class="text-[10px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">長輩省力核心</span>
+                <span class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-1.5 py-0.5 rounded border border-emerald-200/60">連住 5 晚免搬遷</span>
               </div>
-              <h3 class="text-sm font-black text-slate-900 mt-1">機場外搭 Kakao T 大車直達飯店門口</h3>
-              <p class="text-xs text-slate-600 font-kr font-bold">김해국제공항 ➔ 라비앙즈메종드호텔</p>
+              <h3 class="text-sm font-black text-slate-900 mt-1">機場外搭 Kakao T 大車直達門口 ➔ 入住 Raviens Maison de Hotel</h3>
+              <p class="text-xs text-slate-600 font-kr font-bold">김해국제공항 ➔ 라비앙즈메종드호텔・4人行李箱專車直送・連住5晚免打包</p>
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
           <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-200">
+            <!-- 交通與入住策略 -->
             <div class="mt-2.5 bg-white/90 p-2.5 rounded-xl space-y-1.5 border border-amber-200/60">
               <div class="font-bold flex items-center gap-1 text-slate-900">
-                <i class="fa-solid fa-taxi text-amber-600"></i> 長輩極致舒適攻略：
+                <i class="fa-solid fa-taxi text-amber-600"></i> 長輩極致舒適交通攻略 (20:30 出發)：
               </div>
-              <p>4 個人 4 個大行李箱，打開 Kakao T 叫「<strong>벤（Venti / 大型大車）</strong>」！車程約 45～50 分鐘直送飯店門口。</p>
-              <p class="text-slate-600 text-[11px]">省去拖大行李擠輕軌、轉 24 站地鐵與找無障礙電梯的疲累，4 人分攤車資每人只要百元台幣，極度划算！</p>
+              <p>4 個人 4 個大行李箱，出機場大廳打開 Kakao T 叫「<strong>벤（Venti / 大型大車）</strong>」！車程約 45～50 分鐘直送海雲台飯店門口，省去拖大行李擠輕軌、轉 24 站地鐵與找無障礙電梯的疲累，4 人分攤車資每人只要百元台幣，極度划算！</p>
             </div>
+
+            <div class="bg-emerald-50/80 p-2.5 rounded-xl space-y-1 border border-emerald-200/60 text-emerald-950">
+              <div class="font-bold flex items-center gap-1">
+                <i class="fa-solid fa-hotel text-emerald-700"></i> 全趟固定住宿 (21:20 抵達入住)：
+              </div>
+              <p>• <strong>5 晚免打包搬遷：</strong>全趟 5 晚皆住在海雲台 <strong>Raviens Maison de Hotel (拉維恩斯梅松德飯店)</strong>，免去長輩每日收拾打包與搬運行李的勞累。抵達辦妥 Check-in 後進房換上輕便室內拖鞋，燒壺熱水泡茶暖胃放鬆！</p>
+            </div>
+
             <!-- 地點與地址資訊盒 -->
             <div class="bg-white p-2.5 rounded-xl border border-amber-300 space-y-1.5">
               <div class="flex items-center justify-between gap-2">
                 <div class="min-w-0">
-                  <span class="text-[10px] text-slate-400 font-bold block">📍 目的地韓文名稱 (Raviens Maison de Hotel (拉維恩斯梅松德飯店))</span>
+                  <span class="text-[10px] text-slate-400 font-bold block">📍 飯店韓文名稱 (Raviens Maison de Hotel)</span>
                   <span class="font-kr font-black text-slate-900 text-xs">라비앙즈메종드호텔</span>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
@@ -381,13 +390,13 @@
                     <i class="fa-solid fa-magnifying-glass text-[10px]"></i> 搜尋
                   </a>
                   <button onclick="copyPlace('라비앙즈메종드호텔')" class="bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 px-2 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
-                    <i class="fa-regular fa-copy"></i> 複製地名
+                    <i class="fa-regular fa-copy"></i> 複製店名
                   </button>
                 </div>
               </div>
               <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
                 <div class="min-w-0">
-                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 飯店韓文地址</span>
                   <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 해운대해변로209번나길 56</span>
                 </div>
                 <button onclick="copyAddress('부산 해운대구 해운대해변로209번나길 56')" class="shrink-0 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
@@ -399,77 +408,23 @@
               <button onclick="openTaxiModal('hotel')" class="flex-1 min-w-[100px] bg-brand-navy text-amber-300 text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1 shadow">
                 <i class="fa-solid fa-address-card"></i> 司機大字卡
               </button>
-              <a href="https://maps.app.goo.gl/7gS1ZfsMyn9AbqrNA" target="_blank" class="bg-blue-50 text-blue-700 text-xs font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps
+              <a href="https://maps.app.goo.gl/7gS1ZfsMyn9AbqrNA" target="_blank" class="flex-1 min-w-[80px] bg-blue-50 text-blue-700 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1">
+                <i class="fa-solid fa-map-location-dot"></i> Google
               </a>
-              <a href="https://naver.me/FgTCLh2K" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 px-3 rounded-xl flex items-center justify-center gap-1 shadow-sm">
-                <i class="fa-solid fa-compass"></i> Naver Map
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- 卡片 1-3: 入住 Raviens Maison de Hotel -->
-        <div class="accordion-item bg-white rounded-2xl card-shadow border border-slate-200/80 overflow-hidden">
-          <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
-            <div>
-              <div class="flex items-center gap-1.5">
-                <span class="text-[10px] font-black bg-brand-navy text-amber-300 px-2 py-0.5 rounded shadow-xs">D1-3</span>
-                <span class="text-[10px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">21:20 抵達入住</span>
-                <span class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-1.5 py-0.5 rounded">連住 5 晚免搬遷</span>
-              </div>
-              <h3 class="text-sm font-bold text-slate-900 mt-1">入住 Raviens Maison de Hotel (拉維恩斯梅松德飯店)</h3>
-              <p class="text-xs text-slate-500 font-kr">라비앙즈메종드호텔 (부산 해운대구 해운대해변로209번나길 56)</p>
-            </div>
-            <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
-          </div>
-          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-slate-600 space-y-2 border-t border-slate-100">
-            <p class="mt-2.5">
-              • <strong>全趟固定住宿：</strong>5 晚全住在海雲台 Raviens Maison de Hotel (拉維恩斯梅松德飯店)，免去長輩每日收拾打包與搬運行李的勞累。進房後換上輕便室內拖鞋，燒壺熱水泡茶暖胃。
-            </p>
-            <!-- 地點與地址資訊盒 -->
-            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 space-y-1.5">
-              <div class="flex items-center justify-between gap-2">
-                <div class="min-w-0">
-                  <span class="text-[10px] text-slate-400 font-bold block">📍 飯店韓文名稱</span>
-                  <span class="font-kr font-black text-slate-900 text-xs">라비앙즈메종드호텔</span>
-                </div>
-                <div class="flex items-center gap-1 shrink-0">
-                  <a href="https://www.google.com/search?q=%E9%87%9C%E5%B1%B1+Raviens+Maison+de+Hotel+%E6%8B%89%E7%B6%AD%E6%81%A9%E6%96%AF%E6%A2%85%E6%9D%BE%E5%BE%B7%E9%A3%AF%E5%BA%97+%EB%9D%BC%EB%B9%84%EC%95%99%EC%A6%88%EB%A9%94%EC%A2%85%EB%93%9C%ED%98%B8%ED%85%94" target="_blank" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-2 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
-                    <i class="fa-solid fa-magnifying-glass text-[10px]"></i> 搜尋
-                  </a>
-                  <button onclick="copyPlace('라비앙즈메종드호텔')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 px-2 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
-                    <i class="fa-regular fa-copy"></i> 複製地名
-                  </button>
-                </div>
-              </div>
-              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-200/60">
-                <div class="min-w-0">
-                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址</span>
-                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 해운대구 해운대해변로209번나길 56</span>
-                </div>
-                <button onclick="copyAddress('부산 해운대구 해운대해변로209번나길 56')" class="shrink-0 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
-                  <i class="fa-regular fa-copy"></i> 複製地址
-                </button>
-              </div>
-            </div>
-            <div class="flex gap-2 pt-1">
-              <a href="https://maps.app.goo.gl/7gS1ZfsMyn9AbqrNA" target="_blank" class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-map-location-dot"></i> Google Maps
-              </a>
-              <a href="https://naver.me/FgTCLh2K" target="_blank" class="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-compass"></i> Naver Map
+              <a href="https://naver.me/FgTCLh2K" target="_blank" class="flex-1 min-w-[80px] bg-emerald-50 text-emerald-700 text-xs font-bold py-2 rounded-xl text-center flex items-center justify-center gap-1">
+                <i class="fa-solid fa-compass"></i> Naver
               </a>
             </div>
           </div>
         </div>
 
-        <!-- 卡片 1-4: 【宵夜美食】外帶 BHC 炸雞 -->
+
+        <!-- 卡片 1-3: 【宵夜美食】外帶 BHC 炸雞 -->
         <div class="accordion-item bg-gradient-to-br from-amber-50/90 via-orange-50/50 to-amber-50/80 border-2 border-amber-400 shadow-md ring-1 ring-amber-400/40 rounded-2xl overflow-hidden">
           <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
             <div>
               <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-[10px] font-black bg-brand-navy text-amber-300 px-2 py-0.5 rounded shadow-xs">D1-4</span>
+                <span class="text-[10px] font-black bg-brand-navy text-amber-300 px-2 py-0.5 rounded shadow-xs">D1-3</span>
                 <span class="text-[10px] font-black text-white bg-rose-600 px-2 py-0.5 rounded-md shadow-xs flex items-center gap-1">
                   <i class="fa-solid fa-utensils text-[9px]"></i> 21:45 宵夜美味
                 </span>
@@ -534,12 +489,12 @@
           </div>
         </div>
 
-        <!-- 卡片 1-5: 最後一站・回飯店享用宵夜休息 -->
+        <!-- 卡片 1-4: 最後一站・回飯店享用宵夜休息 -->
         <div class="accordion-item bg-gradient-to-r from-slate-900 via-brand-navy to-slate-900 text-white rounded-2xl card-shadow border border-slate-700 overflow-hidden">
           <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
             <div>
               <div class="flex items-center gap-1.5">
-                <span class="text-[10px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded shadow-xs">D1-5</span>
+                <span class="text-[10px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded shadow-xs">D1-4</span>
                 <span class="text-[10px] font-black text-amber-300 bg-white/10 px-2 py-0.5 rounded-md border border-amber-300/30 flex items-center gap-1">
                   <i class="fa-solid fa-hotel text-[9px]"></i> 22:15 賦歸
                 </span>
