@@ -1343,9 +1343,12 @@
             </div>
             <i class="fa-solid fa-chevron-down text-slate-400 text-xs mt-1 chevron-icon rotated"></i>
           </div>
-          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-300">
-            <div class="mt-2.5 bg-white/80 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
-              <p>🍗 <strong>超大份量酥脆傳奇：</strong>《白鐘元的三大天王》激推名店！使用傳統大釜爐鐵鍋高溫油炸，炸衣薄脆且帶淡淡咖哩香氣，外酥內嫩多汁份量豪邁。傍晚從南浦搭車往海雲台方向順路停靠大淵店，內用剛出爐熱騰騰「半半炸雞（原味＋洋釀醬料）」，長輩品嚐釜山最道地傳統炸雞！20:00 專車輕鬆賦歸海雲台。</p>
+          <div class="accordion-content expanded px-3.5 pb-3.5 pt-0 text-xs text-amber-950 space-y-2 border-t border-amber-200">
+            <div class="mt-2.5 bg-white/90 p-2.5 rounded-xl border border-amber-200/80 space-y-1">
+              <p>🍗 <strong>三大炸雞名店香脆內用：</strong>《白鐘元的三大天王》推薦！採用傳統大鐵鍋高溫油炸，切塊炸得極致香脆金黃，帶有獨門咖哩胡椒迷人香氣。招牌「半半炸雞（原味＋洋釀甜辣）」剛出爐外皮喀嚓酥脆、肉汁飽滿！</p>
+              <div class="text-[11px] text-amber-900 bg-amber-50 p-2 rounded-lg">
+                💡 <strong>大淵站舒適內用：</strong>逛完南浦樂天百貨後搭車至大淵站新店（부산 남구 수영로 195-5），店內座位寬敞、平坦無障礙進出，舒適用餐後順路直奔廣安大橋回海雲台飯店！
+              </div>
             </div>
             <!-- 地點與地址資訊盒 -->
             <div class="bg-white p-2.5 rounded-xl border border-amber-300 space-y-1.5">
@@ -1365,30 +1368,33 @@
               </div>
               <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
                 <div class="min-w-0">
-                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址 (大淵洞·近地鐵2號線)</span>
-                  <span class="font-kr font-bold text-slate-700 text-[11px]">부산 남구 수영로 195-5</span>
+                  <span class="text-[10px] text-slate-400 font-bold block">🏠 韓文地址 (大淵站 1 號出口旁)</span>
+                  <span class="font-kr font-bold text-slate-700 text-[11px] truncate block">부산 남구 수영로 195-5</span>
                 </div>
-                <button onclick="copyAddress('부산 남구 수영로 195-5')" class="shrink-0 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
+                <button onclick="copyAddress('부산 남구 수영로 195-5')" class="bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 px-2 py-1 rounded-lg font-bold text-[11px] shrink-0 flex items-center gap-1">
                   <i class="fa-regular fa-copy"></i> 複製地址
                 </button>
               </div>
-              <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
-                <div class="min-w-0">
-                  <span class="text-[10px] text-slate-400 font-bold block">🍗 點餐韓文 (招牌原味+洋釀半半炸雞)</span>
-                  <span class="font-kr font-bold text-rose-700 text-[11px]">반반치킨 한 마리 주세요</span>
-                </div>
-                <button onclick="copyPhrase('반반치킨 한 마리 주세요')" class="shrink-0 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg font-bold text-[11px] flex items-center gap-1">
-                  <i class="fa-regular fa-copy"></i> 複製點餐
-                </button>
+              <!-- 雙地圖導航按鈕 -->
+              <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-100">
+                <a href="https://naver.me/FyARHmg9" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-2 rounded-lg text-[11px] flex items-center justify-center gap-1 shadow-xs">
+                  <i class="fa-solid fa-compass text-[10px]"></i> NAVER MAP
+                </a>
+                <a href="https://www.google.com/maps/search/?api=1&query=%EA%B1%B0%EC%9D%B8%ED%86%B5%EB%8B%AD+%EB%8C%80%EC%97%B0%EC%A0%90" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 px-2 rounded-lg text-[11px] flex items-center justify-center gap-1 shadow-xs">
+                  <i class="fa-solid fa-map-location-dot text-[10px]"></i> GOOGLE MAP
+                </a>
               </div>
             </div>
-            <div class="flex gap-2 pt-1">
+            <!-- 長輩貼心叮嚀 -->
+            <div class="bg-white/80 p-2 rounded-lg border border-amber-200 text-[11px] space-y-1">
+              <p>🪑 <strong>長輩用餐友善：</strong>剛炸起香氣四溢、外皮薄脆好咀嚼不油膩，可依喜好沾特製胡椒鹽或洋釀醬。內用有飲水機與洗手間，長輩可坐著慢慢享用，不用站立排隊！</p>
+              <p>🍗 <strong>點餐密技（4人建議）：</strong>點一份「半半炸雞（반반치킨）」＋一份「原味炸雞（후라이드치킨）」或飲料即可，份量極大保證滿足！</p>
+            </div>
+            <!-- 計程車叫車司機小卡按鈕 -->
+            <div class="pt-1 flex gap-2">
               <button onclick="openTaxiModal('geoin')" class="flex-1 bg-brand-navy text-amber-300 text-xs font-bold py-1.5 rounded-lg flex items-center justify-center gap-1 shadow">
-                <i class="fa-solid fa-address-card"></i> 炸雞司機卡
+                <i class="fa-solid fa-taxi"></i> 叫車・司機小卡
               </button>
-              <a href="https://naver.me/FyARHmg9" target="_blank" class="flex-1 bg-emerald-50 text-emerald-700 text-xs font-bold py-1.5 rounded-lg text-center flex items-center justify-center gap-1">
-                <i class="fa-solid fa-compass"></i> Naver Map
-              </a>
             </div>
           </div>
         </div>
@@ -1398,7 +1404,7 @@
           <div class="accordion-header p-3.5 flex items-start justify-between cursor-pointer" onclick="toggleAccordion(this)">
             <div>
               <div class="flex items-center gap-1.5">
-                <span class="text-[10px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded shadow-xs">D3-8</span>
+                <span class="text-[10px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded shadow-xs">D3-9</span>
                 <span class="text-[10px] font-black text-amber-300 bg-white/10 px-2 py-0.5 rounded-md border border-amber-300/30 flex items-center gap-1">
                   <i class="fa-solid fa-hotel text-[9px]"></i> 20:00 賦歸
                 </span>
@@ -2999,7 +3005,7 @@
         naverMap: 'https://naver.me/xAFCXBOE',
         googleMap: 'https://maps.app.goo.gl/kCyoJ6tySE9UUDjt9'
       },
-            {
+      {
         id: 'geoin',
         num: '08',
         category: '⭐ 激推必吃 3',
@@ -3121,8 +3127,6 @@
         extra: true
       },
       {
-        
-      {
         id: 'yihewan',
         num: '19',
         category: '人氣美食 · 中華料理',
@@ -3203,7 +3207,7 @@
         naverMap: 'https://naver.me/F5D1zR9o',
         googleMap: 'https://maps.app.goo.gl/KJ4bKeN9vDmbvT9A6'
       },
-            {
+      {
         id: 'f_geoin',
         category: 'must',
         tagBadge: '⭐ 激推必吃 3',
@@ -3397,7 +3401,14 @@
         addressKr: '부산 중구 비프광장로 36',
         naverMap: 'https://naver.me/FMcgFvvZ',
         googleMap: 'https://maps.app.goo.gl/9XYEAjNe4Lu92QV88'
-      },
+      }
+    ];
+
+    // ==========================================
+    // 3. 核心檢查清單 (含題目指定項目)
+    // ==========================================
+    const checklistItems = [
+      { id: 'c_linepay', text: 'LINEPay 一人2,000，7-11我們掃他' },
       { id: 'c_capsule', text: '膠囊列車預約（11/8 14:00 尾浦➔青沙浦）' },
       { id: 'c_chairs', text: '4 張輕量折疊露營椅／厚地墊（煙火節沙灘卡位必備，長輩離地坐不受寒）' },
       { id: 'c_warm', text: '防風羽絨外套、毛帽手套、暖暖包、隨身保溫瓶、輕便雨衣（沙灘體感常掉至 8°C）' },
