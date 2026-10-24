@@ -8,10 +8,6 @@
   <meta name="theme-color" content="#0f233a">
   <title>2026 釜山 6天5夜・煙火節與美食互動手冊 (4人家庭長輩舒適版)</title>
   
-  <!-- PWA Manifest & App Icons -->
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/png" href="icon-192.png">
-  <link rel="apple-touch-icon" href="icon-192.png">
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -2962,18 +2958,18 @@
       </div>
 
       <div class="text-xs text-slate-700 space-y-2.5 leading-relaxed">
-        <!-- 方式一：手機 PWA 加入主畫面 -->
+        <!-- 方式一：手機加入主畫面捷徑 -->
         <div class="p-3 bg-gradient-to-br from-sky-50 to-blue-50/50 rounded-2xl border border-sky-200 space-y-1.5">
           <div class="flex items-center gap-1.5 font-bold text-sky-950 text-xs">
             <span class="bg-sky-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span>
-            <span>推薦！加入手機主畫面 (免網路 App 離線觀看)</span>
+            <span>推薦！加入手機主畫面捷徑 (桌面一鍵開啟)</span>
           </div>
           <p class="text-[11px] text-slate-600">
-            本手冊已啟用 <strong>PWA 離線快取技術</strong>！只要在有網路時打開過一次，系統便已自動把所有 6 天行程卡片、韓文店名、計程車司機小卡、韓文點餐密技完整快取儲存。出國在飛機上或地鐵沒訊號時依然可秒開使用！
+            可將本旅遊手冊直接釘選在手機桌面，出國免找網址、隨點即開！
           </p>
           <div class="bg-white/80 p-2 rounded-xl border border-sky-200/80 text-[11px] space-y-1">
             <p>🍏 <strong>iPhone (Safari)：</strong>點擊瀏覽器下方「<strong>分享按鈕 <i class="fa-solid fa-arrow-up-from-bracket text-[10px]"></i></strong>」➔ 往下滑點選「<strong>加入主畫面</strong>」。</p>
-            <p>🤖 <strong>Android (Chrome)：</strong>點擊右上角「<strong>更多選單 <i class="fa-solid fa-ellipsis-vertical text-[10px]"></i></strong>」➔ 點選「<strong>加到主螢幕</strong>」或「安裝應用程式」。</p>
+            <p>🤖 <strong>Android (Chrome)：</strong>點擊右上角「<strong>更多選單 <i class="fa-solid fa-ellipsis-vertical text-[10px]"></i></strong>」➔ 點選「<strong>加到主螢幕</strong>」。</p>
           </div>
         </div>
 
@@ -4693,14 +4689,10 @@
     // ==========================================
     // 初始化
     // ==========================================
-    // 註冊 PWA Service Worker 啟用離線快取
+    // 移除舊版 Service Worker（保持單檔運行）
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
-          console.log('Service Worker registered successfully:', reg.scope);
-        }).catch(err => {
-          console.warn('Service Worker registration failed:', err);
-        });
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) reg.unregister();
       });
     }
 
