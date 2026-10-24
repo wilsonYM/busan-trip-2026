@@ -1,0 +1,25 @@
+{
+  "name": "2026 釜山煙火節與美食互動手冊",
+  "short_name": "釜山2026",
+  "description": "2026 釜山 6天5夜・煙火節與美食互動手冊 (4人家庭長輩舒適版)",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f233a",
+  "theme_color": "#0f233a",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

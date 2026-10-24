@@ -8,6 +8,10 @@
   <meta name="theme-color" content="#0f233a">
   <title>2026 釜山 6天5夜・煙火節與美食互動手冊 (4人家庭長輩舒適版)</title>
   
+  <!-- PWA Manifest & App Icons -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -168,6 +172,41 @@
     .leaflet-tooltip.map-stop-label::before {
       display: none;
     }
+
+    /* 列印與另存 PDF 專用排版優化 */
+    @media print {
+      header, nav, #driver-modal, #senior-modal, #offline-modal, .day-btn, #toggle-all-btn, .allmap-pill, button, .custom-scroll {
+        display: none !important;
+      }
+      .tab-content, #tab-itinerary {
+        display: block !important;
+      }
+      .day-detail {
+        display: block !important;
+        page-break-after: always;
+      }
+      .accordion-content {
+        display: block !important;
+        max-height: none !important;
+        opacity: 1 !important;
+        padding-bottom: 12px !important;
+      }
+      .chevron-icon {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+        color: #0f172a !important;
+        font-size: 10pt !important;
+      }
+      .card-shadow, .shadow, .shadow-md, .shadow-lg {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+      .day-map-canvas, [id^="day-map-wrapper"] {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-brand-warmBg font-sans text-slate-800 antialiased min-h-screen">
@@ -184,9 +223,14 @@
           </span>
           <span class="text-xs font-bold text-amber-200">4人長輩同行</span>
         </div>
-        <button onclick="openSeniorModal()" class="text-[11px] bg-white/15 hover:bg-white/25 text-amber-200 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 transition">
-          <i class="fa-solid fa-heart-pulse text-rose-400"></i>長輩叮嚀
-        </button>
+        <div class="flex items-center gap-1.5">
+          <button onclick="openOfflineModal()" class="text-[11px] bg-white/15 hover:bg-white/25 text-amber-200 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 transition">
+            <i class="fa-solid fa-cloud-arrow-down text-sky-300"></i>離線/PDF
+          </button>
+          <button onclick="openSeniorModal()" class="text-[11px] bg-white/15 hover:bg-white/25 text-amber-200 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 transition">
+            <i class="fa-solid fa-heart-pulse text-rose-400"></i>長輩叮嚀
+          </button>
+        </div>
       </div>
 
       <!-- 主標題 -->
@@ -2906,6 +2950,55 @@
   </div>
 
 
+  <!-- ================= 離線觀看與 PDF 匯出指南 MODAL ================= -->
+  <div id="offline-modal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white w-full max-w-sm rounded-t-3xl sm:rounded-3xl shadow-2xl p-5 border border-slate-200 space-y-3 max-h-[85vh] overflow-y-auto custom-scroll">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <h3 class="text-sm font-black text-slate-900 flex items-center gap-1.5">
+          <i class="fa-solid fa-cloud-arrow-down text-sky-600"></i> 離線觀看與 PDF 匯出指南
+        </h3>
+        <button onclick="closeOfflineModal()" class="text-slate-400 hover:text-slate-600 text-sm p-1"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="text-xs text-slate-700 space-y-2.5 leading-relaxed">
+        <!-- 方式一：手機 PWA 加入主畫面 -->
+        <div class="p-3 bg-gradient-to-br from-sky-50 to-blue-50/50 rounded-2xl border border-sky-200 space-y-1.5">
+          <div class="flex items-center gap-1.5 font-bold text-sky-950 text-xs">
+            <span class="bg-sky-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span>
+            <span>推薦！加入手機主畫面 (免網路 App 離線觀看)</span>
+          </div>
+          <p class="text-[11px] text-slate-600">
+            本手冊已啟用 <strong>PWA 離線快取技術</strong>！只要在有網路時打開過一次，系統便已自動把所有 6 天行程卡片、韓文店名、計程車司機小卡、韓文點餐密技完整快取儲存。出國在飛機上或地鐵沒訊號時依然可秒開使用！
+          </p>
+          <div class="bg-white/80 p-2 rounded-xl border border-sky-200/80 text-[11px] space-y-1">
+            <p>🍏 <strong>iPhone (Safari)：</strong>點擊瀏覽器下方「<strong>分享按鈕 <i class="fa-solid fa-arrow-up-from-bracket text-[10px]"></i></strong>」➔ 往下滑點選「<strong>加入主畫面</strong>」。</p>
+            <p>🤖 <strong>Android (Chrome)：</strong>點擊右上角「<strong>更多選單 <i class="fa-solid fa-ellipsis-vertical text-[10px]"></i></strong>」➔ 點選「<strong>加到主螢幕</strong>」或「安裝應用程式」。</p>
+          </div>
+        </div>
+
+        <!-- 方式二：匯出 / 列印 PDF -->
+        <div class="p-3 bg-gradient-to-br from-amber-50 to-orange-50/40 rounded-2xl border border-amber-200 space-y-2">
+          <div class="flex items-center gap-1.5 font-bold text-amber-950 text-xs">
+            <span class="bg-amber-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span>
+            <span>下載 / 列印 6 天完整手冊 (PDF 檔案)</span>
+          </div>
+          <p class="text-[11px] text-slate-600">
+            若想留存一份紙本或存進手機「檔案」APP，點擊下方按鈕即可一鍵展開所有天數與細節，直接儲存為 PDF 或列印：
+          </p>
+          <button onclick="exportAllDaysPDF()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow transition active:scale-[0.98]">
+            <i class="fa-solid fa-file-pdf text-rose-600 text-sm"></i>
+            <span>產生並下載 6 天完整 PDF 手冊</span>
+          </button>
+        </div>
+      </div>
+
+      <button onclick="closeOfflineModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs transition">
+        了解，關閉視窗
+      </button>
+    </div>
+  </div>
+
+
   <!-- ================= 浮動 Toast 提示 ================= -->
   <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900/95 text-amber-300 text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2 border border-amber-400/30 max-w-[92vw] truncate">
     <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 shrink-0"></i>
@@ -4226,6 +4319,27 @@
       document.getElementById('senior-modal').classList.add('hidden');
     }
 
+    function openOfflineModal() {
+      document.getElementById('offline-modal').classList.remove('hidden');
+    }
+
+    function closeOfflineModal() {
+      document.getElementById('offline-modal').classList.add('hidden');
+    }
+
+    // 一鍵展開全部天數與卡片並觸發 PDF 列印
+    function exportAllDaysPDF() {
+      closeOfflineModal();
+      switchTab('itinerary');
+      document.querySelectorAll('.day-detail').forEach(el => el.classList.remove('hidden'));
+      document.querySelectorAll('.accordion-content').forEach(el => el.classList.add('expanded'));
+      document.querySelectorAll('.chevron-icon').forEach(el => el.classList.add('rotated'));
+      setTimeout(() => {
+        window.print();
+        switchDay(currentDayNum);
+      }, 350);
+    }
+
     // ==========================================
     // 9. 一鍵複製與 Toast 提示
     // ==========================================
@@ -4559,6 +4673,7 @@
       if (e.key === 'Escape') {
         closeTaxiModal();
         closeSeniorModal();
+        closeOfflineModal();
       }
     });
 
@@ -4570,9 +4685,24 @@
       if (e.target.id === 'senior-modal') closeSeniorModal();
     });
 
+    document.getElementById('offline-modal').addEventListener('click', e => {
+      if (e.target.id === 'offline-modal') closeOfflineModal();
+    });
+
     // ==========================================
     // 初始化
     // ==========================================
+    // 註冊 PWA Service Worker 啟用離線快取
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+          console.log('Service Worker registered successfully:', reg.scope);
+        }).catch(err => {
+          console.warn('Service Worker registration failed:', err);
+        });
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       injectItineraryOpeningHours();
       renderAllDayMapCards();
