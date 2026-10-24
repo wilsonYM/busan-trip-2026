@@ -1,4 +1,4 @@
-const CACHE_NAME = 'busan-trip-2026-v1';
+const CACHE_NAME = 'busan-trip-2026-v2';
 
 const STATIC_ASSETS = [
   './',
