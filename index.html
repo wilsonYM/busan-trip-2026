@@ -545,7 +545,7 @@
             <div>
               <div class="flex items-center gap-1.5">
                 <span class="text-[10px] font-black bg-brand-navy text-amber-300 px-2 py-0.5 rounded shadow-xs">D2-1</span>
-                <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">09:30</span>
+                <span class="text-[10px] font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded-md">09:00</span>
                 <span class="text-[10px] bg-amber-50 text-amber-800 font-bold px-1.5 py-0.5 rounded">★長輩無痛走法</span>
               </div>
               <h3 class="text-sm font-bold text-slate-900 mt-1">甘川洞文化村 (諮詢處)</h3>
@@ -1433,6 +1433,15 @@
                 <button onclick="copyAddress('부산 남구 수영로 195-5')" class="bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 px-2 py-1 rounded-lg font-bold text-[11px] shrink-0 flex items-center gap-1">
                   <i class="fa-regular fa-copy"></i> 複製地址
                 </button>
+              </div>
+              <div class="pt-1 border-t border-slate-100 flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <span class="text-[10px] text-slate-400 font-bold block">🕒 營業時間</span>
+                  <span class="text-[11px] font-bold text-amber-800 flex items-center gap-1">
+                    <i class="fa-regular fa-clock text-amber-600 text-[10px]"></i> 16:00–22:30 (每日營業・售完提早打烊)
+                  </span>
+                </div>
+                <span class="shrink-0 text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">晚餐時段</span>
               </div>
               <!-- 雙地圖導航按鈕 -->
               <div class="grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-100">
@@ -3410,7 +3419,7 @@
         title: 'Day 2 動線地圖：甘川洞 ➔ 頤和園中餐 ➔ 松島海水浴場 ➔ 松島海上纜車 ➔ 龍宮步道 ➔ 西面 ➔ 83獬豸燒肉 ➔ 回飯店',
         regionBadge: '沙下 ➔ 松島 ➔ 西面 ➔ 海雲台',
         stops: [
-          { num: '1', time: '09:30', nameZh: '甘川洞文化村 (諮詢處)', nameKr: '아미비석문화마을안내센터', lat: 35.0975, lng: 129.0106, type: 'spot', dir: 'top', offset: [0, -12], taxiId: 'gamcheon', googleMap: 'https://maps.app.goo.gl/ZoyTY3WjpEPftk4U7', naverMap: 'https://naver.me/xy7jSC56' },
+          { num: '1', time: '09:00', nameZh: '甘川洞文化村 (諮詢處)', nameKr: '아미비석문화마을안내센터', lat: 35.0975, lng: 129.0106, type: 'spot', dir: 'top', offset: [0, -12], taxiId: 'gamcheon', googleMap: 'https://maps.app.goo.gl/ZoyTY3WjpEPftk4U7', naverMap: 'https://naver.me/xy7jSC56' },
           { num: '2', time: '11:45', nameZh: '松島 頤和園 中華料理 (正餐午餐)', nameKr: '이화원', lat: 35.0735, lng: 129.0225, type: 'food', dir: 'left', offset: [-12, 0], taxiId: 'yihewan', googleMap: 'https://maps.app.goo.gl/UDd65v4bkG8jMs2P6', naverMap: 'https://naver.me/G1w6vRuJ' },
           { num: '3', time: '13:00', nameZh: '松島海水浴場散步 (松島天空步道)', nameKr: '송도구름산책로', lat: 35.0761, lng: 129.0235, type: 'spot', dir: 'right', offset: [12, -4], googleMap: 'https://maps.app.goo.gl/VgJ68n7M9xyD3LBj9', naverMap: 'https://naver.me/FJbW3smn' },
           { num: '4', time: '13:40', nameZh: '松島海上纜車', nameKr: '송도해상케이블카', lat: 35.0765, lng: 129.0238, type: 'spot', dir: 'right', offset: [12, 4], taxiId: 'songdo', googleMap: 'https://maps.app.goo.gl/YqTEpAd35MEwpPQ97', naverMap: 'https://naver.me/Fmf6KBhZ' },
@@ -3488,7 +3497,7 @@
       '옵스 해운대점': '每日 08:00–22:00 (全年無休)',
       '호랑이젤라떡 부산해운대본점': '12:00–21:30 (午休 16:00–17:30，售完提早打烊)',
       '남포동 원조 찹쌀호떡 본점': '10:00–22:00 (依現場攤位為準)',
-      '거인통닭 대연점': '12:00–22:00 (售完提早打烊)',
+      '거인통닭 대연점': '16:00–22:30 (售完提早打烊)',
       '거인통닭': '11:30–20:30 (午休 14:30–15:30，週日公休，售完提早打烊)',
       '라비앙즈메종드호텔': '24小時櫃檯 (入住 15:00 / 退房 11:00)',
       '김해국제공항': '06:00–23:00 (依航班時刻營運)',
@@ -3508,11 +3517,11 @@
       '롯데마트 동부산점': 'Outlets 10:30–21:00 / 樂天超市 10:00–23:00 (每月第2、4個週三休)',
       '해운대블루라인파크 미포정거장': '09:00–18:00 (11–2月冬季時間，依預約時段搭乘)',
       '센텀 스파랜드': '每日 09:00–22:00 (最後入場 21:00)',
-      '이화원': '10:00–21:00 (無固定午休，公休依現場為準)',
-      '83해치': '15:30–01:00 (每日營業)',
+      '이화원': '09:00–21:00 (無固定午休，公休依現場為準)',
+      '83해치': '16:00–00:30 (每日營業)',
 
       // 依韓文地址索引
-      '부산 부산진구 서전로 11-1 1층': '15:30–01:00 (每日營業)',
+      '부산 부산진구 서전로 11-1 1층': '16:00–00:30 (每日營業)',
       '부산 부산진구 동천로107번길 14 1층': '每日 17:00–24:00 (無公休)',
       '부산 중구 자갈치로23번길 6 1층': '12:00–24:00 (每月第1、3、5個週日公休)',
       '부산 부산진구 서전로38번길 43-3 1층': '11:00–21:00 (午休 15:00–17:00，週六、週日不午休)',
@@ -3526,6 +3535,7 @@
       '부산광역시 해운대구 중동 1394-82': '每日 08:00–22:00 (全年無休)',
       '부산 해운대구 달맞이길62번길 38 115호, 116호': '12:00–21:30 (午休 16:00–17:30，售完提早打烊)',
       '부산 중구 비프광장로 36': '10:00–22:00 (依現場攤位為準)',
+      '부산 남구 수영로 195-5': '16:00–22:30 (售完提早打烊)',
       '부산 서구 부용로38번길 3 1층': '11:30–20:30 (午休 14:30–15:30，週日公休，售完提早打烊)',
       '부산 해운대구 해운대해변로209번나길 56': '24小時櫃檯 (入住 15:00 / 退房 11:00)',
       '부산 강서구 공항진입로 108': '06:00–23:00 (依航班時刻營運)',
@@ -3544,7 +3554,7 @@
       '부산 기장군 기장읍 기장해안로 147 2층 롯데마트 동부산점': 'Outlets 10:30–21:00 / 樂天超市 10:00–23:00 (每月第2、4個週三休)',
       '부산 해운대구 달맞이길62번길 13': '09:00–18:00 (11–2月冬季時間，依預約時段搭乘)',
       '부산 해운대구 센텀남대로 35 신세계백화점센텀시티점': '每日 09:00–22:00 (最後入場 21:00)',
-      '부산 서구 암남공원로 28': '10:00–21:00 (無固定午休，公休依現場為準)'
+      '부산 서구 암남공원로 28': '09:00–21:00 (無固定午休，公休依現場為準)'
     };
 
     function getPlaceHours(nameKr, addressKr) {
